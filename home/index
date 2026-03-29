@@ -1,98 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home Panel - Qixuan</title>
+    <title>Control Panel - Qixuan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png">
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: white;
-            margin: 0;
+        :root {
+            --bg1: #07111f;
+            --bg2: #0f1e3d;
+            --card: rgba(255,255,255,0.08);
+            --border: rgba(255,255,255,0.12);
+            --text: #f8fafc;
         }
 
-        .header {
-            background: #020617;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            border-bottom: 1px solid #1e293b;
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 20% 20%, rgba(79,140,255,0.25), transparent 28%),
+                radial-gradient(circle at 80% 25%, rgba(139,92,246,0.22), transparent 24%),
+                radial-gradient(circle at 50% 80%, rgba(56,189,248,0.16), transparent 30%),
+                linear-gradient(135deg, var(--bg1), #0b1220 45%, var(--bg2));
+            min-height: 100vh;
         }
 
         .container {
-            padding: 30px;
+            width: min(1100px, 92%);
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        .title {
+            font-size: 46px;
+            font-weight: 800;
+            margin-bottom: 30px;
+        }
+
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 22px;
         }
 
         .card {
-            background: #1e293b;
-            padding: 25px;
-            border-radius: 12px;
+            border-radius: 22px;
+            padding: 28px;
             cursor: pointer;
-            transition: 0.2s;
-            text-align: center;
+            transition: 0.25s;
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.12);
         }
 
         .card:hover {
-            background: #334155;
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.35);
         }
 
         .card h2 {
-            margin: 10px 0;
+            margin-top: 0;
+            font-size: 24px;
         }
 
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: #94a3b8;
+        .card p {
+            color: #cbd5e1;
         }
+
+        /* 不同颜色卡片 */
+        .projects { background: linear-gradient(135deg, rgba(79,140,255,0.25), rgba(139,92,246,0.25)); }
+        .files { background: linear-gradient(135deg, rgba(56,189,248,0.25), rgba(14,165,233,0.25)); }
+        .notes { background: linear-gradient(135deg, rgba(34,197,94,0.25), rgba(16,185,129,0.25)); }
+        .password { background: linear-gradient(135deg, rgba(244,63,94,0.25), rgba(236,72,153,0.25)); }
+        .api { background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(249,115,22,0.25)); }
+        .main { background: linear-gradient(135deg, rgba(148,163,184,0.25), rgba(100,116,139,0.25)); }
+
     </style>
 </head>
 
 <body>
-
-    <div class="header">
-        Qixuan Control Panel
-    </div>
-
     <div class="container">
-        <div class="card" onclick="location.href='https://project.qixuan.net'">
-            <h2>Projects</h2>
-            <p>Manage your projects</p>
-        </div>
+        <div class="title">Control Panel</div>
 
-        <div class="card" onclick="location.href='https://files.qixuan.net'">
-            <h2>Files</h2>
-            <p>File storage</p>
-        </div>
+        <div class="grid">
+            <div class="card projects" onclick="location.href='https://project.qixuan.net'">
+                <h2>Projects</h2>
+                <p>Manage your projects</p>
+            </div>
 
-        <div class="card" onclick="location.href='https://notes.qixuan.net'">
-            <h2>Notes</h2>
-            <p>Your notes</p>
-        </div>
+            <div class="card files" onclick="location.href='https://files.qixuan.net'">
+                <h2>Files</h2>
+                <p>File storage</p>
+            </div>
 
-        <div class="card" onclick="location.href='https://password.qixuan.net'">
-            <h2>Password</h2>
-            <p>Password manager</p>
-        </div>
+            <div class="card notes" onclick="location.href='https://notes.qixuan.net'">
+                <h2>Notes</h2>
+                <p>Your notes</p>
+            </div>
 
-        <div class="card" onclick="location.href='https://api.qixuan.net'">
-            <h2>API</h2>
-            <p>Backend API</p>
-        </div>
+            <div class="card password" onclick="location.href='https://password.qixuan.net'">
+                <h2>Password</h2>
+                <p>Password manager</p>
+            </div>
 
-        <div class="card" onclick="location.href='https://qixuan.net'">
-            <h2>Main Site</h2>
-            <p>Public website</p>
+            <div class="card api" onclick="location.href='https://api.qixuan.net'">
+                <h2>API</h2>
+                <p>Backend API</p>
+            </div>
+
+            <div class="card main" onclick="location.href='https://qixuan.net'">
+                <h2>Main Site</h2>
+                <p>Public website</p>
+            </div>
         </div>
     </div>
-
-    <div class="footer">
-        Qixuan System Panel © 2026
-    </div>
-
 </body>
 </html>
