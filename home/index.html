@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Control Panel - Qixuan</title>
+    <title>Qixuan OS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png">
 
@@ -13,6 +13,7 @@
             --card: rgba(255,255,255,0.08);
             --border: rgba(255,255,255,0.12);
             --text: #f8fafc;
+            --sub: #94a3b8;
         }
 
         body {
@@ -28,92 +29,168 @@
         }
 
         .container {
-            width: min(1100px, 92%);
-            margin: 0 auto;
+            width: min(1200px, 92%);
+            margin: auto;
             padding: 40px 0;
         }
 
-        .title {
-            font-size: 46px;
-            font-weight: 800;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 42px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            color: var(--sub);
+            margin-top: 6px;
+        }
+
+        .time {
+            font-size: 18px;
+            color: var(--sub);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .stat {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 18px;
+            border-radius: 14px;
+            backdrop-filter: blur(12px);
+        }
+
+        .stat h3 {
+            margin: 0;
+            font-size: 14px;
+            color: var(--sub);
+        }
+
+        .stat p {
+            margin: 6px 0 0 0;
+            font-size: 22px;
+            font-weight: bold;
         }
 
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-            gap: 22px;
+            gap: 20px;
         }
 
         .card {
-            border-radius: 22px;
-            padding: 28px;
+            border-radius: 20px;
+            padding: 26px;
             cursor: pointer;
             transition: 0.25s;
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(255,255,255,0.12);
+            border: 1px solid var(--border);
         }
 
         .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.35);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.35);
         }
 
         .card h2 {
             margin-top: 0;
-            font-size: 24px;
         }
 
         .card p {
             color: #cbd5e1;
         }
 
-        /* 不同颜色卡片 */
         .projects { background: linear-gradient(135deg, rgba(79,140,255,0.25), rgba(139,92,246,0.25)); }
         .files { background: linear-gradient(135deg, rgba(56,189,248,0.25), rgba(14,165,233,0.25)); }
         .notes { background: linear-gradient(135deg, rgba(34,197,94,0.25), rgba(16,185,129,0.25)); }
         .password { background: linear-gradient(135deg, rgba(244,63,94,0.25), rgba(236,72,153,0.25)); }
-        .api { background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(249,115,22,0.25)); }
-        .main { background: linear-gradient(135deg, rgba(148,163,184,0.25), rgba(100,116,139,0.25)); }
+        .blog { background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(249,115,22,0.25)); }
+        .api { background: linear-gradient(135deg, rgba(148,163,184,0.25), rgba(100,116,139,0.25)); }
 
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="title">Control Panel</div>
+        <div class="header">
+            <div>
+                <div class="title">Qixuan OS</div>
+                <div class="subtitle">Personal Cloud Control Panel</div>
+            </div>
+            <div class="time" id="time"></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <h3>Status</h3>
+                <p>Online</p>
+            </div>
+            <div class="stat">
+                <h3>Projects</h3>
+                <p>6</p>
+            </div>
+            <div class="stat">
+                <h3>Notes</h3>
+                <p>12</p>
+            </div>
+            <div class="stat">
+                <h3>Files</h3>
+                <p>24</p>
+            </div>
+        </div>
 
         <div class="grid">
-            <div class="card projects" onclick="location.href='https://project.qixuan.net'">
+            <div class="card projects" onclick="location.href='/projects'">
                 <h2>Projects</h2>
                 <p>Manage your projects</p>
             </div>
 
-            <div class="card files" onclick="location.href='https://files.qixuan.net'">
+            <div class="card files" onclick="location.href='/files'">
                 <h2>Files</h2>
                 <p>File storage</p>
             </div>
 
-            <div class="card notes" onclick="location.href='https://notes.qixuan.net'">
+            <div class="card notes" onclick="location.href='/notes'">
                 <h2>Notes</h2>
                 <p>Your notes</p>
             </div>
 
-            <div class="card password" onclick="location.href='https://password.qixuan.net'">
+            <div class="card password" onclick="location.href='/password'">
                 <h2>Password</h2>
                 <p>Password manager</p>
             </div>
 
-            <div class="card api" onclick="location.href='https://api.qixuan.net'">
+            <div class="card blog" onclick="location.href='/blog'">
+                <h2>Blog</h2>
+                <p>Write posts</p>
+            </div>
+
+            <div class="card api" onclick="location.href='/api'">
                 <h2>API</h2>
                 <p>Backend API</p>
             </div>
-
-            <div class="card main" onclick="location.href='https://qixuan.net'">
-                <h2>Main Site</h2>
-                <p>Public website</p>
-            </div>
         </div>
     </div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+            document.getElementById("time").innerText =
+                now.toLocaleString();
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
 </body>
 </html>
