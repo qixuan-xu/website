@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Home Panel - Qixuan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+            margin: 0;
+        }
+
+        .header {
+            background: #020617;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .container {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .card:hover {
+            background: #334155;
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            margin: 10px 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        Qixuan Control Panel
+    </div>
+
+    <div class="container">
+        <div class="card" onclick="location.href='https://project.qixuan.net'">
+            <h2>Projects</h2>
+            <p>Manage your projects</p>
+        </div>
+
+        <div class="card" onclick="location.href='https://files.qixuan.net'">
+            <h2>Files</h2>
+            <p>File storage</p>
+        </div>
+
+        <div class="card" onclick="location.href='https://notes.qixuan.net'">
+            <h2>Notes</h2>
+            <p>Your notes</p>
+        </div>
+
+        <div class="card" onclick="location.href='https://password.qixuan.net'">
+            <h2>Password</h2>
+            <p>Password manager</p>
+        </div>
+
+        <div class="card" onclick="location.href='https://api.qixuan.net'">
+            <h2>API</h2>
+            <p>Backend API</p>
+        </div>
+
+        <div class="card" onclick="location.href='https://qixuan.net'">
+            <h2>Main Site</h2>
+            <p>Public website</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        Qixuan System Panel © 2026
+    </div>
+
+</body>
+</html>
