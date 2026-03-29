@@ -1,149 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/png" href="favicon.png">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projects - Qixuan Xu</title>
+    <title>Qixuan OS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="favicon.png">
+
     <style>
+        :root {
+            --bg1: #07111f;
+            --bg2: #0f1e3d;
+            --card: rgba(255,255,255,0.08);
+            --border: rgba(255,255,255,0.12);
+            --text: #f8fafc;
+            --sub: #94a3b8;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            color: white;
+            color: var(--text);
             background:
                 radial-gradient(circle at 20% 20%, rgba(79,140,255,0.25), transparent 28%),
                 radial-gradient(circle at 80% 25%, rgba(139,92,246,0.22), transparent 24%),
-                linear-gradient(135deg, #07111f, #0b1220, #0f1e3d);
+                radial-gradient(circle at 50% 80%, rgba(56,189,248,0.16), transparent 30%),
+                linear-gradient(135deg, var(--bg1), #0b1220 45%, var(--bg2));
             min-height: 100vh;
         }
 
         .container {
-            width: min(1100px, 92%);
-            margin: 0 auto;
+            width: min(1200px, 92%);
+            margin: auto;
             padding: 40px 0;
         }
 
-        .nav {
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
-        .nav a {
-            color: #cbd5e1;
-            text-decoration: none;
-            margin-left: 20px;
+        .title {
+            font-size: 42px;
+            font-weight: 800;
         }
 
-        .nav a:hover {
-            color: white;
+        .subtitle {
+            color: var(--sub);
+            margin-top: 6px;
         }
 
-        h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
+        .time {
+            font-size: 18px;
+            color: var(--sub);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .stat {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 18px;
+            border-radius: 14px;
+            backdrop-filter: blur(12px);
+        }
+
+        .stat h3 {
+            margin: 0;
+            font-size: 14px;
+            color: var(--sub);
+        }
+
+        .stat p {
+            margin: 6px 0 0 0;
+            font-size: 22px;
+            font-weight: bold;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
             gap: 20px;
         }
 
         .card {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.12);
             border-radius: 20px;
-            padding: 20px;
-            transition: 0.2s;
+            padding: 26px;
+            cursor: pointer;
+            transition: 0.25s;
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
         }
 
         .card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.35);
         }
 
         .card h2 {
             margin-top: 0;
         }
 
-        .tag {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            margin-right: 6px;
-            margin-top: 6px;
-            background: rgba(79,140,255,0.2);
+        .card p {
+            color: #cbd5e1;
         }
 
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #93c5fd;
-            text-decoration: none;
-        }
-
-        .back:hover {
-            color: white;
-        }
+        .projects { background: linear-gradient(135deg, rgba(79,140,255,0.25), rgba(139,92,246,0.25)); }
+        .files { background: linear-gradient(135deg, rgba(56,189,248,0.25), rgba(14,165,233,0.25)); }
+        .notes { background: linear-gradient(135deg, rgba(34,197,94,0.25), rgba(16,185,129,0.25)); }
+        .password { background: linear-gradient(135deg, rgba(244,63,94,0.25), rgba(236,72,153,0.25)); }
+        .blog { background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(249,115,22,0.25)); }
+        .api { background: linear-gradient(135deg, rgba(148,163,184,0.25), rgba(100,116,139,0.25)); }
+        .mainweb { background: linear-gradient(135deg, rgba(100,116,53,0.25), rgba(120,04,240,0.25)); }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <div class="nav">
-            <div><strong>QIXUAN.NET</strong></div>
+        <div class="header">
             <div>
-                <a href="www.qixuan.net/index.html">Home</a>
-                <a href="files.html">Files</a>
-                <a href="projects.html">Projects</a>
+                <div class="title">Qixuan OS</div>
+                <div class="subtitle">Personal Cloud Control Panel</div>
             </div>
+            <div class="time" id="time"></div>
         </div>
 
-        <h1>Projects</h1>
+        <div class="stats">
+            <div class="stat">
+                <h3>Status</h3>
+                <p id="status">Loading...</p>
+            </div>
+            <div class="stat">
+                <h3>Projects</h3>
+                <p id="projects">Loading...</p>
+            </div>
+            <div class="stat">
+                <h3>Notes</h3>
+                <p id="notes">Loading...</p>
+            </div>
+            <div class="stat">
+                <h3>Files</h3>
+                <p id="files">Loading...</p>
+            </div>
+        </div>
 
         <div class="grid">
-
-            <div class="card">
-                <h2>FPV Drone Build</h2>
-                <p>Building and tuning a 3.5-inch cinewhoop drone, including Betaflight setup and hardware testing.</p>
-                <div class="tag">FPV</div>
-                <div class="tag">Hardware</div>
-                <div class="tag">Electronics</div>
+            <div class="card projects" onclick="go('projects')">
+                <h2>Projects</h2>
+                <p>Manage your projects</p>
+            </div>
+        
+            <div class="card files" onclick="go('files')">
+                <h2>Files</h2>
+                <p>File storage</p>
+            </div>
+        
+            <div class="card notes" onclick="go('notes')">
+                <h2>Notes</h2>
+                <p>Your notes</p>
+            </div>
+        
+            <div class="card password" onclick="go('password')">
+                <h2>Password</h2>
+                <p>Password manager</p>
             </div>
 
-            <div class="card">
-                <h2>STM32 Projects</h2>
-                <p>Microcontroller projects using STM32, sensors, and embedded programming.</p>
-                <div class="tag">STM32</div>
-                <div class="tag">Embedded</div>
-                <div class="tag">C</div>
+            <div class="card blog" onclick="go('blog')">
+                <h2>Blog</h2>
+                <p>Write posts</p>
             </div>
 
-            <div class="card">
-                <h2>Computer Vision</h2>
-                <p>Lane detection and image processing using Python, OpenCV, and YOLO.</p>
-                <div class="tag">Python</div>
-                <div class="tag">OpenCV</div>
-                <div class="tag">AI</div>
+            <div class="card api" onclick="go('api')">
+                <h2>API</h2>
+                <p>Backend API</p>
             </div>
 
-            <div class="card">
-                <h2>Godot Game</h2>
-                <p>Developing a top-down shooter game using the Godot engine.</p>
-                <div class="tag">Game Dev</div>
-                <div class="tag">Godot</div>
+            <div class="card mainweb" onclick="location.href='https://www.qixuan.net/'">
+                <h2>Main Site</h2>
+                <p>www.qixuan.net</p>
             </div>
-
-            <div class="card">
-                <h2>Study Organizer App</h2>
-                <p>Designing a homework and schedule management app for students.</p>
-                <div class="tag">App</div>
-                <div class="tag">Swift</div>
-            </div>
-
         </div>
     </div>
+
+    <script>
+        const API = "https://api.qixuan.net";
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById("time").innerText = now.toLocaleString();
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        function go(page) {
+            window.location.href = "https://www.qixuan.net/" + page + "/?from=home";
+        }
+
+        // 加载数据
+        fetch(API + "/status")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("status").innerText = data.website;
+            });
+
+        fetch(API + "/projects")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("projects").innerText = data.length;
+            });
+
+        fetch(API + "/stats")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("notes").innerText = data.notes;
+                document.getElementById("files").innerText = data.files;
+            });
+    </script>
 </body>
 </html>
