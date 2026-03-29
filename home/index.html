@@ -134,52 +134,53 @@
         <div class="stats">
             <div class="stat">
                 <h3>Status</h3>
-                <p>Online</p>
+                <p id="status">Loading...</p>
             </div>
             <div class="stat">
                 <h3>Projects</h3>
-                <p>6</p>
+                <p id="projects">Loading...</p>
             </div>
             <div class="stat">
                 <h3>Notes</h3>
-                <p>12</p>
+                <p id="notes">Loading...</p>
             </div>
             <div class="stat">
                 <h3>Files</h3>
-                <p>24</p>
+                <p id="files">Loading...</p>
             </div>
         </div>
 
         <div class="grid">
-            <div class="card projects" onclick="location.href='https://www.qixuan.net/projects/'">
+            <div class="card projects" onclick="go('projects')">
                 <h2>Projects</h2>
                 <p>Manage your projects</p>
             </div>
         
-            <div class="card files" onclick="location.href='https://www.qixuan.net/files/'">
+            <div class="card files" onclick="go('files')">
                 <h2>Files</h2>
                 <p>File storage</p>
             </div>
         
-            <div class="card notes" onclick="location.href='https://www.qixuan.net/notes/'">
+            <div class="card notes" onclick="go('notes')">
                 <h2>Notes</h2>
                 <p>Your notes</p>
             </div>
         
-            <div class="card password" onclick="location.href='https://www.qixuan.net/password/'">
+            <div class="card password" onclick="go('password')">
                 <h2>Password</h2>
                 <p>Password manager</p>
             </div>
 
-            <div class="card blog" onclick="location.href='https://www.qixuan.net/blog/'">
+            <div class="card blog" onclick="go('blog')">
                 <h2>Blog</h2>
                 <p>Write posts</p>
             </div>
 
-            <div class="card api" onclick="location.href='https://www.qixuan.net/api/'">
+            <div class="card api" onclick="go('api')">
                 <h2>API</h2>
                 <p>Backend API</p>
             </div>
+
             <div class="card mainweb" onclick="location.href='https://www.qixuan.net/'">
                 <h2>Main Site</h2>
                 <p>www.qixuan.net</p>
@@ -188,13 +189,38 @@
     </div>
 
     <script>
+        const API = "https://api.qixuan.net";
+
         function updateTime() {
             const now = new Date();
-            document.getElementById("time").innerText =
-                now.toLocaleString();
+            document.getElementById("time").innerText = now.toLocaleString();
         }
         setInterval(updateTime, 1000);
         updateTime();
+
+        function go(page) {
+            window.location.href = "https://www.qixuan.net/" + page + "/?from=home";
+        }
+
+        // 加载数据
+        fetch(API + "/status")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("status").innerText = data.website;
+            });
+
+        fetch(API + "/projects")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("projects").innerText = data.length;
+            });
+
+        fetch(API + "/stats")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("notes").innerText = data.notes;
+                document.getElementById("files").innerText = data.files;
+            });
     </script>
 </body>
 </html>
