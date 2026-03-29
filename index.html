@@ -9,147 +9,243 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg1: #07111f;
+            --bg2: #0f1e3d;
+            --card: rgba(255,255,255,0.08);
+            --border: rgba(255,255,255,0.12);
+            --text: #f8fafc;
+            --muted: #cbd5e1;
+            --soft: #94a3b8;
+            --accent1: #4f8cff;
+            --accent2: #8b5cf6;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            color: white;
+            color: var(--text);
             background:
-                radial-gradient(circle at top left, #1e3a8a 0%, transparent 30%),
-                radial-gradient(circle at bottom right, #7c3aed 0%, transparent 30%),
-                linear-gradient(135deg, #0f172a, #111827, #1f2937);
+                radial-gradient(circle at 20% 20%, rgba(79,140,255,0.25), transparent 28%),
+                radial-gradient(circle at 80% 25%, rgba(139,92,246,0.22), transparent 24%),
+                radial-gradient(circle at 50% 80%, rgba(56,189,248,0.16), transparent 30%),
+                linear-gradient(135deg, var(--bg1), #0b1220 45%, var(--bg2));
             min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-blur {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: 0.35;
+            animation: float 9s ease-in-out infinite;
+        }
+
+        .orb.one {
+            width: 240px;
+            height: 240px;
+            background: #3b82f6;
+            top: 80px;
+            left: -40px;
+        }
+
+        .orb.two {
+            width: 260px;
+            height: 260px;
+            background: #8b5cf6;
+            top: 220px;
+            right: -50px;
+            animation-delay: 1.8s;
+        }
+
+        .orb.three {
+            width: 220px;
+            height: 220px;
+            background: #06b6d4;
+            bottom: 40px;
+            left: 20%;
+            animation-delay: 3.2s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-18px) translateX(10px); }
         }
 
         .container {
-            width: min(1100px, 92%);
+            width: min(1120px, 92%);
             margin: 0 auto;
-            padding: 32px 0 60px;
+            padding: 34px 0 64px;
+            position: relative;
+            z-index: 2;
         }
 
         .nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 50px;
+            margin-bottom: 46px;
+            animation: fadeUp 0.8s ease both;
         }
 
         .logo {
-            font-size: 22px;
-            font-weight: bold;
+            font-size: 26px;
+            font-weight: 800;
             letter-spacing: 1px;
         }
 
+        .nav-links {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
         .nav-links a {
-            color: #cbd5e1;
+            color: var(--muted);
             text-decoration: none;
-            margin-left: 20px;
-            transition: 0.2s;
+            transition: color 0.2s ease, transform 0.2s ease;
         }
 
         .nav-links a:hover {
             color: white;
+            transform: translateY(-1px);
         }
 
         .hero {
             display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 28px;
-            align-items: stretch;
-            margin-bottom: 28px;
+            grid-template-columns: 1.25fr 0.75fr;
+            gap: 24px;
+            margin-bottom: 24px;
         }
 
-        .hero-card,
-        .panel {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+        .glass {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 26px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.28);
+        }
+
+        .hero-main {
+            padding: 34px;
+            animation: fadeUp 0.9s ease 0.1s both;
         }
 
         .tag {
             display: inline-block;
-            padding: 8px 14px;
+            padding: 10px 16px;
             border-radius: 999px;
-            background: rgba(96, 165, 250, 0.18);
-            color: #bfdbfe;
+            background: rgba(79,140,255,0.18);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #dbeafe;
             font-size: 14px;
             margin-bottom: 18px;
         }
 
         h1 {
-            font-size: 56px;
-            line-height: 1.02;
+            font-size: 68px;
+            line-height: 0.98;
             margin: 0 0 14px;
+            letter-spacing: -1px;
         }
 
         .subtitle {
-            font-size: 20px;
-            color: #cbd5e1;
+            font-size: 24px;
+            color: var(--muted);
             margin-bottom: 18px;
         }
 
         .desc {
-            color: #94a3b8;
-            font-size: 16px;
+            font-size: 18px;
+            color: var(--soft);
             line-height: 1.7;
-            max-width: 650px;
+            max-width: 760px;
         }
 
         .button-row {
-            margin-top: 26px;
             display: flex;
             flex-wrap: wrap;
             gap: 14px;
+            margin-top: 28px;
         }
 
         .button {
             display: inline-block;
-            padding: 12px 20px;
-            border-radius: 12px;
+            padding: 13px 22px;
+            border-radius: 14px;
             text-decoration: none;
-            font-weight: bold;
-            transition: transform 0.15s, opacity 0.15s, background 0.15s;
+            font-weight: 700;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
         }
 
         .button:hover {
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.22);
         }
 
         .button-primary {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
             color: white;
+            background: linear-gradient(90deg, var(--accent1), var(--accent2));
         }
 
         .button-secondary {
-            background: rgba(255,255,255,0.08);
             color: white;
-            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .hero-side {
+            padding: 28px;
+            animation: fadeUp 0.9s ease 0.25s both;
+        }
+
+        .hero-side h2 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 24px;
         }
 
         .stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 14px;
-            margin-top: 18px;
         }
 
-        .stat-box {
+        .stat {
             background: rgba(255,255,255,0.05);
-            border-radius: 16px;
+            border-radius: 18px;
             padding: 18px;
+            transition: transform 0.2s ease, background 0.2s ease;
         }
 
-        .stat-box h3 {
-            margin: 0;
-            font-size: 26px;
+        .stat:hover {
+            transform: translateY(-4px);
+            background: rgba(255,255,255,0.08);
         }
 
-        .stat-box p {
-            margin: 6px 0 0;
-            color: #94a3b8;
+        .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .stat-label {
+            color: var(--soft);
+            margin-top: 6px;
             font-size: 14px;
+            line-height: 1.4;
         }
 
         .section-grid {
@@ -160,23 +256,30 @@
         }
 
         .card {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.10);
-            border-radius: 22px;
             padding: 24px;
-            box-shadow: 0 18px 30px rgba(0,0,0,0.18);
+            animation: fadeUp 0.8s ease both;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.25s; }
+        .card:nth-child(2) { animation-delay: 0.38s; }
+        .card:nth-child(3) { animation-delay: 0.5s; }
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 18px 36px rgba(0,0,0,0.24);
         }
 
         .card h2 {
             margin-top: 0;
             margin-bottom: 14px;
-            font-size: 22px;
+            font-size: 24px;
         }
 
-        .card p,
-        .card li {
-            color: #cbd5e1;
-            line-height: 1.6;
+        .card p, .card li {
+            color: var(--muted);
+            line-height: 1.7;
         }
 
         ul {
@@ -185,36 +288,82 @@
         }
 
         .footer {
-            margin-top: 40px;
             text-align: center;
-            color: #94a3b8;
+            color: var(--soft);
+            margin-top: 38px;
             font-size: 14px;
+            animation: fadeUp 0.8s ease 0.6s both;
         }
 
-        @media (max-width: 900px) {
+        .cursor-glow {
+            position: fixed;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99,102,241,0.16), transparent 65%);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            mix-blend-mode: screen;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(22px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 950px) {
             .hero,
             .section-grid {
                 grid-template-columns: 1fr;
             }
 
             h1 {
-                font-size: 42px;
+                font-size: 48px;
             }
 
+            .subtitle {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 640px) {
             .nav {
                 flex-direction: column;
-                gap: 14px;
                 align-items: flex-start;
+                gap: 14px;
             }
 
-            .nav-links a {
-                margin-left: 0;
-                margin-right: 14px;
+            .container {
+                width: min(94%, 1120px);
+            }
+
+            h1 {
+                font-size: 40px;
+            }
+
+            .hero-main,
+            .hero-side,
+            .card {
+                padding: 22px;
             }
         }
     </style>
 </head>
 <body>
+    <div class="bg-blur">
+        <div class="orb one"></div>
+        <div class="orb two"></div>
+        <div class="orb three"></div>
+    </div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+
     <div class="container">
         <div class="nav">
             <div class="logo">QIXUAN.NET</div>
@@ -227,7 +376,7 @@
         </div>
 
         <div class="hero">
-            <div class="hero-card">
+            <div class="hero-main glass">
                 <div class="tag">Student • Builder • Developer</div>
                 <h1>Qixuan Xu</h1>
                 <div class="subtitle">FPV · Programming · AI · Aviation</div>
@@ -243,31 +392,31 @@
                 </div>
             </div>
 
-            <div class="panel">
-                <h2 style="margin-top:0;">Quick Overview</h2>
+            <div class="hero-side glass">
+                <h2>Quick Overview</h2>
                 <div class="stats">
-                    <div class="stat-box">
-                        <h3>4+</h3>
-                        <p>Main project areas</p>
+                    <div class="stat">
+                        <div class="stat-number">4+</div>
+                        <div class="stat-label">Main project areas</div>
                     </div>
-                    <div class="stat-box">
-                        <h3>1</h3>
-                        <p>Personal website</p>
+                    <div class="stat">
+                        <div class="stat-number">1</div>
+                        <div class="stat-label">Personal website</div>
                     </div>
-                    <div class="stat-box">
-                        <h3>∞</h3>
-                        <p>Ideas to build</p>
+                    <div class="stat">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Ideas to build</div>
                     </div>
-                    <div class="stat-box">
-                        <h3>2026</h3>
-                        <p>Website launch</p>
+                    <div class="stat">
+                        <div class="stat-number">2026</div>
+                        <div class="stat-label">Website launch</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="section-grid">
-            <div class="card">
+            <div class="card glass">
                 <h2>About Me</h2>
                 <p>
                     I am interested in engineering, coding, FPV drones, and simulation.
@@ -275,7 +424,7 @@
                 </p>
             </div>
 
-            <div class="card">
+            <div class="card glass">
                 <h2>Projects</h2>
                 <ul>
                     <li>STM32 Projects</li>
@@ -286,7 +435,7 @@
                 </ul>
             </div>
 
-            <div class="card">
+            <div class="card glass">
                 <h2>Contact</h2>
                 <p>Email: <strong>me@qixuan.net</strong></p>
                 <p>This website will keep growing with new projects, notes, and files.</p>
@@ -297,5 +446,14 @@
             © 2026 Qixuan Xu · Built on GitHub Pages + Cloudflare
         </div>
     </div>
+
+    <script>
+        const glow = document.getElementById('cursorGlow');
+
+        window.addEventListener('mousemove', (e) => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        });
+    </script>
 </body>
 </html>
