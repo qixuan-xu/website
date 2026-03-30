@@ -21,6 +21,8 @@
             --accent2: #8b5cf6;
         }
 
+        html { scroll-behavior: smooth; }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -148,7 +150,7 @@
                     </div>
                     <div class="stat">
                         <div class="stat-number" id="stat-year">...</div>
-                        <div>Year</div>
+                        <div>Website launch</div>
                     </div>
                 </div>
             </div>
@@ -157,7 +159,10 @@
         <div class="section-grid">
             <div class="card glass">
                 <h2>About Me</h2>
-                <p>I build software, drones, and engineering projects.</p>
+                <p>
+                    I am interested in engineering, coding, FPV drones, and simulation.
+                    I like building useful tools and learning by making real projects.
+                </p>
             </div>
 
             <div class="card glass">
@@ -169,13 +174,13 @@
 
             <div class="card glass">
                 <h2>Contact</h2>
-                <p>Email: me@qixuan.net</p>
-                <p>GitHub: github.com/qixuan-xu</p>
+                <p>Email: <strong>me@qixuan.net</strong></p>
+                <p>GitHub: <strong>https://github.com/qixuan-xu</strong></p>
             </div>
         </div>
 
         <div class="footer">
-            © 2026 Qixuan Xu
+            © 2026 Qixuan Xu · Built on GitHub Pages + Cloudflare
         </div>
     </div>
 
@@ -185,11 +190,13 @@ async function loadData() {
         const res = await fetch("https://api.qixuan.net/db");
         const data = await res.json();
 
+        // Stats
         document.getElementById("stat-projects").innerText = data.stats.projects;
         document.getElementById("stat-files").innerText = data.stats.files;
         document.getElementById("stat-notes").innerText = data.stats.notes;
         document.getElementById("stat-year").innerText = data.system.year;
 
+        // Project list
         const list = document.getElementById("project-list");
         list.innerHTML = "";
 
