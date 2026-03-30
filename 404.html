@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+  // GitHub Pages 路由修复
+  var path = location.pathname;
+  if (path !== "/" && !path.endsWith(".html")) {
+    location.replace(path + "index.html");
+  }
+</script>
+</head>
+<body></body>
+</html>
