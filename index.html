@@ -5,10 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Qixuan Xu</title>
+
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         :root {
             --bg1: #07111f;
@@ -22,10 +21,6 @@
             --accent2: #8b5cf6;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -36,61 +31,12 @@
                 radial-gradient(circle at 50% 80%, rgba(56,189,248,0.16), transparent 30%),
                 linear-gradient(135deg, var(--bg1), #0b1220 45%, var(--bg2));
             min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .bg-blur {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(70px);
-            opacity: 0.35;
-            animation: float 9s ease-in-out infinite;
-        }
-
-        .orb.one {
-            width: 240px;
-            height: 240px;
-            background: #3b82f6;
-            top: 80px;
-            left: -40px;
-        }
-
-        .orb.two {
-            width: 260px;
-            height: 260px;
-            background: #8b5cf6;
-            top: 220px;
-            right: -50px;
-            animation-delay: 1.8s;
-        }
-
-        .orb.three {
-            width: 220px;
-            height: 220px;
-            background: #06b6d4;
-            bottom: 40px;
-            left: 20%;
-            animation-delay: 3.2s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) translateX(0px); }
-            50% { transform: translateY(-18px) translateX(10px); }
         }
 
         .container {
             width: min(1120px, 92%);
             margin: 0 auto;
             padding: 34px 0 64px;
-            position: relative;
-            z-index: 2;
         }
 
         .nav {
@@ -98,30 +44,17 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 46px;
-            animation: fadeUp 0.8s ease both;
         }
 
         .logo {
             font-size: 26px;
             font-weight: 800;
-            letter-spacing: 1px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 18px;
-            flex-wrap: wrap;
         }
 
         .nav-links a {
             color: var(--muted);
             text-decoration: none;
-            transition: color 0.2s ease, transform 0.2s ease;
-        }
-
-        .nav-links a:hover {
-            color: white;
-            transform: translateY(-1px);
+            margin-left: 20px;
         }
 
         .hero {
@@ -136,88 +69,10 @@
             border: 1px solid var(--border);
             border-radius: 26px;
             backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.28);
-        }
-
-        .hero-main {
-            padding: 34px;
-            animation: fadeUp 0.9s ease 0.1s both;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 10px 16px;
-            border-radius: 999px;
-            background: rgba(79,140,255,0.18);
-            border: 1px solid rgba(255,255,255,0.08);
-            color: #dbeafe;
-            font-size: 14px;
-            margin-bottom: 18px;
-        }
-
-        h1 {
-            font-size: 68px;
-            line-height: 0.98;
-            margin: 0 0 14px;
-            letter-spacing: -1px;
-        }
-
-        .subtitle {
-            font-size: 24px;
-            color: var(--muted);
-            margin-bottom: 18px;
-        }
-
-        .desc {
-            font-size: 18px;
-            color: var(--soft);
-            line-height: 1.7;
-            max-width: 760px;
-        }
-
-        .button-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-            margin-top: 28px;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 13px 22px;
-            border-radius: 14px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-        }
-
-        .button:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 28px rgba(0,0,0,0.22);
-        }
-
-        .button-primary {
-            color: white;
-            background: linear-gradient(90deg, var(--accent1), var(--accent2));
-        }
-
-        .button-secondary {
-            color: white;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
-        }
-
-        .hero-side {
             padding: 28px;
-            animation: fadeUp 0.9s ease 0.25s both;
         }
 
-        .hero-side h2 {
-            margin-top: 0;
-            margin-bottom: 18px;
-            font-size: 24px;
-        }
+        h1 { font-size: 60px; margin: 0 0 10px; }
 
         .stats {
             display: grid;
@@ -229,12 +84,6 @@
             background: rgba(255,255,255,0.05);
             border-radius: 18px;
             padding: 18px;
-            transition: transform 0.2s ease, background 0.2s ease;
-        }
-
-        .stat:hover {
-            transform: translateY(-4px);
-            background: rgba(255,255,255,0.08);
         }
 
         .stat-number {
@@ -242,175 +91,64 @@
             font-weight: 800;
         }
 
-        .stat-label {
-            color: var(--soft);
-            margin-top: 6px;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
         .section-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            margin-top: 10px;
         }
 
         .card {
             padding: 24px;
-            animation: fadeUp 0.8s ease both;
-            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-        }
-
-        .card:nth-child(1) { animation-delay: 0.25s; }
-        .card:nth-child(2) { animation-delay: 0.38s; }
-        .card:nth-child(3) { animation-delay: 0.5s; }
-
-        .card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(255,255,255,0.2);
-            box-shadow: 0 18px 36px rgba(0,0,0,0.24);
-        }
-
-        .card h2 {
-            margin-top: 0;
-            margin-bottom: 14px;
-            font-size: 24px;
-        }
-
-        .card p, .card li {
-            color: var(--muted);
-            line-height: 1.7;
-        }
-
-        ul {
-            padding-left: 18px;
-            margin: 0;
         }
 
         .footer {
             text-align: center;
             color: var(--soft);
             margin-top: 38px;
-            font-size: 14px;
-            animation: fadeUp 0.8s ease 0.6s both;
         }
 
-        .cursor-glow {
-            position: fixed;
-            width: 220px;
-            height: 220px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(99,102,241,0.16), transparent 65%);
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-            mix-blend-mode: screen;
-        }
-
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(22px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 950px) {
-            .hero,
-            .section-grid {
-                grid-template-columns: 1fr;
-            }
-
-            h1 {
-                font-size: 48px;
-            }
-
-            .subtitle {
-                font-size: 20px;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .nav {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 14px;
-            }
-
-            .container {
-                width: min(94%, 1120px);
-            }
-
-            h1 {
-                font-size: 40px;
-            }
-
-            .hero-main,
-            .hero-side,
-            .card {
-                padding: 22px;
-            }
+        @media (max-width: 900px) {
+            .hero, .section-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
-<body>
-    <div class="bg-blur">
-        <div class="orb one"></div>
-        <div class="orb two"></div>
-        <div class="orb three"></div>
-    </div>
-    <div class="cursor-glow" id="cursorGlow"></div>
 
+<body>
     <div class="container">
         <div class="nav">
             <div class="logo">QIXUAN.NET</div>
             <div class="nav-links">
-                <a href="files.html">Files</a>
-                <a href="#">Projects.html</a>
-                <a href="#">Blog</a>
-                <a href="#">Contact</a>
+                <a href="https://home.qixuan.net">Home Panel</a>
+                <a href="https://qixuan.net/files/">Files</a>
+                <a href="https://qixuan.net/projects/">Projects</a>
             </div>
         </div>
 
         <div class="hero">
-            <div class="hero-main glass">
-                <div class="tag">Student • Builder • Developer</div>
+            <div class="glass">
                 <h1>Qixuan Xu</h1>
-                <div class="subtitle">FPV · Programming · AI · Aviation</div>
-                <div class="desc">
-                    I build projects in software, drones, computer vision, and flight simulation.
-                    This site is my personal portfolio, file hub, and project space.
-                </div>
-
-                <div class="button-row">
-                    <a class="button button-primary" href="files.html">Open Files</a>
-                    <a class="button button-secondary" href="projects.html">View Projects</a>
-                    <a class="button button-secondary" href="#">Read Blog</a>
-                </div>
+                <p>FPV · Programming · AI · Aviation</p>
+                <p>This site is my personal portfolio, file hub, and project space.</p>
             </div>
 
-            <div class="hero-side glass">
+            <div class="glass">
                 <h2>Quick Overview</h2>
                 <div class="stats">
                     <div class="stat">
-                        <div class="stat-number">4+</div>
-                        <div class="stat-label">Main project areas</div>
+                        <div class="stat-number" id="stat-projects">...</div>
+                        <div>Main Projects</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-number">1</div>
-                        <div class="stat-label">Personal website</div>
+                        <div class="stat-number" id="stat-files">...</div>
+                        <div>Files</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-number">∞</div>
-                        <div class="stat-label">Ideas to build</div>
+                        <div class="stat-number" id="stat-notes">...</div>
+                        <div>Notes</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-number">2026</div>
-                        <div class="stat-label">Website launch</div>
+                        <div class="stat-number" id="stat-year">...</div>
+                        <div>Year</div>
                     </div>
                 </div>
             </div>
@@ -419,43 +157,55 @@
         <div class="section-grid">
             <div class="card glass">
                 <h2>About Me</h2>
-                <p>
-                    I am interested in engineering, coding, FPV drones, and simulation.
-                    I like building useful tools and learning by making real projects.
-                </p>
+                <p>I build software, drones, and engineering projects.</p>
             </div>
 
             <div class="card glass">
                 <h2>Projects</h2>
-                <ul>
-                    <li>STM32 Projects</li>
-                    <li>FPV Drone Build</li>
-                    <li>Computer Vision</li>
-                    <li>Godot Game</li>
-                    <li>Study App Ideas</li>
+                <ul id="project-list">
+                    <li>Loading...</li>
                 </ul>
             </div>
 
             <div class="card glass">
                 <h2>Contact</h2>
-                <p>Email: <strong>me@qixuan.net</strong></p>
-                <p>GitHub: <strong>https://github.com/qixuan-xu</strong></p>
-                <p>This website will keep growing with new projects, notes, and files.</p>
+                <p>Email: me@qixuan.net</p>
+                <p>GitHub: github.com/qixuan-xu</p>
             </div>
         </div>
 
         <div class="footer">
-            © 2026 Qixuan Xu · Built on GitHub Pages + Cloudflare
+            © 2026 Qixuan Xu
         </div>
     </div>
 
-    <script>
-        const glow = document.getElementById('cursorGlow');
+<script>
+async function loadData() {
+    try {
+        const res = await fetch("https://api.qixuan.net/db");
+        const data = await res.json();
 
-        window.addEventListener('mousemove', (e) => {
-            glow.style.left = e.clientX + 'px';
-            glow.style.top = e.clientY + 'px';
+        document.getElementById("stat-projects").innerText = data.stats.projects;
+        document.getElementById("stat-files").innerText = data.stats.files;
+        document.getElementById("stat-notes").innerText = data.stats.notes;
+        document.getElementById("stat-year").innerText = data.system.year;
+
+        const list = document.getElementById("project-list");
+        list.innerHTML = "";
+
+        data.projects.forEach(p => {
+            const li = document.createElement("li");
+            li.innerText = p.name + " — " + p.status;
+            list.appendChild(li);
         });
-    </script>
+
+    } catch (err) {
+        console.log("API error", err);
+    }
+}
+
+loadData();
+</script>
+
 </body>
 </html>
