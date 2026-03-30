@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Qixuan OS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="/favicon.png">
 
     <style>
         :root {
@@ -103,21 +103,13 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.35);
         }
 
-        .card h2 {
-            margin-top: 0;
-        }
-
-        .card p {
-            color: #cbd5e1;
-        }
-
         .projects { background: linear-gradient(135deg, rgba(79,140,255,0.25), rgba(139,92,246,0.25)); }
         .files { background: linear-gradient(135deg, rgba(56,189,248,0.25), rgba(14,165,233,0.25)); }
         .notes { background: linear-gradient(135deg, rgba(34,197,94,0.25), rgba(16,185,129,0.25)); }
         .password { background: linear-gradient(135deg, rgba(244,63,94,0.25), rgba(236,72,153,0.25)); }
         .blog { background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(249,115,22,0.25)); }
         .api { background: linear-gradient(135deg, rgba(148,163,184,0.25), rgba(100,116,139,0.25)); }
-        .mainweb { background: linear-gradient(135deg, rgba(100,116,53,0.25), rgba(120,04,240,0.25)); }
+        .mainweb { background: linear-gradient(135deg, rgba(100,116,53,0.25), rgba(120,40,240,0.25)); }
     </style>
 </head>
 
@@ -176,14 +168,14 @@
                 <p>Write posts</p>
             </div>
 
-            <div class="card api" onclick="go('api')">
+            <div class="card api" onclick="location.href='https://api.qixuan.net/'">
                 <h2>API</h2>
                 <p>Backend API</p>
             </div>
 
-            <div class="card mainweb" onclick="location.href='https://www.qixuan.net/'">
+            <div class="card mainweb" onclick="location.href='https://qixuan.net/'">
                 <h2>Main Site</h2>
-                <p>www.qixuan.net</p>
+                <p>qixuan.net</p>
             </div>
         </div>
     </div>
@@ -199,10 +191,10 @@
         updateTime();
 
         function go(page) {
-            window.location.href = "https://www.qixuan.net/" + page + "/?from=home";
+            window.location.href = "https://qixuan.net/" + page + "/?from=home";
         }
 
-        // 加载数据
+        // API 数据加载
         fetch(API + "/status")
             .then(res => res.json())
             .then(data => {
