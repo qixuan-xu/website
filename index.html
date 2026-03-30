@@ -6,11 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Qixuan Xu</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         :root {
             --bg1: #07111f;
+            --bgMid: #0b1220;
             --bg2: #0f1e3d;
             --card: rgba(255,255,255,0.08);
             --border: rgba(255,255,255,0.12);
@@ -19,26 +24,57 @@
             --soft: #94a3b8;
             --accent1: #4f8cff;
             --accent2: #8b5cf6;
+            --glow: rgba(99,102,241,0.25);
         }
 
-        html { scroll-behavior: smooth; }
+        .light {
+            --bg1: #eef2ff;
+            --bgMid: #e6ecff;
+            --bg2: #e0e7ff;
+            --card: rgba(255,255,255,0.72);
+            --border: rgba(15,23,42,0.08);
+            --text: #0f172a;
+            --muted: #334155;
+            --soft: #475569;
+            --glow: rgba(79,140,255,0.16);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             color: var(--text);
             background:
-                radial-gradient(circle at 20% 20%, rgba(79,140,255,0.25), transparent 28%),
-                radial-gradient(circle at 80% 25%, rgba(139,92,246,0.22), transparent 24%),
-                radial-gradient(circle at 50% 80%, rgba(56,189,248,0.16), transparent 30%),
-                linear-gradient(135deg, var(--bg1), #0b1220 45%, var(--bg2));
+                radial-gradient(circle at 20% 20%, rgba(79,140,255,0.18), transparent 28%),
+                radial-gradient(circle at 80% 25%, rgba(139,92,246,0.14), transparent 24%),
+                radial-gradient(circle at 50% 80%, rgba(56,189,248,0.12), transparent 30%),
+                linear-gradient(135deg, var(--bg1), var(--bgMid) 45%, var(--bg2));
             min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 1.2s ease, color 0.8s ease;
+        }
+
+        .cursor-glow {
+            position: fixed;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--glow), transparent 60%);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            transition: background 0.4s ease;
         }
 
         .container {
             width: min(1120px, 92%);
             margin: 0 auto;
             padding: 34px 0 64px;
+            position: relative;
+            z-index: 2;
         }
 
         .nav {
@@ -46,17 +82,40 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 46px;
+            gap: 20px;
         }
 
         .logo {
             font-size: 26px;
             font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
         .nav-links a {
             color: var(--muted);
             text-decoration: none;
-            margin-left: 20px;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-1px);
+            color: var(--text);
+        }
+
+        .home-btn {
+            background: linear-gradient(90deg, var(--accent1), var(--accent2));
+            padding: 9px 15px;
+            border-radius: 12px;
+            color: white !important;
+            font-weight: bold;
+            box-shadow: 0 10px 24px rgba(79,140,255,0.22);
         }
 
         .hero {
@@ -71,10 +130,27 @@
             border: 1px solid var(--border);
             border-radius: 26px;
             backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             padding: 28px;
+            transition: background 0.8s ease, border 0.8s ease, transform 0.2s ease;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.16);
         }
 
-        h1 { font-size: 60px; margin: 0 0 10px; }
+        .glass:hover {
+            transform: translateY(-2px);
+        }
+
+        h1 {
+            font-size: 60px;
+            margin: 0 0 10px;
+            line-height: 0.98;
+        }
+
+        .hero p {
+            margin: 10px 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
 
         .stats {
             display: grid;
@@ -93,6 +169,13 @@
             font-weight: 800;
         }
 
+        .stat-label {
+            margin-top: 6px;
+            color: var(--soft);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
         .section-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -103,24 +186,99 @@
             padding: 24px;
         }
 
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 14px;
+        }
+
+        .card p,
+        .card li {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        #project-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        #project-list li + li {
+            margin-top: 6px;
+        }
+
         .footer {
             text-align: center;
             color: var(--soft);
             margin-top: 38px;
+            font-size: 14px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+            background: var(--card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.25s ease, background 0.4s ease, border 0.4s ease;
+            user-select: none;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.12);
         }
 
         @media (max-width: 900px) {
-            .hero, .section-grid { grid-template-columns: 1fr; }
+            .hero,
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 46px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .container {
+                width: min(94%, 1120px);
+            }
+
+            h1 {
+                font-size: 38px;
+            }
+
+            .glass,
+            .card {
+                padding: 22px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <div class="container" id="pageContent">
         <div class="nav">
             <div class="logo">QIXUAN.NET</div>
             <div class="nav-links">
-                <a href="https://home.qixuan.net">Home Panel</a>
+                <a class="home-btn" href="https://home.qixuan.net">Home Panel</a>
                 <a href="https://qixuan.net/files/">Files</a>
                 <a href="https://qixuan.net/projects/">Projects</a>
             </div>
@@ -138,19 +296,19 @@
                 <div class="stats">
                     <div class="stat">
                         <div class="stat-number" id="stat-projects">...</div>
-                        <div>Main Projects</div>
+                        <div class="stat-label">Main Projects</div>
                     </div>
                     <div class="stat">
                         <div class="stat-number" id="stat-files">...</div>
-                        <div>Files</div>
+                        <div class="stat-label">Files</div>
                     </div>
                     <div class="stat">
                         <div class="stat-number" id="stat-notes">...</div>
-                        <div>Notes</div>
+                        <div class="stat-label">Notes</div>
                     </div>
                     <div class="stat">
                         <div class="stat-number" id="stat-year">...</div>
-                        <div>Website launch</div>
+                        <div class="stat-label">Website launch</div>
                     </div>
                 </div>
             </div>
@@ -159,10 +317,7 @@
         <div class="section-grid">
             <div class="card glass">
                 <h2>About Me</h2>
-                <p>
-                    I am interested in engineering, coding, FPV drones, and simulation.
-                    I like building useful tools and learning by making real projects.
-                </p>
+                <p>I build software, drones, and engineering projects.</p>
             </div>
 
             <div class="card glass">
@@ -175,44 +330,141 @@
             <div class="card glass">
                 <h2>Contact</h2>
                 <p>Email: <strong>me@qixuan.net</strong></p>
-                <p>GitHub: <strong>https://github.com/qixuan-xu</strong></p>
+                <p>GitHub: <strong>github.com/qixuan-xu</strong></p>
             </div>
         </div>
 
-        <div class="footer">
-            © 2026 Qixuan Xu · Built on GitHub Pages + Cloudflare
-        </div>
+        <div class="footer">© 2026 Qixuan Xu</div>
     </div>
 
-<script>
-async function loadData() {
-    try {
-        const res = await fetch("https://api.qixuan.net/db");
-        const data = await res.json();
+    <div class="theme-toggle" id="themeToggle">🌙</div>
 
-        // Stats
-        document.getElementById("stat-projects").innerText = data.stats.projects;
-        document.getElementById("stat-files").innerText = data.stats.files;
-        document.getElementById("stat-notes").innerText = data.stats.notes;
-        document.getElementById("stat-year").innerText = data.system.year;
+    <script>
+        const glow = document.getElementById("cursorGlow");
+        const toggleBtn = document.getElementById("themeToggle");
 
-        // Project list
-        const list = document.getElementById("project-list");
-        list.innerHTML = "";
-
-        data.projects.forEach(p => {
-            const li = document.createElement("li");
-            li.innerText = p.name + " — " + p.status;
-            list.appendChild(li);
+        window.addEventListener("mousemove", (e) => {
+            glow.style.left = e.clientX + "px";
+            glow.style.top = e.clientY + "px";
         });
 
-    } catch (err) {
-        console.log("API error", err);
-    }
-}
+        async function loadData() {
+            try {
+                const res = await fetch("https://api.qixuan.net/db");
+                const data = await res.json();
 
-loadData();
-</script>
+                document.getElementById("stat-projects").innerText = data.stats.projects;
+                document.getElementById("stat-files").innerText = data.stats.files;
+                document.getElementById("stat-notes").innerText = data.stats.notes;
+                document.getElementById("stat-year").innerText = data.system.year;
 
+                const list = document.getElementById("project-list");
+                list.innerHTML = "";
+
+                data.projects.forEach((p) => {
+                    const li = document.createElement("li");
+                    li.innerText = p.name + " — " + p.status;
+                    list.appendChild(li);
+                });
+            } catch (err) {
+                console.log("API error:", err);
+            }
+        }
+
+        loadData();
+
+        function applySavedTheme() {
+            if (localStorage.getItem("mode") === "light") {
+                document.body.classList.add("light");
+                toggleBtn.innerText = "☀️";
+            } else {
+                toggleBtn.innerText = "🌙";
+            }
+        }
+
+        applySavedTheme();
+
+        async function animateThemeSwitch(clickX, clickY) {
+            const oldCanvas = await html2canvas(document.body, {
+                backgroundColor: null,
+                useCORS: true,
+                logging: false
+            });
+            const oldDataUrl = oldCanvas.toDataURL("image/png");
+
+            document.body.classList.toggle("light");
+
+            const newCanvas = await html2canvas(document.body, {
+                backgroundColor: null,
+                useCORS: true,
+                logging: false
+            });
+            const newDataUrl = newCanvas.toDataURL("image/png");
+
+            document.body.classList.toggle("light");
+
+            const oldLayer = document.createElement("div");
+            oldLayer.style.position = "fixed";
+            oldLayer.style.inset = "0";
+            oldLayer.style.zIndex = "998";
+            oldLayer.style.pointerEvents = "none";
+            oldLayer.style.background = `url(${oldDataUrl}) center top / cover no-repeat`;
+
+            const newLayer = document.createElement("div");
+            newLayer.style.position = "fixed";
+            newLayer.style.inset = "0";
+            newLayer.style.zIndex = "999";
+            newLayer.style.pointerEvents = "none";
+            newLayer.style.background = `url(${newDataUrl}) center top / cover no-repeat`;
+            newLayer.style.clipPath = `circle(0px at ${clickX}px ${clickY}px)`;
+            newLayer.style.transition = "clip-path 0.95s cubic-bezier(0.22, 1, 0.36, 1)";
+
+            document.body.appendChild(oldLayer);
+            document.body.appendChild(newLayer);
+
+            document.body.classList.toggle("light");
+
+            if (document.body.classList.contains("light")) {
+                toggleBtn.innerText = "☀️";
+                localStorage.setItem("mode", "light");
+            } else {
+                toggleBtn.innerText = "🌙";
+                localStorage.setItem("mode", "dark");
+            }
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    newLayer.style.clipPath = `circle(150% at ${clickX}px ${clickY}px)`;
+                });
+            });
+
+            setTimeout(() => {
+                oldLayer.remove();
+                newLayer.remove();
+            }, 1100);
+        }
+
+        toggleBtn.addEventListener("click", async (e) => {
+            toggleBtn.style.pointerEvents = "none";
+            try {
+                await animateThemeSwitch(e.clientX, e.clientY);
+            } catch (err) {
+                console.log("Theme animation error:", err);
+                document.body.classList.toggle("light");
+
+                if (document.body.classList.contains("light")) {
+                    toggleBtn.innerText = "☀️";
+                    localStorage.setItem("mode", "light");
+                } else {
+                    toggleBtn.innerText = "🌙";
+                    localStorage.setItem("mode", "dark");
+                }
+            } finally {
+                setTimeout(() => {
+                    toggleBtn.style.pointerEvents = "auto";
+                }, 1150);
+            }
+        });
+    </script>
 </body>
 </html>
