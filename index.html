@@ -39,7 +39,6 @@
             inset: 0;
             z-index: -2;
             transition: opacity 1.2s ease;
-            will-change: opacity;
         }
 
         .bg.dark {
@@ -84,11 +83,6 @@
             margin: 0 auto;
             padding: 40px 0 80px;
             animation: fadeIn 0.8s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .nav {
@@ -148,7 +142,6 @@
         }
 
         h1 { font-size: 64px; margin-bottom: 10px; }
-
         p { opacity: 0.75; line-height: 1.6; }
 
         .section-grid {
@@ -156,8 +149,6 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
         }
-
-        .card { padding: 24px; }
 
         .stats {
             margin-top: 10px;
@@ -195,15 +186,12 @@
             background: var(--card-dark);
             border: 1px solid var(--border-dark);
             backdrop-filter: blur(10px);
-            transition: transform 0.2s ease, background 0.6s ease;
         }
 
         body.light .theme-toggle {
             background: var(--card-light);
             border: 1px solid var(--border-light);
         }
-
-        .theme-toggle:hover { transform: scale(1.1); }
 
         @media (max-width: 900px) {
             .hero, .section-grid { grid-template-columns: 1fr; }
@@ -216,7 +204,6 @@
 
 <div class="bg dark"></div>
 <div class="bg light"></div>
-
 <div class="cursor-glow" id="cursorGlow"></div>
 
 <div class="container">
@@ -247,14 +234,22 @@
     </div>
 
     <div class="section-grid">
-        <div class="card glass"><h2>About Me</h2></div>
+        <div class="card glass">
+            <h2>About Me</h2>
+            <p id="about-text">Loading...</p>
+        </div>
+
         <div class="card glass">
             <h2>Projects</h2>
             <ul id="project-list">
                 <li>Loading...</li>
             </ul>
         </div>
-        <div class="card glass"><h2>Contact</h2></div>
+
+        <div class="card glass">
+            <h2>Contact</h2>
+            <p id="contact-text">Loading...</p>
+        </div>
     </div>
 
     <div class="footer">© 2026 Qixuan Xu</div>
@@ -279,11 +274,7 @@ function applySavedTheme() {
 }
 applySavedTheme();
 
-// Theme toggle
 toggleBtn.addEventListener("click", () => {
-    toggleBtn.style.transform = "scale(0.9)";
-    setTimeout(() => toggleBtn.style.transform = "scale(1)", 120);
-
     document.body.classList.toggle("light");
 
     if (document.body.classList.contains("light")) {
@@ -307,12 +298,17 @@ async function loadData() {
 
         const list = document.getElementById("project-list");
         list.innerHTML = "";
-
         data.projects.forEach((p) => {
             const li = document.createElement("li");
             li.innerText = p.name + " — " + p.status;
             list.appendChild(li);
         });
+
+        document.getElementById("about-text").innerText = data.about.text;
+
+        document.getElementById("contact-text").innerHTML =
+            `Email: ${data.contact.email}<br>
+             GitHub: <a href="${data.contact.github}" target="_blank">GitHub</a>`;
 
     } catch (err) {
         console.log("API error:", err);
