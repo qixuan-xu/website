@@ -34,7 +34,6 @@
             color: var(--text-light);
         }
 
-        /* Performance optimized background layers */
         .bg {
             position: fixed;
             inset: 0;
@@ -63,7 +62,6 @@
         body.light .bg.light { opacity: 1; }
         body.light .bg.dark { opacity: 0; }
 
-        /* Cursor glow */
         .cursor-glow {
             position: fixed;
             width: 320px;
@@ -114,9 +112,7 @@
             transition: 0.2s;
         }
 
-        .nav-links a:hover {
-            opacity: 1;
-        }
+        .nav-links a:hover { opacity: 1; }
 
         .home-btn {
             background: linear-gradient(90deg, #4f8cff, #8b5cf6);
@@ -127,7 +123,6 @@
             box-shadow: 0 10px 24px rgba(79,140,255,0.22);
         }
 
-        /* Glass cards */
         .glass {
             background: var(--card-dark);
             border: 1px solid var(--border-dark);
@@ -143,9 +138,7 @@
             border: 1px solid var(--border-light);
         }
 
-        .glass:hover {
-            transform: translateY(-4px) scale(1.01);
-        }
+        .glass:hover { transform: translateY(-4px) scale(1.01); }
 
         .hero {
             display: grid;
@@ -154,10 +147,7 @@
             margin-bottom: 24px;
         }
 
-        h1 {
-            font-size: 64px;
-            margin-bottom: 10px;
-        }
+        h1 { font-size: 64px; margin-bottom: 10px; }
 
         p { opacity: 0.75; line-height: 1.6; }
 
@@ -168,6 +158,19 @@
         }
 
         .card { padding: 24px; }
+
+        .stats {
+            margin-top: 10px;
+            line-height: 1.8;
+            opacity: 0.8;
+        }
+
+        #project-list {
+            margin-top: 10px;
+            padding-left: 18px;
+            line-height: 1.6;
+            opacity: 0.85;
+        }
 
         .footer {
             text-align: center;
@@ -200,15 +203,10 @@
             border: 1px solid var(--border-light);
         }
 
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
+        .theme-toggle:hover { transform: scale(1.1); }
 
         @media (max-width: 900px) {
-            .hero, .section-grid {
-                grid-template-columns: 1fr;
-            }
-
+            .hero, .section-grid { grid-template-columns: 1fr; }
             h1 { font-size: 42px; }
         }
     </style>
@@ -240,13 +238,22 @@
 
         <div class="glass">
             <h2>Quick Overview</h2>
-            <p>Projects, files, and research.</p>
+            <div class="stats">
+                <div><span id="stat-projects">...</span> Projects</div>
+                <div><span id="stat-files">...</span> Files</div>
+                <div><span id="stat-notes">...</span> Notes</div>
+            </div>
         </div>
     </div>
 
     <div class="section-grid">
         <div class="card glass"><h2>About Me</h2></div>
-        <div class="card glass"><h2>Projects</h2></div>
+        <div class="card glass">
+            <h2>Projects</h2>
+            <ul id="project-list">
+                <li>Loading...</li>
+            </ul>
+        </div>
         <div class="card glass"><h2>Contact</h2></div>
     </div>
 
@@ -272,7 +279,7 @@ function applySavedTheme() {
 }
 applySavedTheme();
 
-// Smooth & fast theme toggle (performance optimized)
+// Theme toggle
 toggleBtn.addEventListener("click", () => {
     toggleBtn.style.transform = "scale(0.9)";
     setTimeout(() => toggleBtn.style.transform = "scale(1)", 120);
@@ -287,6 +294,33 @@ toggleBtn.addEventListener("click", () => {
         localStorage.setItem("mode", "dark");
     }
 });
+
+// Load API data
+async function loadData() {
+    try {
+        const res = await fetch("https://api.qixuan.net/db");
+        const data = await res.json();
+
+        document.getElementById("stat-projects").innerText = data.stats.projects;
+        document.getElementById("stat-files").innerText = data.stats.files;
+        document.getElementById("stat-notes").innerText = data.stats.notes;
+
+        const list = document.getElementById("project-list");
+        list.innerHTML = "";
+
+        data.projects.forEach((p) => {
+            const li = document.createElement("li");
+            li.innerText = p.name + " — " + p.status;
+            list.appendChild(li);
+        });
+
+    } catch (err) {
+        console.log("API error:", err);
+    }
+}
+
+loadData();
 </script>
+
 </body>
 </html>
