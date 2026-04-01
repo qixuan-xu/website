@@ -34,7 +34,7 @@ Qixuan System
 │       ├── /notes
 │       ├── /about
 │       ├── /contact
-│       ├── /mc (服务器)
+│       ├── /mc (服务器) http://map.qixuan.net （Map）https://mc.qixuan.net (Server)
 │       ├── /github
 │       └── /system
 │
