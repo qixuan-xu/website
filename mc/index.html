@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Minecraft Control Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(79,140,255,0.25), transparent 25%),
+        radial-gradient(circle at 80% 30%, rgba(139,92,246,0.25), transparent 25%),
+        linear-gradient(135deg, #07111f, #0b1220, #0f1e3d);
+    min-height: 100vh;
+}
+
+.container {
+    width: min(1000px, 92%);
+    margin: 50px auto;
+    text-align: center;
+}
+
+h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 25px;
+    margin-top: 20px;
+    backdrop-filter: blur(10px);
+}
+
+input {
+    padding: 10px;
+    width: 220px;
+    border-radius: 8px;
+    border: none;
+    margin: 10px;
+}
+
+button {
+    padding: 12px 18px;
+    margin: 6px;
+    border-radius: 10px;
+    border: none;
+    background: #3b82f6;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2563eb;
+}
+
+.map-btn {
+    background: #10b981;
+}
+
+.map-btn:hover {
+    background: #059669;
+}
+
+pre {
+    text-align: left;
+    background: rgba(0,0,0,0.45);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    height: 220px;
+    overflow: auto;
+}
+
+.status {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #22c55e;
+}
+
+.footer {
+    margin-top: 30px;
+    opacity: 0.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Minecraft Panel</h1>
+    <div class="status" id="status">Server: Checking...</div>
+
+    <div class="card">
+        <input id="player" placeholder="Player name">
+
+        <div>
+            <button onclick="op()">OP</button>
+            <button onclick="deop()">DEOP</button>
+            <button onclick="whitelist()">Whitelist</button>
+            <button onclick="kick()">Kick</button>
+        </div>
+
+        <div>
+            <button onclick="mc('list')">List</button>
+            <button onclick="mc('tps')">TPS</button>
+            <button onclick="mc('time set day')">Day</button>
+            <button onclick="mc('weather clear')">Weather</button>
+            <button onclick="mc('say Hello from web panel')">Say</button>
+        </div>
+
+        <br>
+        <button class="map-btn" onclick="openMap()">Open Map</button>
+
+        <pre id="output"></pre>
+    </div>
+
+    <div class="footer">
+        api.qixuan.net • mc.qixuan.net • map.qixuan.net
+    </div>
+</div>
+
+<script>
+const API = "https://api.qixuan.net/mc";
+const KEY = "YOUR_SECRET_KEY";
+
+function mc(cmd) {
+    fetch(API, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            key: KEY,
+            cmd: cmd
+        })
+    })
+    .then(r => r.text())
+    .then(t => {
+        document.getElementById("output").innerText = t;
+    });
+}
+
+function op() {
+    const p = document.getElementById("player").value;
+    mc("op " + p);
+}
+
+function deop() {
+    const p = document.getElementById("player").value;
+    mc("deop " + p);
+}
+
+function whitelist() {
+    const p = document.getElementById("player").value;
+    mc("whitelist add " + p);
+}
+
+function kick() {
+    const p = document.getElementById("player").value;
+    mc("kick " + p);
+}
+
+function openMap() {
+    window.location.href = "https://map.qixuan.net";
+}
+
+// 自动检测服务器状态
+function checkStatus() {
+    fetch(API, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            key: KEY,
+            cmd: "list"
+        })
+    })
+    .then(r => r.text())
+    .then(t => {
+        if (t.includes("players")) {
+            document.getElementById("status").innerText = "Server: Online";
+            document.getElementById("status").style.color = "#22c55e";
+        } else {
+            document.getElementById("status").innerText = "Server: Offline";
+            document.getElementById("status").style.color = "red";
+        }
+    });
+}
+
+setInterval(checkStatus, 5000);
+checkStatus();
+</script>
+
+</body>
+</html>
