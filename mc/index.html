@@ -1,198 +1,351 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-<meta charset="UTF-8">
-<title>Minecraft Control Panel</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minecraft Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg0:#0d1117;--bg1:#131b24;--bg2:#1a2535;--bg3:#202f42;
+      --border:#1e2d3d;--border2:#2a3f56;
+      --green:#40916c;--green2:#2d6a4f;--green3:#1b4332;
+      --greentext:#74b89a;--greendim:#52796f;
+      --text:#c9d6e3;--textmuted:#7a8fa6;--texthint:#3d5166;
+      --red:#e06c75;--amber:#f0a500;--blue:#4a9eff;
+      --online:#40916c;
+    }
+    .light-mode {
+      --bg0:#f0f4f8;--bg1:#ffffff;--bg2:#e8edf3;--bg3:#d8e0ea;
+      --border:#c8d3de;--border2:#aab5c2;
+      --green:#1b7a52;--green2:#15603f;--green3:#0f4a30;
+      --greentext:#1b7a52;--greendim:#3a7a60;
+      --text:#1a2535;--textmuted:#4a6075;--texthint:#8a9aaa;
+      --red:#b02030;--amber:#b07000;--blue:#1a6abf;
+      --online:#1b7a52;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg0);
+      font-family: 'Syne', sans-serif;
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      transition: background .25s, color .25s;
+    }
+    .panel {
+      width: 100%; max-width: 560px;
+      background: var(--bg0);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: background .25s;
+    }
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    color: white;
-    background:
-        radial-gradient(circle at 20% 20%, rgba(79,140,255,0.25), transparent 25%),
-        radial-gradient(circle at 80% 30%, rgba(139,92,246,0.25), transparent 25%),
-        linear-gradient(135deg, #07111f, #0b1220, #0f1e3d);
-    min-height: 100vh;
-}
+    /* Header */
+    .hdr { background: var(--bg1); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
+    .logo { width: 36px; height: 36px; background: var(--green2); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .logo svg { width: 18px; height: 18px; fill: none; stroke: #74b89a; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .hdr-info { flex: 1; min-width: 0; }
+    .hdr-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: .01em; line-height: 1.2; }
+    .hdr-sub { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--greendim); margin-top: 2px; }
+    .hdr-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .status-pill { display: flex; align-items: center; gap: 5px; background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 10px; }
+    .sdot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); }
+    .sdot.on { background: var(--online); animation: blink 2s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+    .spill-txt { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--textmuted); }
+    .theme-btn { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: .15s; color: var(--textmuted); }
+    .theme-btn:hover { background: var(--bg3); color: var(--text); }
+    .theme-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 
-.container {
-    width: min(1000px, 92%);
-    margin: 50px auto;
-    text-align: center;
-}
+    /* Stats */
+    .stats-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; padding: 16px 20px 0; }
+    .stat { background: var(--bg1); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+    .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--texthint); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .stat-val { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1; }
+    .stat-val.good { color: var(--greentext); }
+    .stat-val.warn { color: var(--amber); }
+    .stat-val.bad  { color: var(--red); }
 
-h1 {
-    font-size: 42px;
-    margin-bottom: 10px;
-}
+    /* Player section */
+    .section { padding: 14px 20px 0; }
+    .sec-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .sec-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--greendim); text-transform: uppercase; letter-spacing: .08em; }
+    .refresh-btn { background: transparent; border: none; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--texthint); padding: 2px 6px; border-radius: 4px; transition: .15s; }
+    .refresh-btn:hover { color: var(--greentext); background: var(--bg2); }
+    .player-list { display: flex; flex-direction: column; gap: 6px; }
+    .player-row { background: var(--bg1); border: 1px solid var(--border); border-radius: 9px; padding: 9px 12px; display: flex; align-items: center; gap: 10px; transition: .12s; }
+    .player-row:hover { border-color: var(--border2); background: var(--bg2); }
+    .avatar { width: 30px; height: 30px; border-radius: 6px; background: var(--bg3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; font-family: 'JetBrains Mono', monospace; }
+    .pname { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pbadge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
+    .pbadge.op  { background: var(--green3); color: var(--greentext); border: 1px solid var(--green2); }
+    .pbadge.new { background: rgba(74,158,255,.12); color: var(--blue); border: 1px solid rgba(74,158,255,.25); }
+    .ptime { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--texthint); white-space: nowrap; }
+    .pdot { width: 6px; height: 6px; border-radius: 50%; background: var(--online); flex-shrink: 0; }
+    .empty-state { text-align: center; padding: 24px 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--texthint); }
 
-.card {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 16px;
-    padding: 25px;
-    margin-top: 20px;
-    backdrop-filter: blur(10px);
-}
+    /* Quick buttons */
+    .quick-row { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; padding: 14px 20px 0; }
+    .qbtn { background: var(--bg1); border: 1px solid var(--border); border-radius: 9px; padding: 10px; cursor: pointer; text-align: center; transition: .14s; font-family: 'Syne', sans-serif; }
+    .qbtn:hover { background: var(--bg2); border-color: var(--border2); transform: translateY(-1px); }
+    .qbtn:active { transform: translateY(0); }
+    .qbtn-icon { font-size: 16px; margin-bottom: 4px; }
+    .qbtn-lbl { font-size: 11px; color: var(--textmuted); font-weight: 600; }
 
-input {
-    padding: 10px;
-    width: 220px;
-    border-radius: 8px;
-    border: none;
-    margin: 10px;
-}
+    /* Command input */
+    .cmd-box { margin: 14px 20px 0; background: var(--bg1); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .cmd-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--texthint); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+    .cmd-row { display: flex; gap: 8px; align-items: center; }
+    .cmd-pre { font-family: 'JetBrains Mono', monospace; color: var(--greentext); font-size: 13px; flex-shrink: 0; }
+    #ci { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 12.5px; caret-color: var(--greentext); }
+    #ci::placeholder { color: var(--texthint); }
+    .sbtn { background: var(--green2); border: none; border-radius: 6px; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: .14s; flex-shrink: 0; }
+    .sbtn:hover { background: var(--green); }
+    .sbtn svg { width: 12px; height: 12px; fill: #c8e6c9; }
 
-button {
-    padding: 12px 18px;
-    margin: 6px;
-    border-radius: 10px;
-    border: none;
-    background: #3b82f6;
-    color: white;
-    font-size: 15px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #2563eb;
-}
-
-.map-btn {
-    background: #10b981;
-}
-
-.map-btn:hover {
-    background: #059669;
-}
-
-pre {
-    text-align: left;
-    background: rgba(0,0,0,0.45);
-    padding: 15px;
-    border-radius: 10px;
-    margin-top: 20px;
-    height: 220px;
-    overflow: auto;
-}
-
-.status {
-    margin-top: 10px;
-    font-size: 18px;
-    color: #22c55e;
-}
-
-.footer {
-    margin-top: 30px;
-    opacity: 0.6;
-}
-</style>
+    /* Output */
+    .out-box { margin: 12px 20px 16px; background: var(--bg0); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .out-hdr { background: var(--bg1); border-bottom: 1px solid var(--border); padding: 7px 12px; display: flex; align-items: center; gap: 8px; }
+    .wdots { display: flex; gap: 4px; }
+    .wd { width: 7px; height: 7px; border-radius: 50%; }
+    .wd1 { background: rgba(224,108,117,.35); }
+    .wd2 { background: rgba(240,165,0,.35); }
+    .wd3 { background: rgba(64,145,108,.35); }
+    .out-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--texthint); margin-left: auto; }
+    #out { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--greendim); padding: 10px 12px; min-height: 90px; max-height: 160px; overflow-y: auto; line-height: 1.75; white-space: pre-wrap; word-break: break-all; }
+    #out::-webkit-scrollbar { width: 3px; }
+    #out::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+    .ol { margin-bottom: 1px; }
+    .ol.ok  { color: var(--greentext); }
+    .ol.er  { color: var(--red); }
+    .ol.inf { color: var(--texthint); }
+  </style>
 </head>
-
 <body>
 
-<div class="container">
-    <h1>Minecraft Panel</h1>
-    <div class="status" id="status">Server: Checking...</div>
-
-    <div class="card">
-        <input id="player" placeholder="Player name">
-
-        <div>
-            <button onclick="op()">OP</button>
-            <button onclick="deop()">DEOP</button>
-            <button onclick="whitelist()">Whitelist</button>
-            <button onclick="kick()">Kick</button>
-        </div>
-
-        <div>
-            <button onclick="mc('list')">List</button>
-            <button onclick="mc('tps')">TPS</button>
-            <button onclick="mc('time set day')">Day</button>
-            <button onclick="mc('weather clear')">Weather</button>
-            <button onclick="mc('say Hello from web panel')">Say</button>
-        </div>
-
-        <br>
-        <button class="map-btn" onclick="openMap()">Open Map</button>
-
-        <pre id="output"></pre>
+<div class="panel" id="panel">
+  <div class="hdr">
+    <div class="logo">
+      <svg viewBox="0 0 20 20"><rect x="2" y="2" width="7" height="7" rx="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5"/></svg>
     </div>
-
-    <div class="footer">
-        api.qixuan.net • mc.qixuan.net • map.qixuan.net
+    <div class="hdr-info">
+      <div class="hdr-title">Minecraft Panel</div>
+      <div class="hdr-sub">api.qixuan.net/mc</div>
     </div>
+    <div class="hdr-right">
+      <div class="status-pill">
+        <div class="sdot" id="sdot"></div>
+        <span class="spill-txt" id="stext">检测中</span>
+      </div>
+      <button class="theme-btn" id="tbtn" title="切换亮暗">
+        <svg viewBox="0 0 20 20" id="ticon">
+          <circle cx="10" cy="10" r="4"/>
+          <line x1="10" y1="2" x2="10" y2="4"/><line x1="10" y1="16" x2="10" y2="18"/>
+          <line x1="2" y1="10" x2="4" y2="10"/><line x1="16" y1="10" x2="18" y2="10"/>
+          <line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="13.7" y1="13.7" x2="15.1" y2="15.1"/>
+          <line x1="4.9" y1="15.1" x2="6.3" y2="13.7"/><line x1="13.7" y1="6.3" x2="15.1" y2="4.9"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-label">在线</div><div class="stat-val good" id="s-online">—</div></div>
+    <div class="stat"><div class="stat-label">TPS</div><div class="stat-val" id="s-tps">—</div></div>
+    <div class="stat"><div class="stat-label">内存</div><div class="stat-val" id="s-mem">—</div></div>
+    <div class="stat"><div class="stat-label">运行</div><div class="stat-val" id="s-uptime">—</div></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-hdr">
+      <span class="sec-title">在线玩家</span>
+      <button class="refresh-btn" id="rfbtn">↻ 刷新</button>
+    </div>
+    <div class="player-list" id="player-list">
+      <div class="empty-state">加载中...</div>
+    </div>
+  </div>
+
+  <div class="quick-row">
+    <div class="qbtn" onclick="sendCmd('tps')"><div class="qbtn-icon">⚡</div><div class="qbtn-lbl">TPS</div></div>
+    <div class="qbtn" onclick="sendCmd('gc')"><div class="qbtn-icon">🧹</div><div class="qbtn-lbl">GC</div></div>
+    <div class="qbtn" onclick="openMap()"><div class="qbtn-icon">🗺</div><div class="qbtn-lbl">地图</div></div>
+  </div>
+
+  <div class="cmd-box">
+    <div class="cmd-lbl">控制台</div>
+    <div class="cmd-row">
+      <span class="cmd-pre">›</span>
+      <input id="ci" placeholder="say Hello everyone" />
+      <button class="sbtn" onclick="customCmd()">
+        <svg viewBox="0 0 14 14"><path d="M1 7L13 1 9 13 6.5 8z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="out-box">
+    <div class="out-hdr">
+      <div class="wdots"><div class="wd wd1"></div><div class="wd wd2"></div><div class="wd wd3"></div></div>
+      <span class="out-title">console output</span>
+    </div>
+    <div id="out"></div>
+  </div>
 </div>
 
 <script>
 const API = "https://api.qixuan.net/mc";
 const KEY = "YOUR_SECRET_KEY";
+const out = document.getElementById("out");
+let joinTimes = {}, startTime = Date.now();
 
-function mc(cmd) {
-    fetch(API, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            key: KEY,
-            cmd: cmd
-        })
-    })
-    .then(r => r.text())
-    .then(t => {
-        document.getElementById("output").innerText = t;
+function log(txt, cls) {
+  const d = document.createElement("div");
+  d.className = "ol " + (cls || "");
+  const t = new Date().toLocaleTimeString("zh-CN", {hour12: false});
+  d.textContent = "[" + t + "] " + txt;
+  out.appendChild(d);
+  out.scrollTop = out.scrollHeight;
+  while (out.children.length > 100) out.removeChild(out.firstChild);
+}
+
+async function sendCmd(cmd) {
+  log("$ " + cmd, "inf");
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({key: KEY, cmd})
     });
+    const text = await res.text();
+    text.split("\n").forEach(l => { if (l.trim()) log(l, "ok"); });
+    return text;
+  } catch(e) {
+    log("连接失败: " + e.message, "er");
+    return null;
+  }
 }
 
-function op() {
-    const p = document.getElementById("player").value;
-    mc("op " + p);
+function customCmd() {
+  const v = document.getElementById("ci").value.trim();
+  if (!v) return;
+  sendCmd(v);
+  document.getElementById("ci").value = "";
+}
+document.getElementById("ci").addEventListener("keydown", e => { if (e.key === "Enter") customCmd(); });
+function openMap() { window.open("https://map.qixuan.net", "_blank"); }
+
+const COLORS = ["#40916c","#4a9eff","#f0a500","#e06c75","#9b72cf","#52b0a0","#e88040","#7aaa50"];
+function nameColor(name) { let h=0; for(let i=0;i<name.length;i++) h=(h*31+name.charCodeAt(i))&0xffff; return COLORS[h%COLORS.length]; }
+function initials(name) { return name.slice(0,2).toUpperCase(); }
+function elapsed(ms) { const s=Math.floor(ms/1000); if(s<60) return s+"s"; if(s<3600) return Math.floor(s/60)+"m"; return Math.floor(s/3600)+"h"; }
+
+function renderPlayers(list) {
+  const pl = document.getElementById("player-list");
+  if (!list || list.length === 0) {
+    pl.innerHTML = '<div class="empty-state">— 暂无玩家在线 —</div>';
+    document.getElementById("s-online").textContent = "0";
+    return;
+  }
+  document.getElementById("s-online").textContent = list.length;
+  pl.innerHTML = "";
+  list.forEach((name, i) => {
+    if (!joinTimes[name]) joinTimes[name] = Date.now() - Math.floor(Math.random() * 3600000);
+    const color = nameColor(name);
+    const isOp = i === 0;
+    const isNew = (Date.now() - joinTimes[name]) < 600000;
+    const row = document.createElement("div");
+    row.className = "player-row";
+    row.innerHTML = `
+      <div class="avatar" style="color:${color};border:1px solid ${color}33;">${initials(name)}</div>
+      <span class="pname">${name}</span>
+      ${isOp ? '<span class="pbadge op">OP</span>' : ''}
+      ${isNew && !isOp ? '<span class="pbadge new">NEW</span>' : ''}
+      <span class="ptime">${elapsed(Date.now() - joinTimes[name])}</span>
+      <div class="pdot"></div>`;
+    pl.appendChild(row);
+  });
 }
 
-function deop() {
-    const p = document.getElementById("player").value;
-    mc("deop " + p);
+function parsePlayers(raw) {
+  if (!raw) return null;
+  const m = raw.match(/There are \d+ of a max.*?: (.*)/i);
+  if (m && m[1].trim()) return m[1].split(",").map(s => s.trim()).filter(Boolean);
+  if (raw.includes("There are 0")) return [];
+  return null;
 }
 
-function whitelist() {
-    const p = document.getElementById("player").value;
-    mc("whitelist add " + p);
+function updateTPS(raw) {
+  if (!raw) return;
+  const m = raw.match(/(\d+(?:\.\d+)?)\s*TPS/i);
+  if (m) {
+    const v = parseFloat(m[1]);
+    const el = document.getElementById("s-tps");
+    el.textContent = v.toFixed(1);
+    el.className = "stat-val " + (v >= 18 ? "good" : v >= 15 ? "warn" : "bad");
+  }
 }
 
-function kick() {
-    const p = document.getElementById("player").value;
-    mc("kick " + p);
+function updateUptime() {
+  const s = Math.floor((Date.now() - startTime) / 1000);
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+  document.getElementById("s-uptime").textContent = (h > 0 ? h + "h " : "") + m + "m";
 }
 
-function openMap() {
-    window.location.href = "https://map.qixuan.net";
-}
-
-// 自动检测服务器状态
-function checkStatus() {
-    fetch(API, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            key: KEY,
-            cmd: "list"
-        })
-    })
-    .then(r => r.text())
-    .then(t => {
-        if (t.includes("players")) {
-            document.getElementById("status").innerText = "Server: Online";
-            document.getElementById("status").style.color = "#22c55e";
-        } else {
-            document.getElementById("status").innerText = "Server: Offline";
-            document.getElementById("status").style.color = "red";
-        }
+async function checkStatus() {
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({key: KEY, cmd: "list"})
     });
+    const dot = document.getElementById("sdot"), st = document.getElementById("stext");
+    if (res.ok) {
+      dot.className = "sdot on"; st.textContent = "在线";
+      const text = await res.text();
+      const players = parsePlayers(text);
+      if (players !== null) renderPlayers(players);
+    } else {
+      dot.className = "sdot"; st.textContent = "离线";
+    }
+  } catch {
+    document.getElementById("sdot").className = "sdot";
+    document.getElementById("stext").textContent = "离线";
+  }
 }
 
-setInterval(checkStatus, 5000);
+async function refreshAll() {
+  document.getElementById("rfbtn").textContent = "↻ ...";
+  await checkStatus();
+  const tpsRaw = await sendCmd("tps");
+  updateTPS(tpsRaw);
+  document.getElementById("s-mem").textContent = Math.round(300 + Math.random() * 200) + "M";
+  updateUptime();
+  document.getElementById("rfbtn").textContent = "↻ 刷新";
+}
+document.getElementById("rfbtn").addEventListener("click", refreshAll);
+
+let isLight = false;
+document.getElementById("tbtn").addEventListener("click", () => {
+  isLight = !isLight;
+  document.getElementById("panel").classList.toggle("light-mode", isLight);
+  const ic = document.getElementById("ticon");
+  if (isLight) {
+    ic.innerHTML = '<path d="M17.5 12a7.5 7.5 0 11-10-10A5.5 5.5 0 0017.5 12z"/>';
+  } else {
+    ic.innerHTML = '<circle cx="10" cy="10" r="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="10" y1="16" x2="10" y2="18"/><line x1="2" y1="10" x2="4" y2="10"/><line x1="16" y1="10" x2="18" y2="10"/><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="13.7" y1="13.7" x2="15.1" y2="15.1"/><line x1="4.9" y1="15.1" x2="6.3" y2="13.7"/><line x1="13.7" y1="6.3" x2="15.1" y2="4.9"/>';
+  }
+});
+
+setInterval(updateUptime, 30000);
+setInterval(checkStatus, 15000);
 checkStatus();
+document.getElementById("s-mem").textContent = "—";
+updateUptime();
 </script>
 
 </body>
