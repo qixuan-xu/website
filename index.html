@@ -1,322 +1,372 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Qixuan Xu</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07111f;
+  --bg2:#0b1a30;
+  --card:rgba(255,255,255,0.055);
+  --card-border:rgba(255,255,255,0.09);
+  --text:#f0f4ff;
+  --muted:rgba(200,215,255,0.55);
+  --accent:#4f8cff;
+  --accent2:#a78bfa;
+  --glow:rgba(79,140,255,0.18);
+}
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+/* animated gradient bg */
+body::before{
+  content:'';
+  position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 25%, rgba(79,140,255,0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 35% at 85% 20%, rgba(167,139,250,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 50% 90%, rgba(56,189,248,0.09) 0%, transparent 65%),
+    linear-gradient(160deg,#060e1c,#080f1a 50%,#0a1628);
+}
 
-        :root {
-            --card-dark: rgba(255,255,255,0.08);
-            --card-light: rgba(255,255,255,0.72);
-            --border-dark: rgba(255,255,255,0.12);
-            --border-light: rgba(15,23,42,0.08);
-            --text-dark: #f8fafc;
-            --text-light: #0f172a;
-            --muted-dark: #cbd5e1;
-            --muted-light: #334155;
-            --glow-dark: rgba(99,102,241,0.25);
-            --glow-light: rgba(79,140,255,0.16);
-        }
+/* grid noise overlay */
+body::after{
+  content:'';
+  position:fixed;inset:0;z-index:-1;
+  background-image:linear-gradient(rgba(79,140,255,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(79,140,255,0.03) 1px,transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none;
+}
 
-        body {
-            font-family: Arial, sans-serif;
-            color: var(--text-dark);
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: color 0.6s ease;
-        }
+.cursor-glow{
+  position:fixed;width:380px;height:380px;border-radius:50%;
+  background:radial-gradient(circle,rgba(79,140,255,0.12),transparent 65%);
+  pointer-events:none;transform:translate(-50%,-50%);z-index:0;
+  transition:left .08s,top .08s;
+}
 
-        body.light {
-            color: var(--text-light);
-        }
+.wrap{width:min(1080px,92%);margin:0 auto;padding:52px 0 80px;position:relative;z-index:1}
 
-        .bg {
-            position: fixed;
-            inset: 0;
-            z-index: -2;
-            transition: opacity 1.2s ease;
-        }
+/* NAV */
+nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:72px}
+.logo{
+  font-family:'DM Serif Display',serif;
+  font-size:22px;letter-spacing:.5px;
+  background:linear-gradient(90deg,#c7d9ff,#a5b4ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.nav-links{display:flex;gap:8px;align-items:center}
+.nav-links a{
+  font-size:13px;font-weight:400;color:var(--muted);
+  text-decoration:none;padding:7px 14px;border-radius:30px;
+  transition:color .2s,background .2s;
+}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.06)}
+.nav-links .pill{
+  background:linear-gradient(100deg,rgba(79,140,255,0.9),rgba(139,92,246,0.85));
+  color:#fff !important;font-weight:600;
+  box-shadow:0 4px 18px rgba(79,140,255,0.3);
+}
+.nav-links .pill:hover{opacity:.9;background:linear-gradient(100deg,#4f8cff,#8b5cf6)}
 
-        .bg.dark {
-            background:
-                radial-gradient(circle at 20% 20%, rgba(79,140,255,0.18), transparent 28%),
-                radial-gradient(circle at 80% 25%, rgba(139,92,246,0.14), transparent 24%),
-                radial-gradient(circle at 50% 80%, rgba(56,189,248,0.12), transparent 30%),
-                linear-gradient(135deg, #07111f, #0b1220 45%, #0f1e3d);
-        }
+/* HERO */
+.hero{display:grid;grid-template-columns:1.4fr .6fr;gap:18px;margin-bottom:18px}
+.card{
+  background:var(--card);
+  border:1px solid var(--card-border);
+  border-radius:22px;
+  backdrop-filter:blur(18px);
+  padding:32px 32px;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;inset:0;border-radius:22px;
+  background:linear-gradient(135deg,rgba(255,255,255,0.04),transparent 55%);
+  pointer-events:none;
+}
+.card:hover{
+  transform:translateY(-5px) scale(1.008);
+  box-shadow:0 24px 56px rgba(0,0,0,0.28);
+  border-color:rgba(255,255,255,0.16);
+}
 
-        .bg.light {
-            background:
-                radial-gradient(circle at 20% 20%, rgba(79,140,255,0.10), transparent 28%),
-                radial-gradient(circle at 80% 25%, rgba(139,92,246,0.08), transparent 24%),
-                radial-gradient(circle at 50% 80%, rgba(56,189,248,0.08), transparent 30%),
-                linear-gradient(135deg, #eef2ff, #e6ecff 45%, #e0e7ff);
-            opacity: 0;
-        }
+.hero-main h1{
+  font-family:'DM Serif Display',serif;font-size:62px;
+  line-height:1.08;margin-bottom:14px;
+  background:linear-gradient(135deg,#e8eeff 30%,#8ba8ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-main .tagline{
+  font-size:14px;font-weight:300;color:var(--muted);letter-spacing:2.5px;
+  text-transform:uppercase;margin-bottom:10px;
+}
+.hero-main .desc{font-size:15px;color:var(--muted);line-height:1.65;max-width:460px}
 
-        body.light .bg.light { opacity: 1; }
-        body.light .bg.dark { opacity: 0; }
+/* tags */
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.tag{
+  font-family:'DM Mono',monospace;font-size:12px;
+  padding:5px 12px;border-radius:6px;
+  background:rgba(79,140,255,0.1);border:1px solid rgba(79,140,255,0.2);
+  color:#93b4ff;letter-spacing:.5px;
+}
 
-        .cursor-glow {
-            position: fixed;
-            width: 320px;
-            height: 320px;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--glow-dark), transparent 60%);
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: -1;
-            transition: background 0.5s ease;
-            mix-blend-mode: screen;
-        }
+/* stats card */
+.stat-card{display:flex;flex-direction:column;justify-content:center;gap:20px;padding:28px}
+.stat-item{}
+.stat-num{
+  font-family:'DM Serif Display',serif;font-size:38px;
+  background:linear-gradient(90deg,#fff,#a8c0ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;
+}
+.stat-label{font-size:12px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}
 
-        body.light .cursor-glow {
-            background: radial-gradient(circle, var(--glow-light), transparent 60%);
-        }
+/* SECTION GRID */
+.section-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 
-        .container {
-            width: min(1120px, 92%);
-            margin: 0 auto;
-            padding: 40px 0 80px;
-            animation: fadeIn 0.8s ease;
-        }
+.card h2{
+  font-size:13px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--accent);font-weight:600;margin-bottom:18px;
+  font-family:'DM Mono',monospace;
+}
 
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 60px;
-        }
+/* about */
+#about-text{font-size:15px;color:var(--muted);line-height:1.7}
 
-        .logo {
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: 1px;
-        }
+/* projects list */
+.proj-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.proj-item:last-child{border-bottom:none}
+.proj-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent);flex-shrink:0;margin-top:6px;
+  box-shadow:0 0 8px rgba(79,140,255,0.7);
+}
+.proj-name{font-size:14px;font-weight:500;color:var(--text)}
+.proj-status{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:2px}
 
-        .nav-links a {
-            color: inherit;
-            opacity: 0.7;
-            text-decoration: none;
-            margin-left: 18px;
-            transition: 0.2s;
-        }
+/* contact */
+.contact-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;
+}
+.contact-row:last-child{border-bottom:none}
+.contact-icon{
+  width:28px;height:28px;border-radius:8px;
+  background:rgba(79,140,255,0.12);border:1px solid rgba(79,140,255,0.2);
+  display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;
+}
+.contact-label{color:var(--muted);font-size:12px;margin-bottom:1px;font-family:'DM Mono',monospace;letter-spacing:.5px}
+.contact-val{color:var(--text)}
+.contact-val a{color:var(--accent);text-decoration:none}
+.contact-val a:hover{text-decoration:underline}
 
-        .nav-links a:hover { opacity: 1; }
+/* loading pulse */
+.loading{
+  color:var(--muted);font-size:13px;
+  animation:pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:.9}}
 
-        .home-btn {
-            background: linear-gradient(90deg, #4f8cff, #8b5cf6);
-            padding: 9px 15px;
-            border-radius: 12px;
-            color: white !important;
-            font-weight: bold;
-            box-shadow: 0 10px 24px rgba(79,140,255,0.22);
-        }
+/* footer */
+footer{
+  text-align:center;margin-top:52px;
+  font-family:'DM Mono',monospace;font-size:12px;
+  color:rgba(255,255,255,0.2);letter-spacing:1px;
+}
 
-        .glass {
-            background: var(--card-dark);
-            border: 1px solid var(--border-dark);
-            border-radius: 26px;
-            backdrop-filter: blur(14px);
-            padding: 28px;
-            transition: background 0.6s ease, border 0.6s ease, transform 0.2s ease;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.16);
-        }
+/* theme toggle */
+.toggle-btn{
+  position:fixed;right:22px;bottom:22px;
+  width:48px;height:48px;border-radius:50%;
+  background:var(--card);border:1px solid var(--card-border);
+  backdrop-filter:blur(12px);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;z-index:100;transition:transform .15s;
+}
+.toggle-btn:hover{transform:scale(1.1)}
 
-        body.light .glass {
-            background: var(--card-light);
-            border: 1px solid var(--border-light);
-        }
+/* entrance animation */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.wrap{animation:fadeUp .7s ease both}
+.hero-main{animation:fadeUp .7s .1s ease both}
+.stat-card{animation:fadeUp .7s .18s ease both}
+.section-grid .card:nth-child(1){animation:fadeUp .7s .25s ease both}
+.section-grid .card:nth-child(2){animation:fadeUp .7s .32s ease both}
+.section-grid .card:nth-child(3){animation:fadeUp .7s .39s ease both}
 
-        .glass:hover { transform: translateY(-4px) scale(1.01); }
+/* LIGHT MODE */
+body.light{
+  --bg:#f0f4ff;--bg2:#e8eeff;--card:rgba(255,255,255,0.7);
+  --card-border:rgba(15,30,80,0.08);--text:#0f172a;
+  --muted:#475569;--glow:rgba(79,140,255,0.1);
+}
+body.light::before{
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 25%,rgba(79,140,255,0.08) 0%,transparent 65%),
+    radial-gradient(ellipse 50% 35% at 85% 20%,rgba(167,139,250,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse 55% 45% at 50% 90%,rgba(56,189,248,0.05) 0%,transparent 65%),
+    linear-gradient(160deg,#e8eeff,#eef1ff 50%,#e0e8ff);
+}
+body.light::after{
+  background-image:linear-gradient(rgba(79,140,255,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(79,140,255,0.04) 1px,transparent 1px);
+}
+body.light .logo{background:linear-gradient(90deg,#2c4dd9,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+body.light .hero-main h1{background:linear-gradient(135deg,#1e3a8a,#4f46e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+body.light .stat-num{background:linear-gradient(90deg,#1e3a8a,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+body.light .tag{background:rgba(79,140,255,0.08);border-color:rgba(79,140,255,0.2);color:#3b5bd6}
+body.light .proj-dot{background:#4f46e5;box-shadow:0 0 6px rgba(79,70,229,0.5)}
+body.light .contact-icon{background:rgba(79,70,229,0.08);border-color:rgba(79,70,229,0.15)}
 
-        .hero {
-            display: grid;
-            grid-template-columns: 1.25fr 0.75fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        h1 { font-size: 64px; margin-bottom: 10px; }
-        p { opacity: 0.75; line-height: 1.6; }
-
-        .section-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-
-        .stats {
-            margin-top: 10px;
-            line-height: 1.8;
-            opacity: 0.8;
-        }
-
-        #project-list {
-            margin-top: 10px;
-            padding-left: 18px;
-            line-height: 1.6;
-            opacity: 0.85;
-        }
-
-        .footer {
-            text-align: center;
-            opacity: 0.5;
-            margin-top: 40px;
-            font-size: 14px;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 1000;
-            background: var(--card-dark);
-            border: 1px solid var(--border-dark);
-            backdrop-filter: blur(10px);
-        }
-
-        body.light .theme-toggle {
-            background: var(--card-light);
-            border: 1px solid var(--border-light);
-        }
-
-        @media (max-width: 900px) {
-            .hero, .section-grid { grid-template-columns: 1fr; }
-            h1 { font-size: 42px; }
-        }
-    </style>
+@media(max-width:860px){
+  .hero,.section-grid{grid-template-columns:1fr}
+  .hero-main h1{font-size:42px}
+  .stat-card{flex-direction:row;flex-wrap:wrap}
+  nav{margin-bottom:40px}
+}
+</style>
 </head>
-
 <body>
-
-<div class="bg dark"></div>
-<div class="bg light"></div>
-<div class="cursor-glow" id="cursorGlow"></div>
-
-<div class="container">
-    <div class="nav">
-        <div class="logo">QIXUAN.NET</div>
-        <div class="nav-links">
-            <a class="home-btn" href="https://home.qixuan.net">Home Panel</a>
-            <a href="https://qixuan.net/files/">Files</a>
-            <a href="https://qixuan.net/projects/">Projects</a>
-        </div>
+<div class="cursor-glow" id="cg"></div>
+<div class="wrap">
+  <nav>
+    <div class="logo">QIXUAN.NET</div>
+    <div class="nav-links">
+      <a class="pill" href="https://home.qixuan.net">Home Panel</a>
+      <a href="https://qixuan.net/files/">Files</a>
+      <a href="https://qixuan.net/projects/">Projects</a>
     </div>
+  </nav>
 
-    <div class="hero">
-        <div class="glass">
-            <h1>Qixuan Xu</h1>
-            <p>FPV · Programming · AI · Aviation</p>
-            <p>This site is my personal portfolio, file hub, and project space.</p>
-        </div>
-
-        <div class="glass">
-            <h2>Quick Overview</h2>
-            <div class="stats">
-                <div><span id="stat-projects">...</span> Projects</div>
-                <div><span id="stat-files">...</span> Files</div>
-                <div><span id="stat-notes">...</span> Notes</div>
-            </div>
-        </div>
+  <div class="hero">
+    <div class="card hero-main">
+      <div class="tagline">Personal Portfolio</div>
+      <h1>Qixuan Xu</h1>
+      <p class="desc">File hub, project space &amp; personal corner of the internet.</p>
+      <div class="tags">
+        <span class="tag">FPV</span>
+        <span class="tag">Programming</span>
+        <span class="tag">AI</span>
+        <span class="tag">Aviation</span>
+      </div>
     </div>
-
-    <div class="section-grid">
-        <div class="card glass">
-            <h2>About Me</h2>
-            <p id="about-text">Loading...</p>
-        </div>
-
-        <div class="card glass">
-            <h2>Projects</h2>
-            <ul id="project-list">
-                <li>Loading...</li>
-            </ul>
-        </div>
-
-        <div class="card glass">
-            <h2>Contact</h2>
-            <p id="contact-text">Loading...</p>
-        </div>
+    <div class="card stat-card">
+      <div class="stat-item">
+        <div class="stat-num" id="stat-projects">—</div>
+        <div class="stat-label">Projects</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-files">—</div>
+        <div class="stat-label">Files</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-notes">—</div>
+        <div class="stat-label">Notes</div>
+      </div>
     </div>
+  </div>
 
-    <div class="footer">© 2026 Qixuan Xu</div>
+  <div class="section-grid">
+    <div class="card">
+      <h2>About</h2>
+      <p id="about-text" class="loading">Fetching data…</p>
+    </div>
+    <div class="card">
+      <h2>Projects</h2>
+      <div id="project-list" class="loading" style="font-size:13px">Fetching data…</div>
+    </div>
+    <div class="card">
+      <h2>Contact</h2>
+      <div id="contact-wrap" class="loading" style="font-size:13px">Fetching data…</div>
+    </div>
+  </div>
+
+  <footer>© 2026 Qixuan Xu &nbsp;·&nbsp; Built with intention</footer>
 </div>
 
-<div class="theme-toggle" id="themeToggle">🌙</div>
+<button class="toggle-btn" id="tb" title="Toggle theme">🌙</button>
 
 <script>
-const glow = document.getElementById("cursorGlow");
-const toggleBtn = document.getElementById("themeToggle");
+const cg=document.getElementById('cg');
+window.addEventListener('mousemove',e=>{cg.style.left=e.clientX+'px';cg.style.top=e.clientY+'px'});
 
-window.addEventListener("mousemove", (e) => {
-    glow.style.left = e.clientX + "px";
-    glow.style.top = e.clientY + "px";
+const tb=document.getElementById('tb');
+function applyTheme(){
+  if(localStorage.getItem('mode')==='light'){document.body.classList.add('light');tb.textContent='☀️'}
+}
+applyTheme();
+tb.addEventListener('click',()=>{
+  document.body.classList.toggle('light');
+  const isLight=document.body.classList.contains('light');
+  tb.textContent=isLight?'☀️':'🌙';
+  localStorage.setItem('mode',isLight?'light':'dark');
 });
 
-function applySavedTheme() {
-    if (localStorage.getItem("mode") === "light") {
-        document.body.classList.add("light");
-        toggleBtn.innerText = "☀️";
-    }
+async function loadData(){
+  try{
+    const res=await fetch('https://api.qixuan.net/db');
+    const d=await res.json();
+
+    document.getElementById('stat-projects').textContent=d.stats.projects;
+    document.getElementById('stat-files').textContent=d.stats.files;
+    document.getElementById('stat-notes').textContent=d.stats.notes;
+
+    const about=document.getElementById('about-text');
+    about.textContent=d.about.text;
+    about.classList.remove('loading');
+
+    const pl=document.getElementById('project-list');
+    pl.classList.remove('loading');
+    pl.innerHTML='';
+    d.projects.forEach(p=>{
+      pl.innerHTML+=`<div class="proj-item">
+        <div class="proj-dot"></div>
+        <div>
+          <div class="proj-name">${p.name}</div>
+          <div class="proj-status">${p.status}</div>
+        </div>
+      </div>`;
+    });
+
+    const cw=document.getElementById('contact-wrap');
+    cw.classList.remove('loading');
+    cw.innerHTML=`
+      <div class="contact-row">
+        <div class="contact-icon">✉</div>
+        <div>
+          <div class="contact-label">Email</div>
+          <div class="contact-val">${d.contact.email}</div>
+        </div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-icon">&#60;/&#62;</div>
+        <div>
+          <div class="contact-label">GitHub</div>
+          <div class="contact-val"><a href="${d.contact.github}" target="_blank">View Profile</a></div>
+        </div>
+      </div>`;
+  }catch(e){
+    document.getElementById('about-text').textContent='Unable to load data.';
+    document.getElementById('project-list').textContent='—';
+    document.getElementById('contact-wrap').textContent='—';
+  }
 }
-applySavedTheme();
-
-toggleBtn.addEventListener("click", () => {
-    document.body.classList.toggle("light");
-
-    if (document.body.classList.contains("light")) {
-        toggleBtn.innerText = "☀️";
-        localStorage.setItem("mode", "light");
-    } else {
-        toggleBtn.innerText = "🌙";
-        localStorage.setItem("mode", "dark");
-    }
-});
-
-// Load API data
-async function loadData() {
-    try {
-        const res = await fetch("https://api.qixuan.net/db");
-        const data = await res.json();
-
-        document.getElementById("stat-projects").innerText = data.stats.projects;
-        document.getElementById("stat-files").innerText = data.stats.files;
-        document.getElementById("stat-notes").innerText = data.stats.notes;
-
-        const list = document.getElementById("project-list");
-        list.innerHTML = "";
-        data.projects.forEach((p) => {
-            const li = document.createElement("li");
-            li.innerText = p.name + " — " + p.status;
-            list.appendChild(li);
-        });
-
-        document.getElementById("about-text").innerText = data.about.text;
-
-        document.getElementById("contact-text").innerHTML =
-            `Email: ${data.contact.email}<br>
-             GitHub: <a href="${data.contact.github}" target="_blank">GitHub</a>`;
-
-    } catch (err) {
-        console.log("API error:", err);
-    }
-}
-
 loadData();
 </script>
-
 </body>
 </html>
