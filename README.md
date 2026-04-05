@@ -9,11 +9,11 @@ Hey, Welcome to Qixuan's Personal site.
 为啥没回车啊
 
 Qixuan System
-│
-├── Frontend（前端网站）
-│   │
-│   ├── qixuan.net（主站 / 展示）
-│   │   ├── /Home（展示型首页）
+|
+|—— Frontend（前端网站）
+|   |
+|   |—— qixuan.net（主站 / 展示）
+|   |   ├── /Home（展示型首页）
 │   │   ├── /Projects（项目）
 │   │   ├── /Files（文件）
 │   │   ├── /Notes（笔记）
