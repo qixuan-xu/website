@@ -2,6 +2,8 @@
 
 Hey, Welcome to Qixuan's Personal site.
 
+GPT太难用了，现在我要用Claude 帮我搞
+
 
 # My thoughts
 有点问题，回头改一下
