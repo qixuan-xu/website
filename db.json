@@ -1,0 +1,12 @@
+{
+  "stats": { "projects": 5, "files": 12, "notes": 8 },
+  "about": { "text": "Hi, I'm Qixuan — a student passionate about FPV drones, embedded systems, computer vision, and building things that actually work. This is my personal corner of the internet." },
+  "projects": [
+    { "name": "FPV Drone Build", "status": "In progress · Hardware / Betaflight" },
+    { "name": "STM32 Projects", "status": "Active · Embedded C" },
+    { "name": "Computer Vision", "status": "Active · Python / OpenCV / YOLO" },
+    { "name": "Godot Game", "status": "In progress · GDScript" },
+    { "name": "Study Organizer App", "status": "Planned · Swift" }
+  ],
+  "contact": { "email": "hi@qixuan.net", "github": "https://github.com/qixuan-xu" }
+}
