@@ -319,7 +319,7 @@ tb.addEventListener('click',()=>{
 
 async function loadData(){
   try{
-    const res=await fetch('https://api.qixuan.net/db');
+    const res=await fetch('/db.json');
     const d=await res.json();
 
     document.getElementById('stat-projects').textContent=d.stats.projects;
