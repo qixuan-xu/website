@@ -110,10 +110,93 @@
         .blog { background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(249,115,22,0.25)); }
         .api { background: linear-gradient(135deg, rgba(148,163,184,0.25), rgba(100,116,139,0.25)); }
         .mainweb { background: linear-gradient(135deg, rgba(100,116,53,0.25), rgba(120,40,240,0.25)); }
+
+        #lock-screen {
+            position: fixed;
+            inset: 0;
+            backdrop-filter: blur(22px);
+            background: rgba(3, 8, 18, 0.68);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .lock-box {
+            width: min(360px, 92vw);
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 18px;
+            padding: 28px;
+            text-align: center;
+            backdrop-filter: blur(18px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        }
+
+        .lock-box h2 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+
+        .lock-box p {
+            margin: 0 0 18px 0;
+            color: var(--sub);
+            line-height: 1.5;
+        }
+
+        .lock-box input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
+            outline: none;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .lock-box input::placeholder {
+            color: #94a3b8;
+        }
+
+        .lock-box button {
+            margin-top: 12px;
+            width: 100%;
+            padding: 12px 14px;
+            border: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f8cff, #8b5cf6);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .lock-box button:hover {
+            filter: brightness(1.05);
+        }
+
+        .lock-error {
+            min-height: 20px;
+            margin-top: 10px;
+            color: #fda4af;
+            font-size: 13px;
+        }
     </style>
 </head>
 
 <body>
+    <div id="lock-screen">
+        <div class="lock-box">
+            <h2>🔒 Home Panel</h2>
+            <p>Enter the panel password to load protected data.</p>
+            <input type="password" id="pwd" placeholder="Enter password" autocomplete="current-password">
+            <button id="unlock-btn">Unlock</button>
+            <div class="lock-error" id="lock-error"></div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <div>
@@ -126,19 +209,19 @@
         <div class="stats">
             <div class="stat">
                 <h3>Status</h3>
-                <p id="status">Loading...</p>
+                <p id="status">Locked</p>
             </div>
             <div class="stat">
                 <h3>Projects</h3>
-                <p id="projects">Loading...</p>
+                <p id="projects">Locked</p>
             </div>
             <div class="stat">
                 <h3>Notes</h3>
-                <p id="notes">Loading...</p>
+                <p id="notes">Locked</p>
             </div>
             <div class="stat">
                 <h3>Files</h3>
-                <p id="files">Loading...</p>
+                <p id="files">Locked</p>
             </div>
         </div>
 
@@ -168,7 +251,7 @@
                 <p>Write posts</p>
             </div>
 
-            <div class="card api" onclick="location.href='https://api.qixuan.net/'">
+            <div class="card api" onclick="location.href='https://qixuan.net/api/db'">
                 <h2>API</h2>
                 <p>Backend API</p>
             </div>
@@ -181,7 +264,7 @@
     </div>
 
     <script>
-        const API = "https://api.qixuan.net";
+        let PANEL_KEY = null;
 
         function updateTime() {
             const now = new Date();
@@ -194,25 +277,85 @@
             window.location.href = "https://qixuan.net/" + page + "/?from=home";
         }
 
-        // API 数据加载
-        fetch(API + "/status")
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById("status").innerText = data.website;
+        function setError(message) {
+            document.getElementById("lock-error").innerText = message || "";
+        }
+
+        async function unlock() {
+            const input = document.getElementById("pwd");
+            const key = input.value.trim();
+            if (!key) {
+                setError("Enter a password first.");
+                return;
+            }
+
+            PANEL_KEY = key;
+            localStorage.setItem("home_panel_key", key);
+            setError("");
+            await loadData();
+        }
+
+        function hideLock() {
+            document.getElementById("lock-screen").style.display = "none";
+        }
+
+        async function apiFetch(path) {
+            const res = await fetch(path, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key: PANEL_KEY })
             });
 
-        fetch(API + "/projects")
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById("projects").innerText = data.length;
-            });
+            if (res.status === 401) {
+                localStorage.removeItem("home_panel_key");
+                PANEL_KEY = null;
+                setError("Wrong password.");
+                throw new Error("Unauthorized");
+            }
 
-        fetch(API + "/stats")
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById("notes").innerText = data.notes;
-                document.getElementById("files").innerText = data.files;
-            });
+            if (!res.ok) {
+                throw new Error(`Request failed: ${res.status}`);
+            }
+
+            return res.json();
+        }
+
+        async function loadData() {
+            try {
+                const [db, statusData] = await Promise.all([
+                    apiFetch('/api/db'),
+                    apiFetch('/api/status')
+                ]);
+
+                document.getElementById("status").innerText = statusData.status || "online";
+                document.getElementById("projects").innerText = db.stats.projects;
+                document.getElementById("notes").innerText = db.stats.notes;
+                document.getElementById("files").innerText = db.stats.files;
+
+                hideLock();
+                return true;
+            } catch (err) {
+                console.error(err);
+                document.getElementById("status").innerText = "Locked";
+                document.getElementById("projects").innerText = "Locked";
+                document.getElementById("notes").innerText = "Locked";
+                document.getElementById("files").innerText = "Locked";
+                return false;
+            }
+        }
+
+        document.getElementById("unlock-btn").addEventListener("click", unlock);
+        document.getElementById("pwd").addEventListener("keydown", (e) => {
+            if (e.key === "Enter") unlock();
+        });
+
+        window.addEventListener("load", async () => {
+            const saved = localStorage.getItem("home_panel_key");
+            if (saved) {
+                PANEL_KEY = saved;
+                await loadData();
+            }
+        });
     </script>
 </body>
 </html>
