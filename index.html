@@ -490,19 +490,19 @@ document.querySelectorAll('.card').forEach(card=>{
 // data
 async function loadData(){
   try{
-    const res=await fetch('/db.json',{cache:'no-cache'});
-    const d=await res.json();
+    const res = await fetch('/api/db');
+    const d = await res.json();
 
-    countUp(document.getElementById('stat-projects'),d.stats.projects);
-    countUp(document.getElementById('stat-files'),d.stats.files);
-    countUp(document.getElementById('stat-notes'),d.stats.notes);
+    countUp(document.getElementById('stat-projects'), d.stats.projects);
+    countUp(document.getElementById('stat-files'), d.stats.files);
+    countUp(document.getElementById('stat-notes'), d.stats.notes);
 
-    const about=document.getElementById('about-text');
+    const about = document.getElementById('about-text');
     about.classList.remove('loading');
-    about.textContent=d.about.text;
+    about.textContent = d.about.text;
 
-    const pl=document.getElementById('project-list');
-    pl.innerHTML=d.projects.map(p=>`
+    const pl = document.getElementById('project-list');
+    pl.innerHTML = d.projects.map(p => `
       <div class="proj-item">
         <div class="proj-dot"></div>
         <div>
@@ -511,8 +511,8 @@ async function loadData(){
         </div>
       </div>`).join('');
 
-    const cw=document.getElementById('contact-wrap');
-    cw.innerHTML=`
+    const cw = document.getElementById('contact-wrap');
+    cw.innerHTML = `
       <div class="contact-row">
         <div class="contact-icon">✉</div>
         <div>
@@ -524,15 +524,17 @@ async function loadData(){
         <div class="contact-icon">&#60;/&#62;</div>
         <div>
           <div class="contact-label">GitHub</div>
-          <div class="contact-val"><a href="${d.contact.github}" target="_blank" rel="noopener">View Profile →</a></div>
+          <div class="contact-val">
+            <a href="${d.contact.github}" target="_blank">View Profile →</a>
+          </div>
         </div>
       </div>`;
   }catch(e){
-    document.getElementById('about-text').textContent='Unable to load data.';
-    document.getElementById('project-list').textContent='—';
-    document.getElementById('contact-wrap').textContent='—';
+    console.error(e);
+    document.getElementById('about-text').textContent='API load failed.';
   }
 }
+
 loadData();
 </script>
 </body>
