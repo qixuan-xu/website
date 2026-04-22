@@ -181,6 +181,32 @@ body{
 
 .lock-error{color:#fda4af;margin-top:8px}
 
+
+/* ===== Animations ===== */
+@keyframes shake {
+  0%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-6px)}
+  80%{transform:translateX(6px)}
+  100%{transform:translateX(0)}
+}
+
+.lock-box.shake{
+  animation:shake .4s ease;
+}
+
+/* ===== Light theme (from index style idea) ===== */
+body.light{
+  --bg1:#eef2ff;
+  --bg2:#e0e7ff;
+  --card:rgba(0,0,0,0.04);
+  --border:rgba(0,0,0,0.08);
+  --text:#0f172a;
+  --sub:#475569;
+  background:linear-gradient(135deg,#eef2ff,#e0e7ff);
+}
+
 </style>
 </head>
 
@@ -197,6 +223,7 @@ body{
 
 <div class="container" id="main">
   <div class="header">
+    <button onclick="toggleTheme()" style="padding:6px 12px;border-radius:10px;border:none;background:rgba(255,255,255,.1);color:inherit;cursor:pointer">🌓</button>
     <div>
       <div class="title">Qixuan OS</div>
       <div class="subtitle">Personal Cloud Control Panel</div>
@@ -240,9 +267,15 @@ function unlockUI(){
 }
 
 async function unlock(){
+  const box=document.querySelector('.lock-box');
   const pwd=document.getElementById('pwd').value;
   const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pwd})});
-  if(res.status!==200){setError('Wrong password');return}
+  if(res.status!==200){
+    setError('Wrong password');
+    box.classList.add('shake');
+    setTimeout(()=>box.classList.remove('shake'),400);
+    return
+  }
   const data=await res.json();
   TOKEN=data.token;
   localStorage.setItem('token',TOKEN);
@@ -268,7 +301,19 @@ async function loadData(){
   document.getElementById('files').innerText=db.stats.files;
 }
 
+// Enter key support
+document.getElementById('pwd').addEventListener('keydown',e=>{
+  if(e.key==='Enter') unlock();
+});
+
+function toggleTheme(){
+  document.body.classList.toggle('light');
+  localStorage.setItem('theme',document.body.classList.contains('light')?'light':'dark');
+}
+
 window.onload=()=>{
+  const savedTheme=localStorage.getItem('theme');
+  if(savedTheme==='light') document.body.classList.add('light');
   const t=localStorage.getItem('token');
   if(t){TOKEN=t;unlockUI();loadData();}
 }
