@@ -4,99 +4,269 @@
 <meta charset="UTF-8">
 <title>Qixuan OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/favicon.png">
+
+<style>
+:root{
+  --bg1:#07111f;
+  --bg2:#0f1e3d;
+  --card:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.12);
+  --text:#f8fafc;
+  --sub:#94a3b8;
+}
+
+body{
+  margin:0;
+  font-family: Inter, -apple-system, system-ui;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(79,140,255,0.25), transparent 28%),
+    radial-gradient(circle at 80% 25%, rgba(139,92,246,0.22), transparent 24%),
+    radial-gradient(circle at 50% 80%, rgba(56,189,248,0.16), transparent 30%),
+    linear-gradient(135deg,var(--bg1),#0b1220 45%,var(--bg2));
+}
+
+.container{
+  width:min(1200px,92%);
+  margin:auto;
+  padding:40px 0;
+  opacity:0;
+  transform:translateY(20px);
+  transition:.6s ease;
+}
+
+.container.show{
+  opacity:1;
+  transform:none;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.title{font-size:42px;font-weight:800}
+.subtitle{color:var(--sub)}
+.time{color:var(--sub)}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:16px;
+}
+
+.stat{
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:18px;
+  border-radius:14px;
+  backdrop-filter:blur(14px);
+  transition:.25s;
+}
+
+.stat:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 25px rgba(0,0,0,.3);
+}
+
+.stat p{font-size:22px;margin:6px 0 0;font-weight:700}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:20px;
+  margin-top:30px;
+}
+
+.card{
+  border-radius:20px;
+  padding:26px;
+  backdrop-filter:blur(16px);
+  border:1px solid var(--border);
+  cursor:pointer;
+  transition:.25s;
+  position:relative;
+  overflow:hidden;
+}
+
+.card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  opacity:0;
+  transition:.25s;
+}
+
+.card.locked::after{
+  opacity:1;
+}
+
+.card.locked::before{
+  content:"🔒";
+  position:absolute;
+  font-size:28px;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  z-index:2;
+}
+
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 40px rgba(0,0,0,.4);
+}
+
+.projects{background:linear-gradient(135deg,#4f8cff55,#8b5cf655)}
+.files{background:linear-gradient(135deg,#38bdf855,#0ea5e955)}
+.notes{background:linear-gradient(135deg,#22c55e55,#10b98155)}
+.password{background:linear-gradient(135deg,#f43f5e55,#ec489955)}
+.blog{background:linear-gradient(135deg,#fbbf2455,#f9731655)}
+.api{background:linear-gradient(135deg,#94a3b855,#64748b55)}
+.main{background:linear-gradient(135deg,#6366f155,#8b5cf655)}
+
+#lock-screen{
+  position:fixed;
+  inset:0;
+  backdrop-filter:blur(24px);
+  background:rgba(3,8,18,.7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.6s;
+}
+
+#lock-screen.hide{
+  opacity:0;
+  pointer-events:none;
+}
+
+.lock-box{
+  width:min(360px,90%);
+  background:rgba(255,255,255,0.08);
+  padding:28px;
+  border-radius:18px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
+  text-align:center;
+}
+
+.lock-box input{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.08);
+  color:white;
+}
+
+.lock-box button{
+  margin-top:12px;
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:none;
+  background:linear-gradient(135deg,#4f8cff,#8b5cf6);
+  color:white;
+  font-weight:700;
+}
+
+.lock-error{color:#fda4af;margin-top:8px}
+
+</style>
 </head>
 
 <body>
+
 <div id="lock-screen">
-  <input type="password" id="pwd" placeholder="Enter password">
-  <button onclick="unlock()">Unlock</button>
-  <div id="lock-error"></div>
+  <div class="lock-box">
+    <h2>🔒 Home Panel</h2>
+    <input id="pwd" type="password" placeholder="password">
+    <button onclick="unlock()">Unlock</button>
+    <div class="lock-error" id="lock-error"></div>
+  </div>
 </div>
 
-<div>
-  <p>Status: <span id="status">Locked</span></p>
-  <p>Projects: <span id="projects">Locked</span></p>
-  <p>Notes: <span id="notes">Locked</span></p>
-  <p>Files: <span id="files">Locked</span></p>
+<div class="container" id="main">
+  <div class="header">
+    <div>
+      <div class="title">Qixuan OS</div>
+      <div class="subtitle">Personal Cloud Control Panel</div>
+    </div>
+    <div class="time" id="time"></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><h4>Status</h4><p id="status">Locked</p></div>
+    <div class="stat"><h4>Projects</h4><p id="projects">Locked</p></div>
+    <div class="stat"><h4>Notes</h4><p id="notes">Locked</p></div>
+    <div class="stat"><h4>Files</h4><p id="files">Locked</p></div>
+  </div>
+
+  <div class="grid">
+    <div class="card projects locked">Projects</div>
+    <div class="card files locked">Files</div>
+    <div class="card notes locked">Notes</div>
+    <div class="card password locked">Password</div>
+    <div class="card blog locked">Blog</div>
+    <div class="card api locked">API</div>
+    <div class="card main locked">Main Site</div>
+  </div>
 </div>
 
 <script>
-let TOKEN = null;
+let TOKEN=null;
 
-function setError(msg){
-  document.getElementById("lock-error").innerText = msg || "";
+function setError(m){document.getElementById('lock-error').innerText=m}
+
+function updateTime(){
+  document.getElementById('time').innerText=new Date().toLocaleString();
+}
+setInterval(updateTime,1000);
+updateTime();
+
+function unlockUI(){
+  document.getElementById('lock-screen').classList.add('hide');
+  document.getElementById('main').classList.add('show');
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('locked'));
 }
 
 async function unlock(){
-  const pwd = document.getElementById("pwd").value.trim();
-
-  if(!pwd){
-    setError("Enter password");
-    return;
-  }
-
-  const res = await fetch('/api/login',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({password:pwd})
-  });
-
-  if(res.status !== 200){
-    setError("Wrong password");
-    return;
-  }
-
-  const data = await res.json();
-  TOKEN = data.token;
-  localStorage.setItem('token', TOKEN);
-
-  document.getElementById("lock-screen").style.display='none';
+  const pwd=document.getElementById('pwd').value;
+  const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pwd})});
+  if(res.status!==200){setError('Wrong password');return}
+  const data=await res.json();
+  TOKEN=data.token;
+  localStorage.setItem('token',TOKEN);
+  unlockUI();
   loadData();
 }
 
 async function apiFetch(url){
-  const token = localStorage.getItem('token');
-
-  const res = await fetch(url,{
-    headers:{
-      'Authorization':'Bearer '+token
-    }
-  });
-
-  if(res.status === 401){
-    localStorage.removeItem('token');
-    location.reload();
-    return;
-  }
-
+  const token=localStorage.getItem('token');
+  const res=await fetch(url,{headers:{Authorization:'Bearer '+token}});
+  if(res.status===401){localStorage.removeItem('token');location.reload()}
   return res.json();
 }
 
 async function loadData(){
-  try{
-    const [db, status] = await Promise.all([
-      apiFetch('/api/db'),
-      apiFetch('/api/status')
-    ]);
-
-    document.getElementById('status').innerText = status.status;
-    document.getElementById('projects').innerText = db.stats.projects;
-    document.getElementById('notes').innerText = db.stats.notes;
-    document.getElementById('files').innerText = db.stats.files;
-
-  }catch(e){
-    console.error(e);
-  }
+  const [db,status]=await Promise.all([
+    apiFetch('/api/db'),
+    apiFetch('/api/status')
+  ]);
+  document.getElementById('status').innerText=status.status;
+  document.getElementById('projects').innerText=db.stats.projects;
+  document.getElementById('notes').innerText=db.stats.notes;
+  document.getElementById('files').innerText=db.stats.files;
 }
 
-window.onload = ()=>{
-  const token = localStorage.getItem('token');
-  if(token){
-    TOKEN = token;
-    document.getElementById("lock-screen").style.display='none';
-    loadData();
-  }
+window.onload=()=>{
+  const t=localStorage.getItem('token');
+  if(t){TOKEN=t;unlockUI();loadData();}
 }
 </script>
+
 </body>
 </html>
