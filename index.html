@@ -486,8 +486,8 @@ document.querySelectorAll('.card').forEach(card=>{
     if(Math.abs(tx-rx)>0.05||Math.abs(ty-ry)>0.05){raf=requestAnimationFrame(upd)}else{raf=null}
   }
 });
-
-// data
+/*
+// load data with api
 async function loadData(){
   try{
     const res = await fetch('/api/db');
@@ -534,6 +534,64 @@ async function loadData(){
     document.getElementById('about-text').textContent='API load failed.';
   }
 }
+*/
+
+  
+// load data with nothing
+function loadData(){
+  const d = {
+    stats:{projects:4, files:12, notes:6},
+    about:{text:"I build systems across AI, computer vision, and server infrastructure. Currently working on a YOLO-based road detection project and backend systems."},
+    projects:[
+      {name:"Road Detection AI", status:"YOLO + video processing"},
+      {name:"Server Infrastructure", status:"Self-hosted APIs & services"},
+      {name:"Computer Vision Experiments", status:"Model tuning & testing"},
+      {name:"Personal Dev Platform", status:"In progress"}
+    ],
+    contact:{
+      email:"your@email.com",
+      github:"https://github.com/yourname"
+    }
+  };
+
+  countUp(document.getElementById('stat-projects'), d.stats.projects);
+  countUp(document.getElementById('stat-files'), d.stats.files);
+  countUp(document.getElementById('stat-notes'), d.stats.notes);
+
+  const about = document.getElementById('about-text');
+  about.classList.remove('loading');
+  about.textContent = d.about.text;
+
+  const pl = document.getElementById('project-list');
+  pl.innerHTML = d.projects.map(p => `
+    <div class="proj-item">
+      <div class="proj-dot"></div>
+      <div>
+        <div class="proj-name">${p.name}</div>
+        <div class="proj-status">${p.status}</div>
+      </div>
+    </div>`).join('');
+
+  const cw = document.getElementById('contact-wrap');
+  cw.innerHTML = `
+    <div class="contact-row">
+      <div class="contact-icon">✉</div>
+      <div>
+        <div class="contact-label">Email</div>
+        <div class="contact-val">${d.contact.email}</div>
+      </div>
+    </div>
+    <div class="contact-row">
+      <div class="contact-icon">&lt;/&gt;</div>
+      <div>
+        <div class="contact-label">GitHub</div>
+        <div class="contact-val">
+          <a href="${d.contact.github}" target="_blank">View Profile →</a>
+        </div>
+      </div>
+    </div>`;
+}
+
 
 loadData();
 </script>
