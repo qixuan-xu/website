@@ -442,6 +442,7 @@ body.light .chip.planned{color:#3b5bd6}
       <span class="tag">Computer Vision</span>
       <span class="tag">Aviation</span>
       <span class="tag">Game Dev</span>
+
     </div>
     <div class="cta-row">
       <a class="btn btn-primary" href="#projects">View projects ↓</a>
@@ -626,6 +627,115 @@ document.querySelectorAll('.card').forEach(card=>{
     if(Math.abs(tx-rx)>0.05||Math.abs(ty-ry)>0.05){raf=requestAnimationFrame(upd)}else{raf=null}
   }
 });
+/*
+// load data with api
+async function loadData(){
+  try{
+    const res = await fetch('/api/db');
+    const d = await res.json();
+
+    countUp(document.getElementById('stat-projects'), d.stats.projects);
+    countUp(document.getElementById('stat-files'), d.stats.files);
+    countUp(document.getElementById('stat-notes'), d.stats.notes);
+
+    const about = document.getElementById('about-text');
+    about.classList.remove('loading');
+    about.textContent = d.about.text;
+
+    const pl = document.getElementById('project-list');
+    pl.innerHTML = d.projects.map(p => `
+      <div class="proj-item">
+        <div class="proj-dot"></div>
+        <div>
+          <div class="proj-name">${p.name}</div>
+          <div class="proj-status">${p.status}</div>
+        </div>
+      </div>`).join('');
+
+    const cw = document.getElementById('contact-wrap');
+    cw.innerHTML = `
+      <div class="contact-row">
+        <div class="contact-icon">✉</div>
+        <div>
+          <div class="contact-label">Email</div>
+          <div class="contact-val">${d.contact.email}</div>
+        </div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-icon">&#60;/&#62;</div>
+        <div>
+          <div class="contact-label">GitHub</div>
+          <div class="contact-val">
+            <a href="${d.contact.github}" target="_blank">View Profile →</a>
+          </div>
+        </div>
+      </div>`;
+  }catch(e){
+    console.error(e);
+    document.getElementById('about-text').textContent='API load failed.';
+  }
+}
+*/
+
+  
+// load data with nothing
+function loadData(){
+  const d = {
+    stats:{projects:4, files:12, notes:6},
+    about:{text:"I build systems across AI, computer vision, and server infrastructure. I also know many programming languages, such as Java, Python, C++, JavaScript (still learning), and Scratch. Currently working on a code library for FTC robotics. It uses Java as the coding language. It allows the robot to only use simple commands in the main program, making moving, programming the robot, and my life in 9th grade easier."},
+    projects:[
+      {name:"Road Detection AI", status:"YOLO + video processing, still developing"},
+      {name:"Server Infrastructure", status:"Self-hosted APIs & services, which is running at Google Cloud"},
+      {name:"FTC code lib 2026", status:"Still developing"},
+      {name:"Personal Dev Platform", status:"Not finished yet, still developing, which is this site"}
+    ],
+    contact:{
+      email:"qixuanxu@hotmail.com",
+      github:"https://github.com/qixuan-xu"
+    }
+  };
+
+  countUp(document.getElementById('stat-projects'), d.stats.projects);
+  countUp(document.getElementById('stat-files'), d.stats.files);
+  countUp(document.getElementById('stat-notes'), d.stats.notes);
+
+  const about = document.getElementById('about-text');
+  about.classList.remove('loading');
+  about.textContent = d.about.text;
+
+  const pl = document.getElementById('project-list');
+  pl.innerHTML = d.projects.map(p => `
+    <div class="proj-item">
+      <div class="proj-dot"></div>
+      <div>
+        <div class="proj-name">${p.name}</div>
+        <div class="proj-status">${p.status}</div>
+      </div>
+    </div>`).join('');
+
+  const cw = document.getElementById('contact-wrap');
+  cw.innerHTML = `
+    <div class="contact-row">
+      <div class="contact-icon">✉</div>
+      <div>
+        <div class="contact-label">Email</div>
+        <div class="contact-val">${d.contact.email}</div>
+      </div>
+    </div>
+    <div class="contact-row">
+      <div class="contact-icon">&lt;/&gt;</div>
+      <div>
+        <div class="contact-label">GitHub</div>
+        <div class="contact-val">
+          <a href="${d.contact.github}" target="_blank">View Profile →</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+
+loadData();
+
 </script>
 </body>
 </html>

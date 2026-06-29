@@ -2,22 +2,22 @@
 
 Hey, Welcome to Qixuan's Personal site.
 
-GPT太难用了，现在我要用Claude 帮我搞
+
 
 
 # My thoughts
 有点问题，回头改一下
-
-为啥没回车啊
-
-Qixuan System
-|
-|—— Frontend（前端网站）
-|   |
-|   |—— qixuan.net（主站 / 展示）
-|   |   ├── /Home（展示型首页）
-│   │   ├── /Projects（项目）
-│   │   ├── /Files（文件）
+  
+为啥没回车啊  
+  
+Qixuan System  
+|  
+|—— Frontend（前端网站）  
+|   |  
+|   |—— qixuan.net（主站 / 展示）  
+|   |   ├── /Home（展示型首页）  
+│   │   ├── /Projects（项目）  
+│   │   ├── /Files（文件）  
 │   │   ├── /Notes（笔记）
 │   │   └── /About（关于）
 │   │
