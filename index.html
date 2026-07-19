@@ -1,741 +1,858 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Qixuan Xu — FPV · Embedded · Computer Vision</title>
-<meta name="description" content="Qixuan Xu — a student building things across FPV drones, embedded systems, and computer vision. Drones that fly, firmware that runs, models that see."/>
-<link rel="icon" href="/favicon.png"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qixuan Xu — Systems that see, decide, and move</title>
+  <meta name="description" content="Qixuan Xu is a student engineer building across computer vision, embedded systems, and FPV — from camera frames and firmware to real-world motion.">
+  <meta name="theme-color" content="#f2f0e8" id="theme-color">
+  <link rel="canonical" href="https://qixuan.net/">
+  <link rel="icon" href="/favicon.png">
 
-<!-- Open Graph / social share card -->
-<meta property="og:type" content="website"/>
-<meta property="og:title" content="Qixuan Xu — FPV · Embedded · Computer Vision"/>
-<meta property="og:description" content="A student building things across FPV drones, embedded systems, and computer vision."/>
-<meta property="og:url" content="https://qixuan.net/"/>
-<meta property="og:image" content="https://qixuan.net/favicon.png"/>
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Qixuan Xu — FPV · Embedded · Computer Vision"/>
-<meta name="twitter:description" content="A student building things across FPV drones, embedded systems, and computer vision."/>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Qixuan Xu — Systems that see, decide, and move">
+  <meta property="og:description" content="Student engineer working across computer vision, embedded systems, and FPV.">
+  <meta property="og:url" content="https://qixuan.net/">
+  <meta property="og:image" content="https://qixuan.net/favicon.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Qixuan Xu — Systems that see, decide, and move">
+  <meta name="twitter:description" content="Student engineer working across computer vision, embedded systems, and FPV.">
 
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-:root{
-  --bg:#060b16;
-  --card:rgba(255,255,255,0.04);
-  --card-hi:rgba(255,255,255,0.07);
-  --card-border:rgba(255,255,255,0.08);
-  --card-border-hi:rgba(255,255,255,0.18);
-  --text:#f2f5ff;
-  --muted:rgba(200,215,255,0.55);
-  --muted-2:rgba(200,215,255,0.35);
-  --accent:#6aa3ff;
-  --accent-2:#a78bfa;
-  --accent-3:#38bdf8;
-  --ease-silk:cubic-bezier(0.22,1,0.36,1);
-  --ease-expo:cubic-bezier(0.16,1,0.3,1);
-}
-html{scroll-behavior:smooth}
-body{
-  font-family:'Inter',system-ui,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  overflow-x:hidden;
-  font-feature-settings:'ss01','cv11';
-  letter-spacing:-0.01em;
-}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Qixuan Xu",
+      "url": "https://qixuan.net/",
+      "sameAs": ["https://github.com/qixuan-xu"],
+      "knowsAbout": ["Computer vision", "Embedded systems", "FPV drones"]
+    }
+  </script>
 
-/* animated aurora bg */
-body::before{
-  content:'';
-  position:fixed;inset:-20%;z-index:-2;
-  background:
-    radial-gradient(ellipse 55% 45% at 18% 22%,rgba(106,163,255,0.22) 0%,transparent 60%),
-    radial-gradient(ellipse 50% 40% at 82% 18%,rgba(167,139,250,0.18) 0%,transparent 60%),
-    radial-gradient(ellipse 60% 50% at 50% 92%,rgba(56,189,248,0.13) 0%,transparent 65%),
-    linear-gradient(160deg,#050a14,#060c1a 55%,#071428);
-  animation:drift 28s var(--ease-silk) infinite alternate;
-  filter:saturate(1.05);
-}
-@keyframes drift{
-  0%{transform:translate3d(0,0,0) scale(1)}
-  100%{transform:translate3d(-3%,2%,0) scale(1.06)}
-}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
 
-/* grid */
-body::after{
-  content:'';
-  position:fixed;inset:0;z-index:-1;
-  background-image:
-    linear-gradient(rgba(106,163,255,0.028) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(106,163,255,0.028) 1px,transparent 1px);
-  background-size:56px 56px;
-  mask-image:radial-gradient(ellipse 85% 70% at 50% 40%,black 40%,transparent 100%);
-  pointer-events:none;
-}
+  <script>
+    document.documentElement.classList.add('js');
+    try {
+      var savedTheme = localStorage.getItem('qx-theme');
+      var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = savedTheme || (systemDark ? 'dark' : 'light');
+    } catch (error) {
+      document.documentElement.dataset.theme = 'light';
+    }
+  </script>
 
-/* silky cursor glow */
-.cursor-glow{
-  position:fixed;top:0;left:0;width:460px;height:460px;border-radius:50%;
-  background:radial-gradient(circle,rgba(106,163,255,0.14),transparent 62%);
-  pointer-events:none;z-index:0;
-  will-change:transform;
-  mix-blend-mode:screen;
-}
+  <style>
+    *,*::before,*::after{box-sizing:border-box}
+    *{margin:0}
+    :root{
+      color-scheme:light;
+      --paper:#f2f0e8;
+      --paper-raised:#faf8f1;
+      --ink:#111311;
+      --ink-soft:#272a26;
+      --muted:#5d625b;
+      --line:#cbc8bc;
+      --line-strong:#9f9d94;
+      --orange:#ff4f1f;
+      --orange-dark:#d9360c;
+      --blue:#2859ff;
+      --acid:#d7ff58;
+      --hangar:#111311;
+      --hangar-soft:#191c18;
+      --hangar-line:#343831;
+      --hangar-text:#f6f4eb;
+      --nav-bg:rgba(242,240,232,.88);
+      --shadow:0 28px 80px rgba(17,19,17,.12);
+      --ease:cubic-bezier(.2,.8,.2,1);
+    }
+    html[data-theme="dark"]{
+      color-scheme:dark;
+      --paper:#121512;
+      --paper-raised:#191c18;
+      --ink:#f3f1e8;
+      --ink-soft:#d4d3ca;
+      --muted:#a8aca3;
+      --line:#383c36;
+      --line-strong:#666b62;
+      --orange:#ff6a3d;
+      --orange-dark:#ff835e;
+      --blue:#6e8dff;
+      --acid:#d7ff58;
+      --hangar:#080a08;
+      --hangar-soft:#111410;
+      --hangar-line:#2b3028;
+      --hangar-text:#f6f4eb;
+      --nav-bg:rgba(18,21,18,.88);
+      --shadow:0 28px 90px rgba(0,0,0,.35);
+    }
+    html{scroll-behavior:smooth;scroll-padding-top:90px}
+    body{
+      min-width:320px;
+      background:var(--paper);
+      color:var(--ink);
+      font-family:'Space Grotesk',Arial,sans-serif;
+      line-height:1.5;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+    }
+    body::before{
+      content:'';
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      background-image:
+        linear-gradient(to right,color-mix(in srgb,var(--line) 42%,transparent) 1px,transparent 1px),
+        linear-gradient(to bottom,color-mix(in srgb,var(--line) 42%,transparent) 1px,transparent 1px);
+      background-size:48px 48px;
+      mask-image:linear-gradient(to bottom,black 0,transparent 76%);
+      pointer-events:none;
+    }
+    body::after{
+      content:'';
+      position:fixed;
+      width:34vw;
+      height:34vw;
+      min-width:320px;
+      min-height:320px;
+      top:4rem;
+      right:-12vw;
+      border-radius:50%;
+      background:var(--orange);
+      opacity:.055;
+      filter:blur(1px);
+      z-index:-1;
+      pointer-events:none;
+    }
+    a{color:inherit}
+    button,input,textarea,select{font:inherit}
+    svg{display:block;max-width:100%}
+    ::selection{background:var(--orange);color:#fff}
+    :focus-visible{outline:3px solid var(--blue);outline-offset:4px}
+    .skip-link{
+      position:fixed;
+      top:10px;
+      left:10px;
+      z-index:999;
+      padding:10px 14px;
+      background:var(--ink);
+      color:var(--paper);
+      font-family:'IBM Plex Mono',monospace;
+      font-size:12px;
+      transform:translateY(-160%);
+      transition:transform .2s ease;
+    }
+    .skip-link:focus{transform:translateY(0)}
+    .shell{width:min(1240px,calc(100% - 48px));margin-inline:auto}
+    .mono{font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.08em}
 
-.wrap{width:min(1120px,92%);margin:0 auto;padding:48px 0 96px;position:relative;z-index:1}
+    .masthead{
+      position:sticky;
+      top:0;
+      z-index:100;
+      border-bottom:1px solid var(--line);
+      background:var(--nav-bg);
+      backdrop-filter:blur(16px) saturate(130%);
+      -webkit-backdrop-filter:blur(16px) saturate(130%);
+    }
+    .nav{
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:24px;
+    }
+    .brand{display:inline-flex;align-items:center;gap:12px;text-decoration:none;font-weight:700;white-space:nowrap}
+    .brand-mark{
+      display:grid;
+      place-items:center;
+      width:40px;
+      height:40px;
+      border:1px solid var(--ink);
+      background:var(--ink);
+      color:var(--paper);
+      font-family:'IBM Plex Mono',monospace;
+      font-size:12px;
+      letter-spacing:.06em;
+      transition:background .25s ease,color .25s ease;
+    }
+    .brand:hover .brand-mark{background:var(--orange);color:#fff;border-color:var(--orange)}
+    .brand-name{font-size:15px;letter-spacing:-.01em}
+    .nav-actions{display:flex;align-items:center;gap:6px}
+    .nav-link{
+      display:inline-flex;
+      align-items:center;
+      min-height:44px;
+      padding:0 10px;
+      color:var(--muted);
+      text-decoration:none;
+      font-family:'IBM Plex Mono',monospace;
+      font-size:11px;
+      font-weight:500;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      transition:color .2s ease;
+    }
+    .nav-link:hover{color:var(--orange)}
+    .nav-mail{color:var(--ink)}
+    .theme-toggle{
+      width:44px;
+      height:44px;
+      margin-left:4px;
+      display:grid;
+      place-items:center;
+      border:1px solid var(--line);
+      background:transparent;
+      color:var(--ink);
+      cursor:pointer;
+      transition:border-color .2s ease,background .2s ease,transform .2s ease;
+    }
+    .theme-toggle:hover{border-color:var(--ink);background:var(--paper-raised);transform:rotate(7deg)}
+    .theme-icon{font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1}
 
-/* NAV */
-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:72px}
-.logo{
-  font-family:'DM Serif Display',serif;
-  font-size:22px;letter-spacing:.3px;
-  background:linear-gradient(90deg,#eaf1ff,#b4c5ff 60%,#a78bfa);
-  background-size:200% 100%;
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  animation:shine 6s var(--ease-silk) infinite;
-  text-decoration:none;
-  cursor:pointer;
-}
-@keyframes shine{
-  0%,100%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-}
-.nav-links{display:flex;gap:4px;align-items:center}
-.nav-links a{
-  position:relative;
-  font-size:13px;font-weight:450;color:var(--muted);
-  text-decoration:none;padding:9px 16px;border-radius:999px;
-  transition:color .5s var(--ease-silk),background .5s var(--ease-silk);
-  overflow:hidden;
-}
-.nav-links a::before{
-  content:'';position:absolute;inset:0;border-radius:999px;
-  background:rgba(255,255,255,0.06);
-  transform:scale(0.6);opacity:0;
-  transition:transform .5s var(--ease-silk),opacity .4s var(--ease-silk);
-}
-.nav-links a:hover{color:var(--text)}
-.nav-links a:hover::before{transform:scale(1);opacity:1}
-.nav-links a span{position:relative;z-index:1}
-.nav-links .pill{
-  background:linear-gradient(100deg,rgba(106,163,255,0.95),rgba(167,139,250,0.9));
-  color:#fff !important;font-weight:600;
-  box-shadow:0 6px 24px rgba(106,163,255,0.35),inset 0 1px 0 rgba(255,255,255,0.2);
-  transition:transform .5s var(--ease-silk),box-shadow .5s var(--ease-silk);
-}
-.nav-links .pill::before{display:none}
-.nav-links .pill:hover{
-  transform:translateY(-2px);
-  box-shadow:0 14px 36px rgba(106,163,255,0.45),inset 0 1px 0 rgba(255,255,255,0.25);
-}
+    .hero{padding:clamp(70px,9vw,124px) 0 64px}
+    .hero-layout{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(340px,.78fr);gap:clamp(48px,8vw,112px);align-items:end}
+    .eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:34px;color:var(--muted);font-size:11px}
+    .eyebrow::before{content:'';width:32px;height:2px;background:var(--orange)}
+    .status-dot{width:7px;height:7px;border-radius:50%;background:#2bb673;box-shadow:0 0 0 5px color-mix(in srgb,#2bb673 14%,transparent)}
+    .hero h1{
+      max-width:850px;
+      font-size:clamp(58px,8vw,126px);
+      font-weight:600;
+      line-height:.86;
+      letter-spacing:-.075em;
+      text-wrap:balance;
+    }
+    .hero h1 .line{display:block}
+    .hero h1 em{color:var(--orange);font-style:normal}
+    .hero h1 .move{color:var(--blue)}
+    .hero-copy{max-width:620px;margin-top:38px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end}
+    .hero-copy p{font-size:clamp(17px,1.7vw,21px);line-height:1.55;color:var(--muted);letter-spacing:-.018em}
+    .hero-copy strong{color:var(--ink);font-weight:600}
+    .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}
+    .button{
+      min-height:48px;
+      padding:0 18px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      border:1px solid var(--ink);
+      text-decoration:none;
+      font-family:'IBM Plex Mono',monospace;
+      font-size:11px;
+      font-weight:600;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      transition:transform .25s var(--ease),background .25s ease,color .25s ease,box-shadow .25s ease;
+    }
+    .button:hover{transform:translateY(-3px)}
+    .button-primary{background:var(--ink);color:var(--paper);box-shadow:5px 5px 0 var(--orange)}
+    .button-primary:hover{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:5px 5px 0 var(--ink)}
+    .button-plain{background:transparent;color:var(--ink)}
+    .button-plain:hover{background:var(--paper-raised)}
+    .scroll-index{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:10px;white-space:nowrap;padding-bottom:4px}
+    .scroll-index::before{content:'';width:24px;height:1px;background:var(--line-strong)}
 
-/* CARD base */
-.card{
-  background:var(--card);
-  border:1px solid var(--card-border);
-  border-radius:24px;
-  backdrop-filter:blur(22px) saturate(1.2);
-  -webkit-backdrop-filter:blur(22px) saturate(1.2);
-  padding:36px;
-  position:relative;overflow:hidden;
-  transition:
-    transform .6s var(--ease-silk),
-    border-color .6s var(--ease-silk),
-    background .6s var(--ease-silk),
-    box-shadow .6s var(--ease-silk);
-  will-change:transform;
-}
-.card::before{
-  content:'';position:absolute;inset:0;border-radius:24px;
-  background:linear-gradient(135deg,rgba(255,255,255,0.06),transparent 50%);
-  pointer-events:none;
-  opacity:.8;transition:opacity .6s var(--ease-silk);
-}
-.card::after{
-  content:'';position:absolute;inset:-1px;border-radius:inherit;
-  padding:1px;pointer-events:none;opacity:0;
-  background:linear-gradient(135deg,rgba(106,163,255,0.4),rgba(167,139,250,0.2) 40%,transparent 70%);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  transition:opacity .6s var(--ease-silk);
-}
-.card:hover{
-  transform:translateY(-6px);
-  background:var(--card-hi);
-  border-color:var(--card-border-hi);
-  box-shadow:0 30px 80px rgba(0,0,0,0.35);
-}
-.card:hover::after{opacity:1}
+    .instrument{
+      position:relative;
+      min-height:510px;
+      padding:22px;
+      overflow:hidden;
+      background:var(--hangar);
+      color:var(--hangar-text);
+      box-shadow:var(--shadow);
+      isolation:isolate;
+    }
+    .instrument::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      z-index:-1;
+      background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);
+      background-size:28px 28px;
+      mask-image:linear-gradient(to bottom,black,transparent 92%);
+    }
+    .instrument::after{content:'';position:absolute;right:-85px;bottom:-85px;width:230px;height:230px;border:1px solid rgba(215,255,88,.24);border-radius:50%;box-shadow:0 0 0 34px rgba(215,255,88,.03),0 0 0 68px rgba(215,255,88,.02)}
+    .instrument-head,.instrument-foot{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:18px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+    .instrument-head{padding-bottom:18px;border-bottom:1px solid var(--hangar-line);color:#9da399}
+    .loop-state{display:inline-flex;align-items:center;gap:8px;color:var(--acid)}
+    .loop-state::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--acid);box-shadow:0 0 12px rgba(215,255,88,.8)}
+    .system-map{position:relative;z-index:2;display:grid;gap:12px;padding:38px 0 32px}
+    .system-node{position:relative;min-height:92px;padding:16px 18px;border:1px solid var(--hangar-line);background:rgba(255,255,255,.025);display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:16px}
+    .node-no{color:#72786f;font-family:'IBM Plex Mono',monospace;font-size:10px}
+    .node-name{font-size:20px;font-weight:600;letter-spacing:-.025em}
+    .node-sub{margin-top:3px;color:#858b82;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em}
+    .node-signal{width:44px;height:44px;display:grid;place-items:center;border:1px solid #50564d;color:var(--acid);font-family:'IBM Plex Mono',monospace;font-size:11px}
+    .system-node:nth-child(3) .node-signal{color:#8ba4ff}
+    .system-node:nth-child(5) .node-signal{color:#ff815d}
+    .flow-line{height:18px;margin-left:37px;border-left:1px dashed #596057;position:relative}
+    .flow-line::after{content:'';position:absolute;left:-3px;bottom:0;width:5px;height:5px;background:var(--acid);animation:signal 2.4s ease-in-out infinite}
+    .flow-line:nth-of-type(4)::after{animation-delay:1.1s;background:var(--orange)}
+    @keyframes signal{0%{transform:translateY(-16px);opacity:0}30%{opacity:1}100%{transform:translateY(4px);opacity:0}}
+    .instrument-foot{padding-top:18px;border-top:1px solid var(--hangar-line);color:#7d837a}
+    .instrument-foot strong{color:var(--hangar-text);font-weight:500}
 
-/* HERO */
-.hero{margin-bottom:96px}
-.hero .tagline{
-  font-family:'JetBrains Mono',monospace;
-  font-size:12px;font-weight:400;color:var(--accent);
-  letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;
-  display:inline-flex;align-items:center;gap:10px;
-}
-.hero .tagline::before{
-  content:'';width:28px;height:1px;
-  background:linear-gradient(90deg,var(--accent),transparent);
-}
-.hero h1{
-  font-family:'DM Serif Display',serif;font-size:72px;font-weight:400;
-  line-height:1.05;margin-bottom:20px;letter-spacing:-0.02em;
-  background:linear-gradient(135deg,#f0f4ff 20%,#8ca8ff 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.hero .desc{font-size:17px;color:var(--muted);line-height:1.7;max-width:620px;font-weight:400}
-.hero .desc strong{color:var(--text);font-weight:500}
+    .domain-strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .domain-list{display:grid;grid-template-columns:repeat(4,1fr);list-style:none;padding:0}
+    .domain-list li{min-height:76px;display:flex;align-items:center;gap:14px;padding:0 20px;border-right:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+    .domain-list li:first-child{padding-left:0}
+    .domain-list li:last-child{border-right:0}
+    .domain-list li::before{content:'';width:8px;height:8px;background:var(--orange)}
+    .domain-list li:nth-child(2)::before{background:var(--blue)}
+    .domain-list li:nth-child(3)::before{background:var(--acid);border:1px solid var(--ink)}
+    .domain-list li:nth-child(4)::before{background:var(--ink)}
 
-.status-pill{
-  display:inline-flex;align-items:center;gap:8px;margin-bottom:22px;
-  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;
-  letter-spacing:.5px;color:#7ee2b8;
-  padding:6px 13px 6px 11px;border-radius:999px;
-  background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.22);
-}
-.status-pill .dot{
-  width:7px;height:7px;border-radius:50%;background:#34d399;
-  box-shadow:0 0 10px rgba(52,211,153,0.9);position:relative;
-}
-.status-pill .dot::after{
-  content:'';position:absolute;inset:-3px;border-radius:50%;
-  background:rgba(52,211,153,0.35);
-  animation:ping 2.6s var(--ease-silk) infinite;
-}
-body.light .status-pill{color:#0f9d6b;background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.25)}
+    .work-section{margin-top:100px;padding:clamp(80px,9vw,130px) 0;background:var(--hangar);color:var(--hangar-text)}
+    .section-intro{display:grid;grid-template-columns:180px 1fr;gap:34px;align-items:start;margin-bottom:56px}
+    .section-label{display:flex;align-items:center;gap:10px;color:var(--orange);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase}
+    .section-label::before{content:'';width:22px;height:1px;background:currentColor}
+    .section-title{font-size:clamp(40px,5.5vw,76px);line-height:.98;letter-spacing:-.055em;font-weight:600;max-width:800px;text-wrap:balance}
+    .section-title .outline{color:transparent;-webkit-text-stroke:1px #747970}
+    .featured-project{display:grid;grid-template-columns:minmax(290px,.72fr) minmax(0,1.28fr);border:1px solid var(--hangar-line);background:var(--hangar-soft);overflow:hidden}
+    .featured-copy{padding:clamp(30px,5vw,64px);display:flex;flex-direction:column;align-items:flex-start}
+    .project-meta{width:100%;display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:44px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#858b81}
+    .status{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;color:var(--acid)}
+    .status::before{content:'';width:7px;height:7px;background:currentColor;border-radius:50%}
+    .status-progress{color:#ff9a79}
+    .status-planned{color:#93a9ff}
+    .featured-project h3{font-size:clamp(34px,4.6vw,62px);line-height:.98;letter-spacing:-.05em;margin-bottom:24px}
+    .project-desc{color:#aeb3aa;font-size:16px;line-height:1.65;max-width:540px}
+    .project-tags{display:flex;flex-wrap:wrap;gap:7px;margin:26px 0 34px}
+    .project-tag{padding:7px 9px;border:1px solid var(--hangar-line);color:#c0c4bb;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.05em;text-transform:uppercase}
+    .text-link{display:inline-flex;align-items:center;gap:10px;color:var(--hangar-text);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--orange);padding-bottom:6px;transition:color .2s ease,gap .2s ease}
+    .text-link:hover{color:var(--orange);gap:15px}
+    .vision-visual{min-height:490px;border-left:1px solid var(--hangar-line);background:#0c1022;position:relative;display:grid;place-items:center;padding:clamp(22px,4vw,50px);overflow:hidden}
+    .vision-visual::after{content:'CV_FEED / 00:14:28';position:absolute;left:28px;bottom:20px;color:#7482ad;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em}
+    .vision-svg{width:100%;height:auto;filter:drop-shadow(0 28px 60px rgba(0,0,0,.35))}
 
-.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
-.tag{
-  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;
-  padding:6px 12px;border-radius:8px;
-  background:rgba(106,163,255,0.08);
-  border:1px solid rgba(106,163,255,0.18);
-  color:#9cbaff;letter-spacing:.3px;
-  transition:all .5s var(--ease-silk);
-  cursor:default;
-}
-.tag:hover{
-  transform:translateY(-2px);
-  background:rgba(106,163,255,0.15);
-  border-color:rgba(106,163,255,0.35);
-  color:#c8d7ff;
-}
+    .project-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+    .project-card{position:relative;border:1px solid var(--hangar-line);background:var(--hangar-soft);overflow:hidden;transition:transform .35s var(--ease),border-color .25s ease}
+    .project-card::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(280px circle at var(--mx,50%) var(--my,0%),rgba(255,79,31,.12),transparent 65%);opacity:0;transition:opacity .25s ease}
+    .project-card:hover{transform:translateY(-6px);border-color:#5b6157}
+    .project-card:hover::after{opacity:1}
+    .card-graphic{height:190px;padding:24px;border-bottom:1px solid var(--hangar-line);background:#141713;display:grid;place-items:center;overflow:hidden}
+    .card-graphic svg{width:100%;height:100%}
+    .card-body{position:relative;z-index:1;padding:28px;display:flex;flex-direction:column;min-height:340px;align-items:flex-start}
+    .card-body .project-meta{margin-bottom:30px}
+    .project-card h3{font-size:27px;letter-spacing:-.035em;line-height:1.05;margin-bottom:16px}
+    .project-card .project-desc{font-size:14px;line-height:1.65}
+    .project-card .project-tags{margin-top:auto;padding-top:26px;margin-bottom:0}
+    .card-note{margin-top:24px;color:#777e74;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em}
 
-/* CTA buttons */
-.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
-.btn{
-  display:inline-flex;align-items:center;gap:8px;
-  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;
-  letter-spacing:.3px;text-decoration:none;
-  padding:13px 22px;border-radius:999px;cursor:pointer;
-  transition:transform .5s var(--ease-silk),box-shadow .5s var(--ease-silk),background .5s var(--ease-silk),border-color .5s var(--ease-silk);
-}
-.btn-primary{
-  background:linear-gradient(100deg,rgba(106,163,255,0.95),rgba(167,139,250,0.9));
-  color:#fff;
-  box-shadow:0 6px 24px rgba(106,163,255,0.35),inset 0 1px 0 rgba(255,255,255,0.2);
-}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(106,163,255,0.45),inset 0 1px 0 rgba(255,255,255,0.25)}
-.btn-ghost{
-  background:var(--card);color:var(--text);
-  border:1px solid var(--card-border-hi);
-}
-.btn-ghost:hover{transform:translateY(-2px);background:var(--card-hi)}
+    .next-bar{display:grid;grid-template-columns:180px 1fr auto;align-items:center;gap:30px;margin-top:16px;padding:28px 32px;border:1px solid var(--hangar-line);background:#151814}
+    .next-label{color:#8a9086;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+    .next-title{font-size:20px;font-weight:600;letter-spacing:-.025em}
+    .next-copy{color:#858b81;font-size:13px;text-align:right}
 
-/* SECTION heading */
-.section{margin-bottom:80px}
-.section-head{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;letter-spacing:2.5px;text-transform:uppercase;
-  color:var(--accent);font-weight:500;margin-bottom:28px;
-  display:flex;align-items:center;gap:14px;
-}
-.section-head::after{
-  content:'';flex:1;height:1px;
-  background:linear-gradient(90deg,rgba(106,163,255,0.25),transparent);
-}
+    .method-section{padding:clamp(90px,10vw,150px) 0;border-bottom:1px solid var(--line)}
+    .method-head{display:grid;grid-template-columns:180px 1fr;gap:34px;margin-bottom:64px}
+    .method-head .section-title{color:var(--ink)}
+    .method-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .method-item{position:relative;min-height:280px;padding:34px;border-right:1px solid var(--line);display:flex;flex-direction:column}
+    .method-item:first-child{padding-left:0}
+    .method-item:last-child{border-right:0}
+    .method-no{font-family:'IBM Plex Mono',monospace;color:var(--orange);font-size:10px;letter-spacing:.1em}
+    .method-item h3{font-size:clamp(34px,4vw,54px);letter-spacing:-.05em;margin-top:auto;margin-bottom:16px}
+    .method-item p{color:var(--muted);max-width:310px;font-size:14px;line-height:1.6}
+    .method-item:not(:last-child)::after{content:'→';position:absolute;right:-17px;top:28px;width:34px;height:34px;display:grid;place-items:center;background:var(--paper);color:var(--line-strong);font-family:'IBM Plex Mono',monospace;z-index:2}
 
-/* PROJECTS grid */
-.proj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-.proj-card{display:flex;flex-direction:column;gap:14px;padding:30px}
-.proj-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
-.proj-name{
-  font-family:'DM Serif Display',serif;font-size:25px;font-weight:400;
-  letter-spacing:-0.01em;line-height:1.15;
-  background:linear-gradient(135deg,#f0f4ff 30%,#9fbaff 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.proj-desc{font-size:14.5px;color:var(--muted);line-height:1.65;font-weight:400}
-.proj-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
-.proj-tags .tag{font-size:10.5px;padding:5px 10px}
+    .about-section{padding:clamp(90px,10vw,150px) 0}
+    .about-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:clamp(50px,9vw,130px);align-items:start}
+    .about-statement{font-size:clamp(42px,6vw,82px);font-weight:600;line-height:.98;letter-spacing:-.06em;text-wrap:balance}
+    .about-statement span{color:var(--orange)}
+    .about-copy{padding-top:6px}
+    .about-copy .section-label{margin-bottom:28px}
+    .about-copy p{color:var(--muted);font-size:17px;line-height:1.75}
+    .about-copy p+p{margin-top:18px}
+    .stack-list{display:grid;grid-template-columns:repeat(2,1fr);margin-top:36px;border-top:1px solid var(--line)}
+    .stack-item{padding:16px 0;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase}
+    .stack-item:nth-child(odd){border-right:1px solid var(--line)}
+    .stack-item:nth-child(even){padding-left:18px}
 
-/* status chip */
-.chip{
-  flex-shrink:0;
-  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;
-  letter-spacing:.5px;padding:5px 10px;border-radius:999px;
-  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
-}
-.chip .d{width:6px;height:6px;border-radius:50%}
-.chip.active{color:#7ee2b8;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.22)}
-.chip.active .d{background:#34d399;box-shadow:0 0 8px rgba(52,211,153,0.8)}
-.chip.progress{color:#ffd089;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.22)}
-.chip.progress .d{background:#fbbf24;box-shadow:0 0 8px rgba(251,191,36,0.8)}
-.chip.planned{color:#9cbaff;background:rgba(106,163,255,0.08);border:1px solid rgba(106,163,255,0.2)}
-.chip.planned .d{background:#6aa3ff}
+    .contact-section{padding-bottom:clamp(80px,10vw,140px)}
+    .contact-panel{position:relative;overflow:hidden;padding:clamp(38px,7vw,88px);background:var(--orange);color:#fff;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end}
+    .contact-panel::after{content:'QX';position:absolute;right:-.04em;top:-.35em;color:rgba(255,255,255,.1);font-size:clamp(180px,28vw,430px);font-weight:700;letter-spacing:-.12em;line-height:1;pointer-events:none}
+    .contact-panel>*{position:relative;z-index:1}
+    .contact-kicker{margin-bottom:22px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase}
+    .contact-panel h2{max-width:800px;font-size:clamp(40px,6vw,78px);line-height:.98;letter-spacing:-.055em;text-wrap:balance}
+    .contact-button{min-width:210px;background:#fff;color:#171917;border-color:#fff;box-shadow:6px 6px 0 #171917}
+    .contact-button:hover{background:#171917;color:#fff;border-color:#171917;box-shadow:6px 6px 0 #fff}
 
-/* project links */
-.proj-links{display:flex;flex-wrap:wrap;gap:16px;margin-top:auto;padding-top:8px}
-.proj-links a{
-  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3px;
-  color:var(--accent);text-decoration:none;
-  display:inline-flex;align-items:center;gap:5px;
-  transition:color .4s var(--ease-silk),transform .4s var(--ease-silk);
-}
-.proj-links a:hover{color:#c0d4ff;transform:translateX(2px)}
+    .footer{border-top:1px solid var(--line)}
+    .footer-inner{min-height:110px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .footer-copy{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase}
+    .footer-links{display:flex;align-items:center;gap:22px}
+    .footer-links a{color:var(--muted);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;transition:color .2s ease}
+    .footer-links a:hover{color:var(--orange)}
 
-/* ABOUT + CONTACT row */
-.bottom-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:18px}
-#about-text{font-size:15px;color:var(--muted);line-height:1.8;font-weight:400}
-#about-text strong{color:var(--text);font-weight:500}
+    .js .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+    .js .reveal.is-visible{opacity:1;transform:none}
+    .js .reveal-delay{transition-delay:.12s}
 
-.contact-row{
-  display:flex;align-items:center;gap:12px;
-  padding:13px 0;border-bottom:1px solid rgba(255,255,255,0.05);
-  transition:transform .5s var(--ease-silk);
-}
-.contact-row:last-child{border-bottom:none}
-.contact-row:hover{transform:translateX(4px)}
-.contact-icon{
-  width:34px;height:34px;border-radius:10px;
-  background:rgba(106,163,255,0.1);
-  border:1px solid rgba(106,163,255,0.2);
-  display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;
-  transition:all .5s var(--ease-silk);
-}
-.contact-row:hover .contact-icon{
-  background:rgba(106,163,255,0.18);
-  border-color:rgba(106,163,255,0.35);
-}
-.contact-label{color:var(--muted-2);font-size:10px;margin-bottom:2px;font-family:'JetBrains Mono',monospace;letter-spacing:1.5px;text-transform:uppercase}
-.contact-val{color:var(--text);font-size:13.5px}
-.contact-val a{color:var(--accent);text-decoration:none;transition:color .3s var(--ease-silk)}
-.contact-val a:hover{color:#c0d4ff}
-
-footer{
-  text-align:center;margin-top:72px;
-  font-family:'JetBrains Mono',monospace;font-size:11px;
-  color:rgba(255,255,255,0.22);letter-spacing:1.5px;
-  display:flex;flex-direction:column;gap:10px;align-items:center;
-}
-footer a{color:rgba(255,255,255,0.3);text-decoration:none;transition:color .4s var(--ease-silk)}
-footer a:hover{color:var(--accent)}
-
-@keyframes ping{
-  0%{transform:scale(1);opacity:.6}
-  80%,100%{transform:scale(2.4);opacity:0}
-}
-
-/* theme toggle */
-.toggle-btn{
-  position:fixed;right:24px;bottom:24px;
-  width:48px;height:48px;border-radius:50%;
-  background:var(--card);border:1px solid var(--card-border);
-  backdrop-filter:blur(14px);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;z-index:100;
-  transition:transform .5s var(--ease-silk),background .5s var(--ease-silk);
-  color:var(--text);
-}
-.toggle-btn:hover{
-  transform:scale(1.08) rotate(12deg);
-  background:var(--card-hi);
-}
-
-/* reveal */
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease-expo),transform .9s var(--ease-expo)}
-.reveal.in{opacity:1;transform:translateY(0)}
-.reveal.d1{transition-delay:.05s}
-.reveal.d2{transition-delay:.12s}
-.reveal.d3{transition-delay:.2s}
-.reveal.d4{transition-delay:.28s}
-.reveal.d5{transition-delay:.36s}
-
-/* LIGHT MODE */
-body.light{
-  --bg:#f2f5ff;
-  --card:rgba(255,255,255,0.72);
-  --card-hi:rgba(255,255,255,0.88);
-  --card-border:rgba(15,30,80,0.07);
-  --card-border-hi:rgba(15,30,80,0.14);
-  --text:#0f172a;
-  --muted:#475569;
-  --muted-2:#64748b;
-}
-body.light::before{
-  background:
-    radial-gradient(ellipse 55% 45% at 18% 22%,rgba(106,163,255,0.15) 0%,transparent 60%),
-    radial-gradient(ellipse 50% 40% at 82% 18%,rgba(167,139,250,0.12) 0%,transparent 60%),
-    radial-gradient(ellipse 60% 50% at 50% 92%,rgba(56,189,248,0.08) 0%,transparent 65%),
-    linear-gradient(160deg,#eaf0ff,#f0f4ff 50%,#e4ecff);
-}
-body.light::after{
-  background-image:
-    linear-gradient(rgba(79,140,255,0.05) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(79,140,255,0.05) 1px,transparent 1px);
-}
-body.light .logo{background:linear-gradient(90deg,#1e3a8a,#6366f1 60%,#a78bfa);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-body.light .hero h1{background:linear-gradient(135deg,#1e3a8a,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-body.light .proj-name{background:linear-gradient(135deg,#1e3a8a,#4f46e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-body.light .tag{background:rgba(79,140,255,0.08);border-color:rgba(79,140,255,0.2);color:#3b5bd6}
-body.light .tag:hover{background:rgba(79,140,255,0.14);color:#1e3a8a}
-body.light .contact-icon{background:rgba(79,70,229,0.08);border-color:rgba(79,70,229,0.16)}
-body.light .chip.progress{color:#b45309}
-body.light .chip.planned{color:#3b5bd6}
-
-@media(max-width:860px){
-  .proj-grid,.bottom-grid{grid-template-columns:1fr}
-  .hero h1{font-size:48px}
-  .hero .desc{font-size:15px}
-  nav{margin-bottom:48px}
-  .wrap{padding:32px 0 64px}
-  .card{padding:28px 24px;border-radius:20px}
-  .section{margin-bottom:56px}
-}
-
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
-  body::before{animation:none}
-}
-</style>
+    @media(max-width:1040px){
+      .hero-layout{grid-template-columns:1fr;align-items:start}
+      .hero h1{max-width:980px}
+      .hero-copy{max-width:760px}
+      .instrument{min-height:auto;max-width:760px;width:100%}
+      .system-map{grid-template-columns:1fr 18px 1fr 18px 1fr;align-items:center;padding:54px 0}
+      .system-node{min-height:150px;padding:16px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:10px}
+      .node-signal{align-self:flex-end}
+      .flow-line{height:1px;width:18px;margin:0;border-left:0;border-top:1px dashed #596057}
+      .flow-line::after{left:0;top:-3px;bottom:auto;animation-name:signal-horizontal}
+      @keyframes signal-horizontal{0%{transform:translateX(-2px);opacity:0}30%{opacity:1}100%{transform:translateX(18px);opacity:0}}
+      .project-grid{grid-template-columns:repeat(2,1fr)}
+      .project-card:last-child{grid-column:1/-1}
+      .project-card:last-child .card-graphic{height:240px}
+      .project-card:last-child .card-body{min-height:280px}
+    }
+    @media(max-width:800px){
+      .shell{width:min(100% - 32px,720px)}
+      .brand-name{display:none}
+      .nav-link-secondary{display:none}
+      .hero{padding-top:64px}
+      .hero-copy{grid-template-columns:1fr}
+      .scroll-index{display:none}
+      .domain-list{grid-template-columns:repeat(2,1fr)}
+      .domain-list li{border-bottom:1px solid var(--line)}
+      .domain-list li:nth-child(2){border-right:0}
+      .domain-list li:nth-child(3),.domain-list li:nth-child(4){border-bottom:0}
+      .domain-list li:nth-child(3){padding-left:0}
+      .section-intro,.method-head{grid-template-columns:1fr;gap:24px}
+      .featured-project{grid-template-columns:1fr}
+      .vision-visual{border-left:0;border-top:1px solid var(--hangar-line);min-height:380px}
+      .method-grid{grid-template-columns:1fr}
+      .method-item,.method-item:first-child{min-height:230px;padding:28px 0;border-right:0;border-bottom:1px solid var(--line)}
+      .method-item:last-child{border-bottom:0}
+      .method-item:not(:last-child)::after{content:'↓';right:16px;top:auto;bottom:-17px}
+      .about-grid{grid-template-columns:1fr}
+      .contact-panel{grid-template-columns:1fr;align-items:start}
+      .contact-button{justify-self:start}
+    }
+    @media(max-width:620px){
+      .shell{width:calc(100% - 24px)}
+      .nav{min-height:64px;gap:8px}
+      .brand-mark{width:38px;height:38px}
+      .nav-actions{gap:0}
+      .nav-link{padding:0 7px;font-size:9px}
+      .nav-link-github{display:none}
+      .theme-toggle{width:40px;height:40px;margin-left:2px}
+      .hero{padding-top:48px}
+      .eyebrow{align-items:flex-start;flex-wrap:wrap;margin-bottom:28px}
+      .hero h1{font-size:clamp(49px,16vw,76px);letter-spacing:-.07em}
+      .hero-copy{margin-top:28px;gap:20px}
+      .hero-copy p{font-size:17px}
+      .hero-actions{display:grid;grid-template-columns:1fr}
+      .button{width:100%}
+      .instrument{padding:16px;min-height:520px}
+      .system-map{grid-template-columns:1fr;gap:8px;padding:26px 0}
+      .system-node{min-height:88px;display:grid;grid-template-columns:32px 1fr 38px;padding:12px;gap:10px}
+      .node-signal{align-self:auto;width:38px;height:38px}
+      .flow-line{width:1px;height:12px;margin-left:27px;border-top:0;border-left:1px dashed #596057}
+      .flow-line::after{left:-3px;top:0;animation-name:signal}
+      .instrument-foot{align-items:flex-start;flex-direction:column}
+      .domain-list li{min-height:64px;font-size:9px;padding:0 12px}
+      .work-section{margin-top:72px}
+      .featured-copy{padding:28px 22px}
+      .project-meta{align-items:flex-start;flex-direction:column;margin-bottom:30px}
+      .vision-visual{min-height:280px;padding:16px}
+      .project-grid{grid-template-columns:1fr}
+      .project-card:last-child{grid-column:auto}
+      .project-card:last-child .card-graphic{height:190px}
+      .card-body{min-height:330px;padding:24px 22px}
+      .next-bar{grid-template-columns:1fr;gap:10px;padding:24px 22px}
+      .next-copy{text-align:left}
+      .method-item h3{margin-top:54px}
+      .stack-list{grid-template-columns:1fr}
+      .stack-item:nth-child(odd){border-right:0}
+      .stack-item:nth-child(even){padding-left:0}
+      .contact-panel{padding:34px 24px}
+      .footer-inner{padding:28px 0;align-items:flex-start;flex-direction:column}
+      .footer-links{flex-wrap:wrap;gap:16px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+      .js .reveal{opacity:1;transform:none}
+    }
+  </style>
 </head>
 <body>
-<div class="cursor-glow" id="cg"></div>
-<div class="wrap">
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <nav class="reveal">
-    <a class="logo" href="/">QIXUAN.NET</a>
-    <div class="nav-links">
-      <a href="#projects"><span>Projects</span></a>
-      <a href="#about"><span>About</span></a>
-      <a class="pill" href="mailto:hi@qixuan.net"><span>Get in touch</span></a>
-    </div>
-  </nav>
-
-  <!-- ============ HERO ============ -->
-  <header class="hero reveal d1">
-    <div class="tagline">Student · Builder</div>
-    <div class="status-pill"><span class="dot"></span>Open to internships &amp; collaborations</div>
-    <h1>Qixuan Xu</h1>
-    <p class="desc">I'm a student who likes to <strong>make things that actually work</strong> — across
-      <strong>FPV drones</strong>, <strong>embedded systems</strong>, and <strong>computer vision</strong>.
-      Drones that fly, firmware that runs, models that see.</p>
-    <div class="tags">
-      <span class="tag">FPV</span>
-      <span class="tag">Embedded</span>
-      <span class="tag">Computer Vision</span>
-      <span class="tag">Aviation</span>
-      <span class="tag">Game Dev</span>
-
-    </div>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="#projects">View projects ↓</a>
-      <a class="btn btn-ghost" href="mailto:hi@qixuan.net">Get in touch ✉</a>
-    </div>
+  <header class="masthead">
+    <nav class="nav shell" aria-label="Main navigation">
+      <a class="brand" href="/" aria-label="Qixuan Xu, home">
+        <span class="brand-mark" aria-hidden="true">QX</span>
+        <span class="brand-name">Qixuan Xu</span>
+      </a>
+      <div class="nav-actions">
+        <a class="nav-link" href="#projects">Work</a>
+        <a class="nav-link nav-link-secondary" href="#about">About</a>
+        <a class="nav-link nav-link-github" href="https://github.com/qixuan-xu" target="_blank" rel="noopener">GitHub ↗</a>
+        <a class="nav-link nav-mail" href="mailto:hi@qixuan.net">Email</a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+          <span class="theme-icon" aria-hidden="true">◐</span>
+        </button>
+      </div>
+    </nav>
   </header>
 
-  <!-- ============ PROJECTS (centerpiece) ============ -->
-  <section class="section" id="projects">
-    <div class="section-head reveal">Selected Projects</div>
-    <div class="proj-grid">
-
-      <!-- ---- FPV Drone Build ---- -->
-      <article class="card proj-card reveal d1">
-        <div class="proj-top">
-          <h3 class="proj-name">FPV Drone Build</h3>
-          <span class="chip progress"><span class="d"></span>In progress</span>
-        </div>
-        <p class="proj-desc">Building and tuning a 3.5-inch cinewhoop — Betaflight configuration,
-          hardware testing, and dialing in flight performance from the bench to the air.</p>
-        <div class="proj-tags">
-          <span class="tag">FPV</span><span class="tag">Betaflight</span><span class="tag">Electronics</span>
-        </div>
-        <div class="proj-links">
-          <!-- TODO: 把下面换成真实链接（飞行视频 / 搭建记录），不用的就删掉这一行 -->
-
-          <a href="#" target="_blank" rel="noopener">Flight video ↗</a>
-        </div>
-      </article>
-
-      <!-- ---- STM32 Projects ---- -->
-      <article class="card proj-card reveal d2">
-        <div class="proj-top">
-          <h3 class="proj-name">STM32 Projects</h3>
-          <span class="chip active"><span class="d"></span>Active</span>
-        </div>
-        <p class="proj-desc">Microcontroller projects on STM32 — driving sensors and peripherals
-          with bare-metal embedded C, and learning how the hardware really works underneath.</p>
-        <div class="proj-tags">
-          <span class="tag">STM32</span><span class="tag">Embedded</span><span class="tag">C</span>
-        </div>
-        <div class="proj-links">
-          <!-- TODO: 换成这个项目的真实 GitHub 仓库地址 -->
-          <a href="https://github.com/qixuan-xu" target="_blank" rel="noopener">GitHub ↗</a>
-        </div>
-      </article>
-
-      <!-- ---- Computer Vision ---- -->
-      <article class="card proj-card reveal d3">
-        <div class="proj-top">
-          <h3 class="proj-name">Computer Vision</h3>
-          <span class="chip active"><span class="d"></span>Active</span>
-        </div>
-        <p class="proj-desc">Lane detection and image processing with Python, OpenCV, and YOLO —
-          turning raw camera frames into something a machine can actually reason about.</p>
-        <div class="proj-tags">
-          <span class="tag">Python</span><span class="tag">OpenCV</span><span class="tag">YOLO</span>
-        </div>
-        <div class="proj-links">
-          <!-- TODO: 换成这个项目的真实 GitHub 仓库地址  ！✅完成！ -->
-          <a href="https://github.com/qixuan-xu/yolo-vision-system" target="_blank" rel="noopener">GitHub ↗</a>
-        </div>
-      </article>
-
-      <!-- ---- Godot Game ---- -->
-      <article class="card proj-card reveal d4">
-        <div class="proj-top">
-          <h3 class="proj-name">Godot Game</h3>
-          <span class="chip progress"><span class="d"></span>In progress</span>
-        </div>
-        <p class="proj-desc">A top-down shooter built in the Godot engine — gameplay loop, enemy
-          behavior, and game feel, written in GDScript.</p>
-        <div class="proj-tags">
-          <span class="tag">Godot</span><span class="tag">GDScript</span><span class="tag">Game Dev</span>
-        </div>
-        <div class="proj-links">
-          <!-- TODO: 有可玩 demo / 截图 / 仓库的话放这里 -->
-          <a href="#" target="_blank" rel="noopener">Play demo ↗</a>
-        </div>
-      </article>
-
-      <!-- ---- Study Organizer App ---- -->
-      <article class="card proj-card reveal d5">
-        <div class="proj-top">
-          <h3 class="proj-name">Study Organizer App</h3>
-          <span class="chip planned"><span class="d"></span>Planned</span>
-        </div>
-        <p class="proj-desc">A homework and schedule manager for students — designed to make the
-          school week less of a mess. Building it in Swift for iOS.</p>
-        <div class="proj-tags">
-          <span class="tag">Swift</span><span class="tag">iOS</span><span class="tag">App</span>
-        </div>
-        <!-- 还没开工，先不放链接 -->
-      </article>
-
-    </div>
-  </section>
-
-  <!-- ============ ABOUT + CONTACT ============ -->
-  <section class="bottom-grid">
-    <div class="card reveal" id="about">
-      <div class="section-head">About</div>
-      <p id="about-text">Hi, I'm Qixuan — a student who's into <strong>FPV drones</strong>,
-        <strong>embedded systems</strong>, <strong>computer vision</strong>, and the occasional
-        game or app. I like projects that cross the line between hardware and software: soldering a
-        board, flashing firmware, then writing the code that makes it do something useful. This site
-        is where I keep track of the things I'm building.</p>
-    </div>
-    <div class="card reveal d1">
-      <div class="section-head">Contact</div>
-      <div class="contact-row">
-        <div class="contact-icon">✉</div>
+  <main id="main">
+    <section class="hero shell" aria-labelledby="hero-title">
+      <div class="hero-layout">
         <div>
-          <div class="contact-label">Email</div>
-          <div class="contact-val"><a href="mailto:hi@qixuan.net">hi@qixuan.net</a></div>
-        </div>
-      </div>
-      <div class="contact-row">
-        <div class="contact-icon">&#60;/&#62;</div>
-        <div>
-          <div class="contact-label">GitHub</div>
-          <div class="contact-val"><a href="https://github.com/qixuan-xu" target="_blank" rel="noopener">@qixuan-xu ↗</a></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="reveal">
-    <div>© 2026 Qixuan Xu &nbsp;·&nbsp; Crafted with care ✨</div>
-    <!-- 你的「后院」私人面板，前台访客不会特意点这里 -->
-    <a href="/home">↗ private dashboard</a>
-  </footer>
-</div>
-
-<button class="toggle-btn" id="tb" title="Toggle theme">🌙</button>
-
-<script>
-// silky cursor (lerp)
-const cg=document.getElementById('cg');
-let mx=innerWidth/2,my=innerHeight/2,gx=mx,gy=my;
-addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY},{passive:true});
-(function loop(){
-  gx+=(mx-gx)*0.09;
-  gy+=(my-gy)*0.09;
-  cg.style.transform=`translate3d(${gx-230}px,${gy-230}px,0)`;
-  requestAnimationFrame(loop);
-})();
-
-// theme
-const tb=document.getElementById('tb');
-if(localStorage.getItem('mode')==='light'){document.body.classList.add('light');tb.textContent='☀️'}
-tb.addEventListener('click',()=>{
-  const apply=()=>{
-    document.body.classList.toggle('light');
-    const isLight=document.body.classList.contains('light');
-    tb.textContent=isLight?'☀️':'🌙';
-    localStorage.setItem('mode',isLight?'light':'dark');
-  };
-  if(document.startViewTransition){document.startViewTransition(apply)}else{apply()}
-});
-
-// reveal on load
-requestAnimationFrame(()=>{
-  document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
-});
-
-// magnetic hover on cards
-document.querySelectorAll('.card').forEach(card=>{
-  let rx=0,ry=0,tx=0,ty=0,raf;
-  card.addEventListener('pointermove',e=>{
-    const r=card.getBoundingClientRect();
-    const x=(e.clientX-r.left)/r.width-0.5;
-    const y=(e.clientY-r.top)/r.height-0.5;
-    tx=x*6;ty=y*6;
-    if(!raf)raf=requestAnimationFrame(upd);
-  });
-  card.addEventListener('pointerleave',()=>{tx=0;ty=0;if(!raf)raf=requestAnimationFrame(upd)});
-  function upd(){
-    rx+=(tx-rx)*0.12;
-    ry+=(ty-ry)*0.12;
-    card.style.transform=`translate3d(${rx}px,${ry-(card.matches(':hover')?6:0)}px,0)`;
-    if(Math.abs(tx-rx)>0.05||Math.abs(ty-ry)>0.05){raf=requestAnimationFrame(upd)}else{raf=null}
-  }
-});
-/*
-// load data with api
-async function loadData(){
-  try{
-    const res = await fetch('/api/db');
-    const d = await res.json();
-
-    countUp(document.getElementById('stat-projects'), d.stats.projects);
-    countUp(document.getElementById('stat-files'), d.stats.files);
-    countUp(document.getElementById('stat-notes'), d.stats.notes);
-
-    const about = document.getElementById('about-text');
-    about.classList.remove('loading');
-    about.textContent = d.about.text;
-
-    const pl = document.getElementById('project-list');
-    pl.innerHTML = d.projects.map(p => `
-      <div class="proj-item">
-        <div class="proj-dot"></div>
-        <div>
-          <div class="proj-name">${p.name}</div>
-          <div class="proj-status">${p.status}</div>
-        </div>
-      </div>`).join('');
-
-    const cw = document.getElementById('contact-wrap');
-    cw.innerHTML = `
-      <div class="contact-row">
-        <div class="contact-icon">✉</div>
-        <div>
-          <div class="contact-label">Email</div>
-          <div class="contact-val">${d.contact.email}</div>
-        </div>
-      </div>
-      <div class="contact-row">
-        <div class="contact-icon">&#60;/&#62;</div>
-        <div>
-          <div class="contact-label">GitHub</div>
-          <div class="contact-val">
-            <a href="${d.contact.github}" target="_blank">View Profile →</a>
+          <div class="eyebrow mono reveal">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span>Student engineer / Open to internships &amp; collaboration</span>
+          </div>
+          <h1 id="hero-title" class="reveal reveal-delay">
+            <span class="line">I build systems</span>
+            <span class="line">that <em>see</em>, decide,</span>
+            <span class="line">and <span class="move">move.</span></span>
+          </h1>
+          <div class="hero-copy reveal reveal-delay">
+            <div>
+              <p>I'm <strong>Qixuan Xu</strong>, a student building across computer vision, embedded systems, and FPV — from sensor input and camera frames to firmware and real-world motion.</p>
+              <div class="hero-actions">
+                <a class="button button-primary" href="#projects">Explore selected builds <span aria-hidden="true">↓</span></a>
+                <a class="button button-plain" href="https://github.com/qixuan-xu" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+            <span class="scroll-index mono">Scroll / 01—04</span>
           </div>
         </div>
-      </div>`;
-  }catch(e){
-    console.error(e);
-    document.getElementById('about-text').textContent='API load failed.';
-  }
-}
-*/
 
-  
-// load data with nothing
-function loadData(){
-  const d = {
-    stats:{projects:4, files:12, notes:6},
-    about:{text:"I build systems across AI, computer vision, and server infrastructure. I also know many programming languages, such as Java, Python, C++, JavaScript (still learning), and Scratch. Currently working on a code library for FTC robotics. It uses Java as the coding language. It allows the robot to only use simple commands in the main program, making moving, programming the robot, and my life in 9th grade easier."},
-    projects:[
-      {name:"Road Detection AI", status:"YOLO + video processing, still developing"},
-      {name:"Server Infrastructure", status:"Self-hosted APIs & services, which is running at Google Cloud"},
-      {name:"FTC code lib 2026", status:"Still developing"},
-      {name:"Personal Dev Platform", status:"Not finished yet, still developing, which is this site"}
-    ],
-    contact:{
-      email:"qixuanxu@hotmail.com",
-      github:"https://github.com/qixuan-xu"
-    }
-  };
-
-  countUp(document.getElementById('stat-projects'), d.stats.projects);
-  countUp(document.getElementById('stat-files'), d.stats.files);
-  countUp(document.getElementById('stat-notes'), d.stats.notes);
-
-  const about = document.getElementById('about-text');
-  about.classList.remove('loading');
-  about.textContent = d.about.text;
-
-  const pl = document.getElementById('project-list');
-  pl.innerHTML = d.projects.map(p => `
-    <div class="proj-item">
-      <div class="proj-dot"></div>
-      <div>
-        <div class="proj-name">${p.name}</div>
-        <div class="proj-status">${p.status}</div>
+        <aside class="instrument reveal reveal-delay" aria-label="A system map showing camera input, compute, and motion output">
+          <div class="instrument-head">
+            <span>System map / QX-01</span>
+            <span class="loop-state">Loop active</span>
+          </div>
+          <div class="system-map">
+            <div class="system-node">
+              <span class="node-no">01</span>
+              <div>
+                <div class="node-name">Sense</div>
+                <div class="node-sub">Camera / sensor input</div>
+              </div>
+              <span class="node-signal" aria-hidden="true">◉</span>
+            </div>
+            <div class="flow-line" aria-hidden="true"></div>
+            <div class="system-node">
+              <span class="node-no">02</span>
+              <div>
+                <div class="node-name">Decide</div>
+                <div class="node-sub">Model / control logic</div>
+              </div>
+              <span class="node-signal" aria-hidden="true">ƒx</span>
+            </div>
+            <div class="flow-line" aria-hidden="true"></div>
+            <div class="system-node">
+              <span class="node-no">03</span>
+              <div>
+                <div class="node-name">Move</div>
+                <div class="node-sub">Motor / real-world output</div>
+              </div>
+              <span class="node-signal" aria-hidden="true">↗</span>
+            </div>
+          </div>
+          <div class="instrument-foot">
+            <span>Focus <strong>physical systems</strong></span>
+            <span>Mode <strong>learn by building</strong></span>
+          </div>
+        </aside>
       </div>
-    </div>`).join('');
+    </section>
 
-  const cw = document.getElementById('contact-wrap');
-  cw.innerHTML = `
-    <div class="contact-row">
-      <div class="contact-icon">✉</div>
-      <div>
-        <div class="contact-label">Email</div>
-        <div class="contact-val">${d.contact.email}</div>
-      </div>
+    <div class="domain-strip">
+      <ul class="domain-list shell" aria-label="Areas of focus">
+        <li>Computer vision</li>
+        <li>Embedded systems</li>
+        <li>FPV / aviation</li>
+        <li>Game development</li>
+      </ul>
     </div>
-    <div class="contact-row">
-      <div class="contact-icon">&lt;/&gt;</div>
-      <div>
-        <div class="contact-label">GitHub</div>
-        <div class="contact-val">
-          <a href="${d.contact.github}" target="_blank">View Profile →</a>
+
+    <section class="work-section" id="projects" aria-labelledby="projects-title">
+      <div class="shell">
+        <div class="section-intro reveal">
+          <div class="section-label">01 / Selected builds</div>
+          <h2 class="section-title" id="projects-title">Projects built to <span class="outline">leave the screen.</span></h2>
+        </div>
+
+        <article class="featured-project reveal">
+          <div class="featured-copy">
+            <div class="project-meta">
+              <span>Featured / Vision</span>
+              <span class="status">Prototype</span>
+            </div>
+            <h3>YOLO Vision System</h3>
+            <p class="project-desc">A prototype pipeline that turns road footage into structured detections with Python, OpenCV, and YOLO — finding useful signal in raw camera frames.</p>
+            <div class="project-tags" aria-label="Technologies used">
+              <span class="project-tag">Python</span>
+              <span class="project-tag">OpenCV</span>
+              <span class="project-tag">YOLO</span>
+              <span class="project-tag">Video processing</span>
+            </div>
+            <a class="text-link" href="https://github.com/qixuan-xu/yolo-vision-system" target="_blank" rel="noopener">View repository <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="vision-visual" aria-hidden="true">
+            <svg class="vision-svg" viewBox="0 0 640 420" role="img">
+              <defs>
+                <pattern id="cv-grid" width="32" height="32" patternUnits="userSpaceOnUse">
+                  <path d="M32 0H0V32" fill="none" stroke="#63719f" stroke-opacity=".17" stroke-width="1"/>
+                </pattern>
+                <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#222b47"/>
+                  <stop offset="1" stop-color="#101526"/>
+                </linearGradient>
+              </defs>
+              <rect width="640" height="420" rx="2" fill="#0c1022"/>
+              <rect width="640" height="420" fill="url(#cv-grid)"/>
+              <path d="M0 215L172 164L317 184L468 155L640 203V420H0Z" fill="#17223b"/>
+              <path d="M208 420L292 192H356L472 420Z" fill="url(#road)" stroke="#53618d" stroke-opacity=".5"/>
+              <path d="M290 420L316 201M390 420L335 201" stroke="#d7ff58" stroke-width="3" stroke-dasharray="14 12" opacity=".8"/>
+              <path d="M0 215H640" stroke="#6d79a6" stroke-dasharray="4 8" opacity=".45"/>
+              <g fill="none" stroke="#ff6a3d" stroke-width="2">
+                <rect x="370" y="190" width="95" height="74"/>
+                <path d="M370 202H444"/>
+                <rect x="108" y="177" width="68" height="52"/>
+                <path d="M108 189H165"/>
+              </g>
+              <g fill="#ff6a3d" font-family="IBM Plex Mono, monospace" font-size="10">
+                <text x="376" y="200">CAR .94</text>
+                <text x="114" y="187">SIGN .87</text>
+              </g>
+              <g fill="none" stroke="#6e8dff" stroke-width="1.5" opacity=".95">
+                <circle cx="320" cy="210" r="34"/>
+                <path d="M270 210H370M320 160V260"/>
+              </g>
+              <g fill="#95a6de" font-family="IBM Plex Mono, monospace" font-size="9">
+                <text x="20" y="26">MODEL / YOLO-VISION</text>
+                <text x="512" y="26">FPS 28.4</text>
+                <text x="20" y="400">LANE CONF / .91</text>
+                <text x="501" y="400">FRAME 0824</text>
+              </g>
+              <path d="M14 48V14H48M592 14H626V48M626 372V406H592M48 406H14V372" fill="none" stroke="#d7ff58" stroke-width="2"/>
+            </svg>
+          </div>
+        </article>
+
+        <div class="project-grid">
+          <article class="project-card reveal">
+            <div class="card-graphic" aria-hidden="true">
+              <svg viewBox="0 0 360 150">
+                <g fill="none" stroke="#ff6a3d" stroke-width="2">
+                  <circle cx="92" cy="38" r="24"/><circle cx="268" cy="38" r="24"/>
+                  <circle cx="92" cy="112" r="24"/><circle cx="268" cy="112" r="24"/>
+                  <path d="M109 49L159 66M251 49L201 66M109 101L159 84M251 101L201 84"/>
+                  <rect x="154" y="54" width="52" height="42" rx="4"/>
+                </g>
+                <path d="M170 60H190L198 75L190 90H170L162 75Z" fill="#d7ff58" opacity=".9"/>
+                <g stroke="#596057" stroke-dasharray="3 6"><path d="M0 75H134M226 75H360"/></g>
+                <text x="12" y="18" fill="#7d837a" font-family="IBM Plex Mono" font-size="9">AIRFRAME / 3.5 IN</text>
+                <text x="269" y="142" fill="#7d837a" font-family="IBM Plex Mono" font-size="9">BENCH → AIR</text>
+              </svg>
+            </div>
+            <div class="card-body">
+              <div class="project-meta">
+                <span>02 / Flight</span>
+                <span class="status status-progress">In progress</span>
+              </div>
+              <h3>FPV Drone Build</h3>
+              <p class="project-desc">A 3.5-inch cinewhoop built, wired, tuned, and tested — taking Betaflight settings and hardware from bench checks to stable flight.</p>
+              <div class="project-tags">
+                <span class="project-tag">FPV</span>
+                <span class="project-tag">Betaflight</span>
+                <span class="project-tag">Electronics</span>
+              </div>
+              <div class="card-note">Build log coming soon</div>
+            </div>
+          </article>
+
+          <article class="project-card reveal reveal-delay">
+            <div class="card-graphic" aria-hidden="true">
+              <svg viewBox="0 0 360 150">
+                <g stroke="#667064" stroke-width="2">
+                  <path d="M30 20H116V52H138M30 130H94V102H138M330 20H256V52H222M330 130H272V102H222" fill="none"/>
+                </g>
+                <g fill="#d7ff58"><circle cx="30" cy="20" r="4"/><circle cx="30" cy="130" r="4"/><circle cx="330" cy="20" r="4"/><circle cx="330" cy="130" r="4"/></g>
+                <rect x="136" y="31" width="88" height="88" fill="none" stroke="#6e8dff" stroke-width="2"/>
+                <rect x="150" y="45" width="60" height="60" fill="#1d2545" stroke="#6e8dff"/>
+                <g stroke="#6e8dff"><path d="M146 23V31M160 23V31M174 23V31M188 23V31M202 23V31M216 23V31M146 119V127M160 119V127M174 119V127M188 119V127M202 119V127M216 119V127"/></g>
+                <text x="161" y="70" fill="#aab8f1" font-family="IBM Plex Mono" font-size="10">STM32</text>
+                <text x="160" y="87" fill="#7786c1" font-family="IBM Plex Mono" font-size="8">BARE METAL</text>
+              </svg>
+            </div>
+            <div class="card-body">
+              <div class="project-meta">
+                <span>03 / Embedded</span>
+                <span class="status">Active</span>
+              </div>
+              <h3>STM32 Projects</h3>
+              <p class="project-desc">Bare-metal experiments that make sensors and peripherals behave — learning what really happens below the abstraction layer.</p>
+              <div class="project-tags">
+                <span class="project-tag">STM32</span>
+                <span class="project-tag">Embedded C</span>
+                <span class="project-tag">Sensors</span>
+              </div>
+              <a class="text-link card-note" href="https://github.com/qixuan-xu" target="_blank" rel="noopener">GitHub profile <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+
+          <article class="project-card reveal">
+            <div class="card-graphic" aria-hidden="true">
+              <svg viewBox="0 0 360 150">
+                <rect x="48" y="20" width="264" height="110" fill="#10152a" stroke="#465174"/>
+                <g stroke="#242d4a"><path d="M48 47H312M48 74H312M48 101H312M92 20V130M136 20V130M180 20V130M224 20V130M268 20V130"/></g>
+                <path d="M72 111L121 70L158 91L207 48L288 96" fill="none" stroke="#ff6a3d" stroke-width="3"/>
+                <circle cx="121" cy="70" r="5" fill="#d7ff58"/>
+                <circle cx="207" cy="48" r="5" fill="#6e8dff"/>
+                <rect x="262" y="82" width="22" height="22" fill="none" stroke="#ff6a3d" stroke-width="2"/>
+                <text x="58" y="38" fill="#69759e" font-family="IBM Plex Mono" font-size="8">GAME LOOP / LIVE</text>
+              </svg>
+            </div>
+            <div class="card-body">
+              <div class="project-meta">
+                <span>04 / Game dev</span>
+                <span class="status status-progress">In progress</span>
+              </div>
+              <h3>Godot Game</h3>
+              <p class="project-desc">A top-down shooter focused on the gameplay loop, enemy behavior, and the small details that make movement feel right.</p>
+              <div class="project-tags">
+                <span class="project-tag">Godot</span>
+                <span class="project-tag">GDScript</span>
+                <span class="project-tag">Game feel</span>
+              </div>
+              <div class="card-note">Playable build in development</div>
+            </div>
+          </article>
+        </div>
+
+        <div class="next-bar reveal" aria-label="Next planned project">
+          <span class="next-label">Now / Next 05</span>
+          <span class="next-title">Study Organizer App</span>
+          <span class="next-copy">A Swift homework and schedule manager for a less chaotic school week. <span class="status status-planned">Planned</span></span>
         </div>
       </div>
-    </div>`;
-}
+    </section>
 
+    <section class="method-section" aria-labelledby="method-title">
+      <div class="shell">
+        <div class="method-head reveal">
+          <div class="section-label">02 / Process</div>
+          <h2 class="section-title" id="method-title">One loop, three ways of thinking.</h2>
+        </div>
+        <div class="method-grid">
+          <article class="method-item reveal">
+            <span class="method-no">INPUT / 01</span>
+            <h3>Sense</h3>
+            <p>Start with the messy world: camera frames, sensors, radio links, and the signal underneath the noise.</p>
+          </article>
+          <article class="method-item reveal reveal-delay">
+            <span class="method-no">LOGIC / 02</span>
+            <h3>Decide</h3>
+            <p>Turn inputs into useful choices with models, firmware, control logic, and repeated testing.</p>
+          </article>
+          <article class="method-item reveal">
+            <span class="method-no">OUTPUT / 03</span>
+            <h3>Act</h3>
+            <p>Close the loop in the physical world — on a motor, in a flight controller, or inside an interaction.</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-loadData();
+    <section class="about-section shell" id="about" aria-labelledby="about-title">
+      <div class="about-grid">
+        <h2 class="about-statement reveal" id="about-title">I build to understand <span>how things really work.</span></h2>
+        <div class="about-copy reveal reveal-delay">
+          <div class="section-label">03 / About</div>
+          <p>I'm most interested in the moment software meets physics: when a control loop steadies a drone, a sensor becomes useful data, or a vision model finds structure in a frame.</p>
+          <p>This site is my field log for the things I'm learning, breaking, rebuilding, and eventually getting to work.</p>
+          <div class="stack-list" aria-label="Tools and technologies">
+            <span class="stack-item">Python / OpenCV</span>
+            <span class="stack-item">Embedded C</span>
+            <span class="stack-item">Betaflight / FPV</span>
+            <span class="stack-item">Godot / GDScript</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
-</script>
+    <section class="contact-section shell" aria-labelledby="contact-title">
+      <div class="contact-panel reveal">
+        <div>
+          <div class="contact-kicker">04 / Contact — Channel open</div>
+          <h2 id="contact-title">Have a problem that crosses hardware and software?</h2>
+        </div>
+        <a class="button contact-button" href="mailto:hi@qixuan.net">Let's talk <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner shell">
+      <div class="footer-copy">© <span id="year">2026</span> Qixuan Xu / Built with curiosity</div>
+      <div class="footer-links" aria-label="Footer links">
+        <a href="#main">Top ↑</a>
+        <a href="https://github.com/qixuan-xu" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="mailto:hi@qixuan.net">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var toggle = document.getElementById('theme-toggle');
+      var themeColor = document.getElementById('theme-color');
+
+      function syncTheme() {
+        var dark = root.dataset.theme === 'dark';
+        toggle.setAttribute('aria-pressed', String(dark));
+        toggle.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+        toggle.querySelector('.theme-icon').textContent = dark ? '☀' : '◐';
+        themeColor.setAttribute('content', dark ? '#121512' : '#f2f0e8');
+      }
+
+      toggle.addEventListener('click', function () {
+        root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+        try { localStorage.setItem('qx-theme', root.dataset.theme); } catch (error) {}
+        syncTheme();
+      });
+      syncTheme();
+
+      document.getElementById('year').textContent = String(new Date().getFullYear());
+
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var reveals = document.querySelectorAll('.reveal');
+      if (!reduceMotion && 'IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px' });
+        reveals.forEach(function (element) { observer.observe(element); });
+      } else {
+        reveals.forEach(function (element) { element.classList.add('is-visible'); });
+      }
+
+      if (!reduceMotion && window.matchMedia('(pointer: fine)').matches) {
+        document.querySelectorAll('.project-card').forEach(function (card) {
+          card.addEventListener('pointermove', function (event) {
+            var bounds = card.getBoundingClientRect();
+            card.style.setProperty('--mx', (event.clientX - bounds.left) + 'px');
+            card.style.setProperty('--my', (event.clientY - bounds.top) + 'px');
+          });
+        });
+      }
+    }());
+  </script>
 </body>
 </html>
