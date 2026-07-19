@@ -6,7 +6,6 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
   "routes": [
-    { "pattern": "admin.qixuan.net", "custom_domain": true },
     { "pattern": "api.qixuan.net", "custom_domain": true }
   ],
   "vars": {
@@ -17,7 +16,7 @@
     {
       "binding": "DB",
       "database_name": "qixuan-admin",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "f40738c5-f0f7-4319-bdad-2fc5fad753c1",
       "migrations_dir": "migrations"
     }
   ],
