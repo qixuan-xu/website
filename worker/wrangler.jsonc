@@ -6,6 +6,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
   "routes": [
+    { "pattern": "admin.qixuan.net", "custom_domain": true },
     { "pattern": "api.qixuan.net", "custom_domain": true }
   ],
   "vars": {
