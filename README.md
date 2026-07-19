@@ -1,80 +1,43 @@
-# website
+# qixuan.net
 
-Hey, Welcome to Qixuan's Personal site.
+Qixuan Xu's public portfolio and private content control panel.
 
+## Architecture
 
+| Surface | Hosting | Purpose |
+| --- | --- | --- |
+| `qixuan.net` | GitHub Pages | Public portfolio with a built-in content fallback |
+| `admin.qixuan.net` | Cloudflare Worker static assets | Private editor protected by Cloudflare Access |
+| `api.qixuan.net` | Cloudflare Worker | Public published content API |
+| Cloudflare D1 | Cloudflare | Drafts, immutable versions, publish state, and audit records |
 
+The public homepage requests `GET https://api.qixuan.net/v1/content`. If the API is slow, unavailable, or returns invalid data, the checked-in HTML remains visible instead of rendering an empty page.
 
-# My thoughts
-有点问题，回头改一下
-  
-为啥没回车啊  
-  
-Qixuan System  
-|  
-|—— Frontend（前端网站）  
-|   |  
-|   |—— qixuan.net（主站 / 展示）  
-|   |   ├── /Home（展示型首页）  
-│   │   ├── /Projects（项目）  
-│   │   ├── /Files（文件）  
-│   │   ├── /Notes（笔记）
-│   │   └── /About（关于）
-│   │
-│   └── home.qixuan.net（控制面板 / Dashboard）
-│       ├── /Stats（统计）
-│       ├── /MC Server（服务器状态）
-│       ├── /Latest Project（最新项目）
-│       ├── /Quick Links（快速入口）
-│       ├── /GitHub Activity
-│       ├── /Calendar / School
-│       └── /System Status
-│
-├── Backend（API）
-│   │
-│   └── api.qixuan.net（Cloudflare Worker）
-│       ├── /stats
-│       ├── /projects
-│       ├── /files
-│       ├── /notes
-│       ├── /about
-│       ├── /contact
-│       ├── /mc (服务器) http://map.qixuan.net （Map）https://mc.qixuan.net (Server)
-│       ├── /github
-│       └── /system
-│
-├── Storage（数据存储）
-│   │
-│   ├── Worker 内置 DB（小数据）
-│   │   ├── about
-│   │   ├── contact
-│   │   ├── stats
-│   │   └── projects
-│   │
-│   ├── Cloudflare KV（文本）
-│   │   └── notes
-│   │
-│   ├── Cloudflare R2（文件）
-│   │   └── files
-│   │
-│   └── D1 / SQLite（以后）
-│       ├── users
-│       ├── logs
-│       ├── analytics
-│       └── mc data
-│
-├── External Services（外部系统）
-│   │
-│   ├── Minecraft Server → /mc API
-│   ├── GitHub → /github API
-│   ├── Google Calendar → /calendar API
-│   ├── School → /school API
-│   └── Drone / FPV Logs → /fpv API
-│
-└── Future（以后可以加）
-    ├── Login System
-    ├── Admin Panel
-    ├── Upload Files
-    ├── Write Notes Online
-    ├── Analytics
-    └── Mobile App
+Because the public site stays on GitHub Pages, admin changes to title/description update JavaScript-capable browsers but do not rewrite the checked-in HTML used by every social preview crawler. Change fallback/OG metadata in `index.html` when crawler-visible metadata must change too.
+
+The admin application never implements its own password form and never stores an authentication token. Cloudflare Access authenticates the user, while the Worker verifies the Access JWT again before every admin request. Writes also require an exact origin, a CSRF token, schema-valid JSON, and the current draft revision.
+
+## Repository layout
+
+- `index.html` — public homepage and safe API hydration
+- `content/site.json` — initial site content and local fallback source
+- `content/site.schema.json` — strict content contract
+- `admin/` — responsive admin application
+- `worker/` — Worker API, D1 migration, security checks, and tests
+- `home/` — older personal dashboard experiment; separate from the admin application
+
+`_config.yml` excludes `admin/`, `worker/`, and the source content model from the GitHub Pages artifact. The admin assets are published only through the Access-protected Worker hostname.
+
+## Local verification
+
+```sh
+cd worker
+npm install
+npx wrangler d1 migrations apply qixuan-admin --local
+npm run check
+npx wrangler deploy --dry-run
+```
+
+For the admin UI demo, start the Worker locally and open `http://localhost:8787/?demo=1`. Demo mode is accepted only on `localhost` or `127.0.0.1` and does not enable production authentication bypasses.
+
+Production setup, required secrets, API routes, and the Cloudflare Access checklist are documented in [`worker/README.md`](worker/README.md).

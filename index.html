@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -320,13 +320,14 @@
     .status-planned{color:#93a9ff}
     .featured-project h3{font-size:clamp(34px,4.6vw,62px);line-height:.98;letter-spacing:-.05em;margin-bottom:24px}
     .project-desc{color:#aeb3aa;font-size:16px;line-height:1.65;max-width:540px}
-    .project-tags{display:flex;flex-wrap:wrap;gap:7px;margin:26px 0 34px}
+    .project-tags{display:flex;flex-wrap:wrap;gap:7px;margin:26px 0 34px;padding:0;list-style:none}
     .project-tag{padding:7px 9px;border:1px solid var(--hangar-line);color:#c0c4bb;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.05em;text-transform:uppercase}
     .text-link{display:inline-flex;align-items:center;gap:10px;color:var(--hangar-text);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--orange);padding-bottom:6px;transition:color .2s ease,gap .2s ease}
     .text-link:hover{color:var(--orange);gap:15px}
     .vision-visual{min-height:490px;border-left:1px solid var(--hangar-line);background:#0c1022;position:relative;display:grid;place-items:center;padding:clamp(22px,4vw,50px);overflow:hidden}
-    .vision-visual::after{content:'CV_FEED / 00:14:28';position:absolute;left:28px;bottom:20px;color:#7482ad;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em}
+    .vision-visual::after{content:attr(data-visual-label);position:absolute;left:28px;bottom:20px;color:#7482ad;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em}
     .vision-svg{width:100%;height:auto;filter:drop-shadow(0 28px 60px rgba(0,0,0,.35))}
+    .featured-preset-visual svg{width:100%;height:auto;max-height:360px;filter:drop-shadow(0 28px 60px rgba(0,0,0,.35))}
 
     .project-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
     .project-card{position:relative;border:1px solid var(--hangar-line);background:var(--hangar-soft);overflow:hidden;transition:transform .35s var(--ease),border-color .25s ease}
@@ -345,6 +346,8 @@
     .next-bar{display:grid;grid-template-columns:180px 1fr auto;align-items:center;gap:30px;margin-top:16px;padding:28px 32px;border:1px solid var(--hangar-line);background:#151814}
     .next-label{color:#8a9086;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
     .next-title{font-size:20px;font-weight:600;letter-spacing:-.025em}
+    .next-title a{color:inherit;text-decoration:none}
+    .next-title a:hover{color:var(--orange)}
     .next-copy{color:#858b81;font-size:13px;text-align:right}
 
     .method-section{padding:clamp(90px,10vw,150px) 0;border-bottom:1px solid var(--line)}
@@ -367,7 +370,7 @@
     .about-copy .section-label{margin-bottom:28px}
     .about-copy p{color:var(--muted);font-size:17px;line-height:1.75}
     .about-copy p+p{margin-top:18px}
-    .stack-list{display:grid;grid-template-columns:repeat(2,1fr);margin-top:36px;border-top:1px solid var(--line)}
+    .stack-list{display:grid;grid-template-columns:repeat(2,1fr);margin-top:36px;padding:0;border-top:1px solid var(--line);list-style:none}
     .stack-item{padding:16px 0;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase}
     .stack-item:nth-child(odd){border-right:1px solid var(--line)}
     .stack-item:nth-child(even){padding-left:18px}
@@ -590,15 +593,15 @@
             </div>
             <h3>YOLO Vision System</h3>
             <p class="project-desc">A prototype pipeline that turns road footage into structured detections with Python, OpenCV, and YOLO — finding useful signal in raw camera frames.</p>
-            <div class="project-tags" aria-label="Technologies used">
-              <span class="project-tag">Python</span>
-              <span class="project-tag">OpenCV</span>
-              <span class="project-tag">YOLO</span>
-              <span class="project-tag">Video processing</span>
-            </div>
+            <ul class="project-tags" aria-label="Technologies used">
+              <li class="project-tag">Python</li>
+              <li class="project-tag">OpenCV</li>
+              <li class="project-tag">YOLO</li>
+              <li class="project-tag">Video processing</li>
+            </ul>
             <a class="text-link" href="https://github.com/qixuan-xu/yolo-vision-system" target="_blank" rel="noopener">View repository <span aria-hidden="true">↗</span></a>
           </div>
-          <div class="vision-visual" aria-hidden="true">
+          <div class="vision-visual" data-preset-visual="vision" data-visual-label="CV_FEED / 00:14:28" aria-hidden="true">
             <svg class="vision-svg" viewBox="0 0 640 420" role="img">
               <defs>
                 <pattern id="cv-grid" width="32" height="32" patternUnits="userSpaceOnUse">
@@ -642,7 +645,7 @@
 
         <div class="project-grid">
           <article class="project-card reveal">
-            <div class="card-graphic" aria-hidden="true">
+            <div class="card-graphic" data-preset-visual="drone" aria-hidden="true">
               <svg viewBox="0 0 360 150">
                 <g fill="none" stroke="#ff6a3d" stroke-width="2">
                   <circle cx="92" cy="38" r="24"/><circle cx="268" cy="38" r="24"/>
@@ -663,17 +666,17 @@
               </div>
               <h3>FPV Drone Build</h3>
               <p class="project-desc">A 3.5-inch cinewhoop built, wired, tuned, and tested — taking Betaflight settings and hardware from bench checks to stable flight.</p>
-              <div class="project-tags">
-                <span class="project-tag">FPV</span>
-                <span class="project-tag">Betaflight</span>
-                <span class="project-tag">Electronics</span>
-              </div>
+              <ul class="project-tags">
+                <li class="project-tag">FPV</li>
+                <li class="project-tag">Betaflight</li>
+                <li class="project-tag">Electronics</li>
+              </ul>
               <div class="card-note">Build log coming soon</div>
             </div>
           </article>
 
           <article class="project-card reveal reveal-delay">
-            <div class="card-graphic" aria-hidden="true">
+            <div class="card-graphic" data-preset-visual="embedded" aria-hidden="true">
               <svg viewBox="0 0 360 150">
                 <g stroke="#667064" stroke-width="2">
                   <path d="M30 20H116V52H138M30 130H94V102H138M330 20H256V52H222M330 130H272V102H222" fill="none"/>
@@ -693,17 +696,17 @@
               </div>
               <h3>STM32 Projects</h3>
               <p class="project-desc">Bare-metal experiments that make sensors and peripherals behave — learning what really happens below the abstraction layer.</p>
-              <div class="project-tags">
-                <span class="project-tag">STM32</span>
-                <span class="project-tag">Embedded C</span>
-                <span class="project-tag">Sensors</span>
-              </div>
+              <ul class="project-tags">
+                <li class="project-tag">STM32</li>
+                <li class="project-tag">Embedded C</li>
+                <li class="project-tag">Sensors</li>
+              </ul>
               <a class="text-link card-note" href="https://github.com/qixuan-xu" target="_blank" rel="noopener">GitHub profile <span aria-hidden="true">↗</span></a>
             </div>
           </article>
 
           <article class="project-card reveal">
-            <div class="card-graphic" aria-hidden="true">
+            <div class="card-graphic" data-preset-visual="game" aria-hidden="true">
               <svg viewBox="0 0 360 150">
                 <rect x="48" y="20" width="264" height="110" fill="#10152a" stroke="#465174"/>
                 <g stroke="#242d4a"><path d="M48 47H312M48 74H312M48 101H312M92 20V130M136 20V130M180 20V130M224 20V130M268 20V130"/></g>
@@ -721,21 +724,21 @@
               </div>
               <h3>Godot Game</h3>
               <p class="project-desc">A top-down shooter focused on the gameplay loop, enemy behavior, and the small details that make movement feel right.</p>
-              <div class="project-tags">
-                <span class="project-tag">Godot</span>
-                <span class="project-tag">GDScript</span>
-                <span class="project-tag">Game feel</span>
-              </div>
+              <ul class="project-tags">
+                <li class="project-tag">Godot</li>
+                <li class="project-tag">GDScript</li>
+                <li class="project-tag">Game feel</li>
+              </ul>
               <div class="card-note">Playable build in development</div>
             </div>
           </article>
         </div>
 
-        <div class="next-bar reveal" aria-label="Next planned project">
+        <section class="next-bar reveal" aria-label="Next planned project">
           <span class="next-label">Now / Next 05</span>
           <span class="next-title">Study Organizer App</span>
           <span class="next-copy">A Swift homework and schedule manager for a less chaotic school week. <span class="status status-planned">Planned</span></span>
-        </div>
+        </section>
       </div>
     </section>
 
@@ -772,12 +775,12 @@
           <div class="section-label">03 / About</div>
           <p>I'm most interested in the moment software meets physics: when a control loop steadies a drone, a sensor becomes useful data, or a vision model finds structure in a frame.</p>
           <p>This site is my field log for the things I'm learning, breaking, rebuilding, and eventually getting to work.</p>
-          <div class="stack-list" aria-label="Tools and technologies">
-            <span class="stack-item">Python / OpenCV</span>
-            <span class="stack-item">Embedded C</span>
-            <span class="stack-item">Betaflight / FPV</span>
-            <span class="stack-item">Godot / GDScript</span>
-          </div>
+          <ul class="stack-list" aria-label="Tools and technologies">
+            <li class="stack-item">Python / OpenCV</li>
+            <li class="stack-item">Embedded C</li>
+            <li class="stack-item">Betaflight / FPV</li>
+            <li class="stack-item">Godot / GDScript</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -796,19 +799,40 @@
   <footer class="footer">
     <div class="footer-inner shell">
       <div class="footer-copy">© <span id="year">2026</span> Qixuan Xu / Built with curiosity</div>
-      <div class="footer-links" aria-label="Footer links">
+      <nav class="footer-links" aria-label="Footer links">
         <a href="#main">Top ↑</a>
         <a href="https://github.com/qixuan-xu" target="_blank" rel="noopener">GitHub ↗</a>
         <a href="mailto:hi@qixuan.net">Email</a>
-      </div>
+      </nav>
     </div>
   </footer>
 
   <script>
     (function () {
+      'use strict';
+
+      var CONTENT_ENDPOINT = 'https://api.qixuan.net/v1/content';
+      var CONTENT_TIMEOUT_MS = 4500;
+      var STATUS_VALUES = ['planned', 'prototype', 'active', 'in_progress', 'completed', 'archived'];
+      var VISUAL_KEYS = ['vision', 'drone', 'embedded', 'game'];
+      var VISUAL_LABELS = {
+        vision: 'CV_FEED / LIVE',
+        drone: 'AIRFRAME / BUILD',
+        embedded: 'MCU / SIGNAL',
+        game: 'GAME LOOP / LIVE'
+      };
       var root = document.documentElement;
       var toggle = document.getElementById('theme-toggle');
       var themeColor = document.getElementById('theme-color');
+      var presetSvgs = {};
+      var visualInstance = 0;
+      var cardTemplate = document.querySelector('.project-card').cloneNode(true);
+
+      document.querySelectorAll('[data-preset-visual]').forEach(function (visual) {
+        var key = visual.getAttribute('data-preset-visual');
+        var svg = visual.querySelector('svg');
+        if (VISUAL_KEYS.indexOf(key) !== -1 && svg) presetSvgs[key] = svg.cloneNode(true);
+      });
 
       function syncTheme() {
         var dark = root.dataset.theme === 'dark';
@@ -843,15 +867,507 @@
         reveals.forEach(function (element) { element.classList.add('is-visible'); });
       }
 
-      if (!reduceMotion && window.matchMedia('(pointer: fine)').matches) {
-        document.querySelectorAll('.project-card').forEach(function (card) {
+      function wireProjectCard(card) {
+        if (!reduceMotion && window.matchMedia('(pointer: fine)').matches) {
           card.addEventListener('pointermove', function (event) {
             var bounds = card.getBoundingClientRect();
             card.style.setProperty('--mx', (event.clientX - bounds.left) + 'px');
             card.style.setProperty('--my', (event.clientY - bounds.top) + 'px');
           });
+        }
+      }
+
+      document.querySelectorAll('.project-card').forEach(wireProjectCard);
+
+      function isRecord(value) {
+        return typeof value === 'object' && value !== null && !Array.isArray(value);
+      }
+
+      function isText(value, maxLength, allowEmpty) {
+        return typeof value === 'string' && value.length <= maxLength && (allowEmpty || value.trim().length > 0);
+      }
+
+      function isHttpsUrl(value) {
+        if (!isText(value, 2048, false)) return false;
+        try {
+          var url = new URL(value);
+          return url.protocol === 'https:' && !url.username && !url.password;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function isEmail(value) {
+        return isText(value, 254, false) && !/[\r\n]/.test(value) && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      }
+
+      function isStatus(value) {
+        return STATUS_VALUES.indexOf(value) !== -1;
+      }
+
+      function isTextArray(value, minItems, maxItems, maxLength) {
+        if (!Array.isArray(value) || value.length < minItems || value.length > maxItems) return false;
+        return value.every(function (item) { return isText(item, maxLength, false); });
+      }
+
+      function validateProject(project) {
+        if (!isRecord(project)) return false;
+        if (!isText(project.id, 64, false) || !/^[a-z0-9][a-z0-9-]{0,63}$/.test(project.id)) return false;
+        if (!isText(project.slug, 64, false) || !/^[a-z0-9][a-z0-9-]{0,63}$/.test(project.slug)) return false;
+        if (!isText(project.title, 120, false) || !isText(project.category, 120, false)) return false;
+        if (!isText(project.summary, 800, false) || !isStatus(project.status)) return false;
+        if (!isText(project.statusLabel, 120, false) || !isTextArray(project.tags, 0, 8, 32)) return false;
+        if (new Set(project.tags).size !== project.tags.length) return false;
+        if (project.link !== null) {
+          if (!isRecord(project.link) || !isText(project.link.label, 120, false) || !isHttpsUrl(project.link.url)) return false;
+        }
+        if (project.note !== null && !isText(project.note, 160, false)) return false;
+        if (typeof project.featured !== 'boolean' || typeof project.published !== 'boolean') return false;
+        if (!Number.isInteger(project.order) || project.order < 0 || project.order > 10000) return false;
+        if (!isRecord(project.visual) || project.visual.type !== 'preset') return false;
+        return VISUAL_KEYS.indexOf(project.visual.key) !== -1;
+      }
+
+      function validateContent(content) {
+        if (!isRecord(content) || content.schemaVersion !== 1) return false;
+
+        var site = content.site;
+        if (!isRecord(site) || !isText(site.name, 120, false) || !isText(site.shortMark, 4, false)) return false;
+        if (!isHttpsUrl(site.canonicalUrl) || !isText(site.title, 180, false) || !isText(site.description, 320, false)) return false;
+        if (!isEmail(site.email) || !isHttpsUrl(site.githubUrl) || !isText(site.footerText, 120, false)) return false;
+
+        var navigation = content.navigation;
+        if (!isRecord(navigation) || !isText(navigation.workLabel, 120, false) || !isText(navigation.aboutLabel, 120, false)) return false;
+        if (!isText(navigation.githubLabel, 120, false) || !isText(navigation.emailLabel, 120, false)) return false;
+
+        var hero = content.hero;
+        if (!isRecord(hero) || typeof hero.availabilityEnabled !== 'boolean' || !isText(hero.availabilityLabel, 120, false)) return false;
+        if (!isText(hero.primaryCtaLabel, 120, false) || !isText(hero.secondaryCtaLabel, 120, false) || !isText(hero.scrollLabel, 120, false)) return false;
+        if (!isRecord(hero.headline) || !isText(hero.headline.line1, 120, false) || !isText(hero.headline.line2Prefix, 120, false)) return false;
+        if (!isText(hero.headline.primaryAccent, 120, false) || !isText(hero.headline.line2Suffix, 120, true)) return false;
+        if (!isText(hero.headline.line3Prefix, 120, false) || !isText(hero.headline.secondaryAccent, 120, false) || !isText(hero.headline.line3Suffix, 120, true)) return false;
+        if (!isRecord(hero.intro) || !isText(hero.intro.lead, 120, false) || !isText(hero.intro.emphasis, 120, false) || !isText(hero.intro.tail, 800, false)) return false;
+
+        var systemMap = content.systemMap;
+        if (!isRecord(systemMap) || !isText(systemMap.label, 120, false) || !isText(systemMap.state, 120, false)) return false;
+        if (!Array.isArray(systemMap.nodes) || systemMap.nodes.length !== 3) return false;
+        if (!systemMap.nodes.every(function (node) {
+          return isRecord(node) && isText(node.name, 120, false) && isText(node.description, 120, false) && isText(node.signal, 8, false);
+        })) return false;
+        if (!isText(systemMap.focusLabel, 120, false) || !isText(systemMap.focusValue, 120, false)) return false;
+        if (!isText(systemMap.modeLabel, 120, false) || !isText(systemMap.modeValue, 120, false)) return false;
+
+        if (!isTextArray(content.domains, 4, 4, 120)) return false;
+        if (!isRecord(content.work) || !isText(content.work.sectionLabel, 120, false)) return false;
+        if (!isText(content.work.titleLead, 120, false) || !isText(content.work.titleAccent, 120, false)) return false;
+
+        if (!Array.isArray(content.projects) || content.projects.length > 24 || !content.projects.every(validateProject)) return false;
+        var ids = new Set(content.projects.map(function (project) { return project.id; }));
+        var slugs = new Set(content.projects.map(function (project) { return project.slug; }));
+        if (ids.size !== content.projects.length || slugs.size !== content.projects.length) return false;
+
+        var now = content.now;
+        if (!isRecord(now) || !isText(now.label, 120, false) || !isText(now.title, 120, false) || !isText(now.summary, 800, false)) return false;
+        if (!isStatus(now.status) || !isText(now.statusLabel, 120, false) || (now.url !== null && !isHttpsUrl(now.url))) return false;
+
+        var method = content.method;
+        if (!isRecord(method) || !isText(method.sectionLabel, 120, false) || !isText(method.title, 120, false)) return false;
+        if (!Array.isArray(method.items) || method.items.length !== 3 || !method.items.every(function (item) {
+          return isRecord(item) && isText(item.label, 120, false) && isText(item.title, 120, false) && isText(item.description, 800, false);
+        })) return false;
+
+        var about = content.about;
+        if (!isRecord(about) || !isText(about.headingLead, 120, false) || !isText(about.headingAccent, 120, false)) return false;
+        if (!isText(about.sectionLabel, 120, false) || !isTextArray(about.paragraphs, 1, 4, 800) || !isTextArray(about.skills, 1, 8, 64)) return false;
+        if (new Set(about.skills).size !== about.skills.length) return false;
+
+        var contact = content.contact;
+        return isRecord(contact) && isText(contact.kicker, 120, false) && isText(contact.heading, 240, false) && isText(contact.buttonLabel, 120, false);
+      }
+
+      function setMetaContent(selector, value) {
+        var element = document.querySelector(selector);
+        if (element) element.setAttribute('content', value);
+      }
+
+      function setHttpsHref(element, value) {
+        if (element && isHttpsUrl(value)) element.setAttribute('href', value);
+      }
+
+      function setEmailHref(element, email) {
+        if (element && isEmail(email)) element.setAttribute('href', 'mailto:' + email);
+      }
+
+      function makeArrow(arrow) {
+        var span = document.createElement('span');
+        span.setAttribute('aria-hidden', 'true');
+        span.textContent = arrow;
+        return span;
+      }
+
+      function setArrowLabel(element, label, arrow) {
+        element.replaceChildren(document.createTextNode(label + ' '), makeArrow(arrow));
+      }
+
+      function setStatus(element, status, label) {
+        element.classList.remove('status-progress', 'status-planned');
+        if (status === 'in_progress') element.classList.add('status-progress');
+        if (status === 'planned' || status === 'archived') element.classList.add('status-planned');
+        element.textContent = label;
+      }
+
+      function clonePresetSvg(key) {
+        var source = presetSvgs[key] || presetSvgs.vision;
+        var svg = source.cloneNode(true);
+        visualInstance += 1;
+        var idMap = {};
+        svg.querySelectorAll('[id]').forEach(function (element) {
+          var oldId = element.getAttribute('id');
+          var newId = 'qx-' + key + '-' + visualInstance + '-' + oldId;
+          idMap[oldId] = newId;
+          element.setAttribute('id', newId);
+        });
+        svg.querySelectorAll('*').forEach(function (element) {
+          Array.prototype.slice.call(element.attributes).forEach(function (attribute) {
+            var nextValue = attribute.value;
+            Object.keys(idMap).forEach(function (oldId) {
+              nextValue = nextValue.split('url(#' + oldId + ')').join('url(#' + idMap[oldId] + ')');
+              if (nextValue === '#' + oldId) nextValue = '#' + idMap[oldId];
+            });
+            if (nextValue !== attribute.value) element.setAttribute(attribute.name, nextValue);
+          });
+        });
+        return svg;
+      }
+
+      function makeCardVisual(key) {
+        var visual = document.createElement('div');
+        visual.className = 'card-graphic';
+        visual.setAttribute('aria-hidden', 'true');
+        visual.appendChild(clonePresetSvg(key));
+        return visual;
+      }
+
+      function makeFeaturedVisual(key) {
+        var visual = document.createElement('div');
+        visual.className = 'vision-visual featured-preset-visual';
+        visual.setAttribute('data-visual-label', VISUAL_LABELS[key]);
+        visual.setAttribute('aria-hidden', 'true');
+        var svg = clonePresetSvg(key);
+        svg.classList.add('vision-svg');
+        visual.appendChild(svg);
+        return visual;
+      }
+
+      function renderTags(container, tags) {
+        var fragment = document.createDocumentFragment();
+        tags.forEach(function (tag) {
+          var element = document.createElement('li');
+          element.className = 'project-tag';
+          element.textContent = tag;
+          fragment.appendChild(element);
+        });
+        container.replaceChildren(fragment);
+      }
+
+      function removeProjectTail(container) {
+        Array.prototype.slice.call(container.children).forEach(function (child) {
+          if (child.classList.contains('text-link') || child.classList.contains('card-note')) child.remove();
         });
       }
+
+      function renderProjectTail(container, project, featured) {
+        removeProjectTail(container);
+        if (project.link) {
+          var link = document.createElement('a');
+          link.className = featured ? 'text-link' : 'text-link card-note';
+          setHttpsHref(link, project.link.url);
+          link.setAttribute('target', '_blank');
+          link.setAttribute('rel', 'noopener');
+          setArrowLabel(link, project.link.label, '↗');
+          container.appendChild(link);
+        }
+        if (project.note) {
+          var note = document.createElement('div');
+          note.className = 'card-note';
+          note.textContent = project.note;
+          container.appendChild(note);
+        }
+      }
+
+      function fillProject(article, project, displayNumber, featured) {
+        var meta = article.querySelector('.project-meta');
+        meta.querySelector('span:first-child').textContent = featured
+          ? 'Featured / ' + project.category
+          : String(displayNumber).padStart(2, '0') + ' / ' + project.category;
+        setStatus(meta.querySelector('.status'), project.status, project.statusLabel);
+        article.querySelector('h3').textContent = project.title;
+        article.querySelector('.project-desc').textContent = project.summary;
+        renderTags(article.querySelector('.project-tags'), project.tags);
+        renderProjectTail(article.querySelector(featured ? '.featured-copy' : '.card-body'), project, featured);
+        article.setAttribute('data-project-id', project.id);
+      }
+
+      function renderProjects(projects) {
+        var published = projects.filter(function (project) { return project.published; }).slice().sort(function (left, right) {
+          return left.order - right.order || left.title.localeCompare(right.title);
+        });
+        var featuredArticle = document.querySelector('.featured-project');
+        var grid = document.querySelector('.project-grid');
+
+        if (!published.length) {
+          featuredArticle.hidden = true;
+          grid.hidden = true;
+          return;
+        }
+
+        featuredArticle.hidden = false;
+        grid.hidden = false;
+        var featuredProject = published.find(function (project) { return project.featured; }) || published[0];
+        fillProject(featuredArticle, featuredProject, 1, true);
+        var oldVisual = featuredArticle.querySelector('.vision-visual');
+        oldVisual.replaceWith(makeFeaturedVisual(featuredProject.visual.key));
+
+        var remaining = published.filter(function (project) { return project.id !== featuredProject.id; });
+        var fragment = document.createDocumentFragment();
+        remaining.forEach(function (project, index) {
+          var card = cardTemplate.cloneNode(true);
+          card.classList.toggle('reveal-delay', index % 2 === 1);
+          card.classList.add('is-visible');
+          card.querySelector('.card-graphic').replaceWith(makeCardVisual(project.visual.key));
+          fillProject(card, project, index + 2, false);
+          wireProjectCard(card);
+          fragment.appendChild(card);
+        });
+        grid.replaceChildren(fragment);
+      }
+
+      function renderSite(content) {
+        var site = content.site;
+        document.title = site.title;
+        setMetaContent('meta[name="description"]', site.description);
+        setMetaContent('meta[property="og:title"]', site.title);
+        setMetaContent('meta[property="og:description"]', site.description);
+        setMetaContent('meta[property="og:url"]', site.canonicalUrl);
+        setMetaContent('meta[name="twitter:title"]', site.title);
+        setMetaContent('meta[name="twitter:description"]', site.description);
+        setHttpsHref(document.querySelector('link[rel="canonical"]'), site.canonicalUrl);
+
+        var jsonLd = document.querySelector('script[type="application/ld+json"]');
+        if (jsonLd) {
+          jsonLd.textContent = JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Person',
+            name: site.name,
+            url: site.canonicalUrl,
+            sameAs: [site.githubUrl],
+            knowsAbout: content.domains
+          });
+        }
+
+        document.querySelector('.brand-mark').textContent = site.shortMark;
+        document.querySelector('.brand-name').textContent = site.name;
+        document.querySelector('.brand').setAttribute('aria-label', site.name + ', home');
+
+        var nav = content.navigation;
+        document.querySelector('.nav-link[href="#projects"]').textContent = nav.workLabel;
+        document.querySelector('.nav-link[href="#about"]').textContent = nav.aboutLabel;
+        var navGithub = document.querySelector('.nav-link-github');
+        navGithub.textContent = nav.githubLabel;
+        setHttpsHref(navGithub, site.githubUrl);
+        var navEmail = document.querySelector('.nav-mail');
+        navEmail.textContent = nav.emailLabel;
+        setEmailHref(navEmail, site.email);
+
+        var hero = content.hero;
+        var eyebrow = document.querySelector('.eyebrow');
+        eyebrow.hidden = !hero.availabilityEnabled;
+        eyebrow.querySelector('span:last-child').textContent = hero.availabilityLabel;
+        var headlineLines = document.querySelectorAll('#hero-title .line');
+        headlineLines[0].textContent = hero.headline.line1;
+        var primaryAccent = document.createElement('em');
+        primaryAccent.textContent = hero.headline.primaryAccent;
+        headlineLines[1].replaceChildren(
+          document.createTextNode(hero.headline.line2Prefix + ' '),
+          primaryAccent,
+          document.createTextNode(hero.headline.line2Suffix)
+        );
+        var secondaryAccent = document.createElement('span');
+        secondaryAccent.className = 'move';
+        secondaryAccent.textContent = hero.headline.secondaryAccent;
+        headlineLines[2].replaceChildren(
+          document.createTextNode(hero.headline.line3Prefix + ' '),
+          secondaryAccent,
+          document.createTextNode(hero.headline.line3Suffix)
+        );
+        var heroIntro = document.querySelector('.hero-copy p');
+        var heroStrong = document.createElement('strong');
+        heroStrong.textContent = hero.intro.emphasis;
+        heroIntro.replaceChildren(
+          document.createTextNode(hero.intro.lead + ' '),
+          heroStrong,
+          document.createTextNode(hero.intro.tail)
+        );
+        setArrowLabel(document.querySelector('.hero-actions .button-primary'), hero.primaryCtaLabel, '↓');
+        var heroGithub = document.querySelector('.hero-actions .button-plain');
+        setArrowLabel(heroGithub, hero.secondaryCtaLabel, '↗');
+        setHttpsHref(heroGithub, site.githubUrl);
+        document.querySelector('.scroll-index').textContent = hero.scrollLabel;
+
+        var systemMap = content.systemMap;
+        var instrumentHead = document.querySelectorAll('.instrument-head span');
+        instrumentHead[0].textContent = systemMap.label;
+        instrumentHead[1].textContent = systemMap.state;
+        document.querySelectorAll('.system-node').forEach(function (node, index) {
+          node.querySelector('.node-name').textContent = systemMap.nodes[index].name;
+          node.querySelector('.node-sub').textContent = systemMap.nodes[index].description;
+          node.querySelector('.node-signal').textContent = systemMap.nodes[index].signal;
+        });
+        var instrumentFoot = document.querySelectorAll('.instrument-foot span');
+        var focusStrong = document.createElement('strong');
+        focusStrong.textContent = systemMap.focusValue;
+        instrumentFoot[0].replaceChildren(document.createTextNode(systemMap.focusLabel + ' '), focusStrong);
+        var modeStrong = document.createElement('strong');
+        modeStrong.textContent = systemMap.modeValue;
+        instrumentFoot[1].replaceChildren(document.createTextNode(systemMap.modeLabel + ' '), modeStrong);
+
+        var domainFragment = document.createDocumentFragment();
+        content.domains.forEach(function (domain) {
+          var item = document.createElement('li');
+          item.textContent = domain;
+          domainFragment.appendChild(item);
+        });
+        document.querySelector('.domain-list').replaceChildren(domainFragment);
+
+        document.querySelector('.work-section .section-label').textContent = content.work.sectionLabel;
+        var workAccent = document.createElement('span');
+        workAccent.className = 'outline';
+        workAccent.textContent = content.work.titleAccent;
+        document.getElementById('projects-title').replaceChildren(
+          document.createTextNode(content.work.titleLead + ' '),
+          workAccent
+        );
+        renderProjects(content.projects);
+
+        var now = content.now;
+        document.querySelector('.next-label').textContent = now.label;
+        var nextTitle = document.querySelector('.next-title');
+        if (now.url) {
+          var nextLink = document.createElement('a');
+          nextLink.textContent = now.title;
+          setHttpsHref(nextLink, now.url);
+          nextLink.setAttribute('target', '_blank');
+          nextLink.setAttribute('rel', 'noopener');
+          nextTitle.replaceChildren(nextLink);
+        } else {
+          nextTitle.textContent = now.title;
+        }
+        var nowStatus = document.createElement('span');
+        nowStatus.className = 'status';
+        setStatus(nowStatus, now.status, now.statusLabel);
+        document.querySelector('.next-copy').replaceChildren(
+          document.createTextNode(now.summary + ' '),
+          nowStatus
+        );
+
+        var method = content.method;
+        document.querySelector('.method-head .section-label').textContent = method.sectionLabel;
+        document.getElementById('method-title').textContent = method.title;
+        document.querySelectorAll('.method-item').forEach(function (item, index) {
+          item.querySelector('.method-no').textContent = method.items[index].label;
+          item.querySelector('h3').textContent = method.items[index].title;
+          item.querySelector('p').textContent = method.items[index].description;
+        });
+
+        var about = content.about;
+        var aboutAccent = document.createElement('span');
+        aboutAccent.textContent = about.headingAccent;
+        document.getElementById('about-title').replaceChildren(
+          document.createTextNode(about.headingLead + ' '),
+          aboutAccent
+        );
+        var aboutCopy = document.querySelector('.about-copy');
+        aboutCopy.querySelector('.section-label').textContent = about.sectionLabel;
+        aboutCopy.querySelectorAll('p').forEach(function (paragraph) { paragraph.remove(); });
+        var stackList = aboutCopy.querySelector('.stack-list');
+        about.paragraphs.forEach(function (paragraphText) {
+          var paragraph = document.createElement('p');
+          paragraph.textContent = paragraphText;
+          aboutCopy.insertBefore(paragraph, stackList);
+        });
+        var skillFragment = document.createDocumentFragment();
+        about.skills.forEach(function (skill) {
+          var item = document.createElement('li');
+          item.className = 'stack-item';
+          item.textContent = skill;
+          skillFragment.appendChild(item);
+        });
+        stackList.replaceChildren(skillFragment);
+
+        document.querySelector('.contact-kicker').textContent = content.contact.kicker;
+        document.getElementById('contact-title').textContent = content.contact.heading;
+        var contactButton = document.querySelector('.contact-button');
+        setArrowLabel(contactButton, content.contact.buttonLabel, '↗');
+        setEmailHref(contactButton, site.email);
+
+        var footerCopy = document.querySelector('.footer-copy');
+        var year = document.createElement('span');
+        year.id = 'year';
+        year.textContent = String(new Date().getFullYear());
+        footerCopy.replaceChildren(
+          document.createTextNode('© '),
+          year,
+          document.createTextNode(' ' + site.name + ' / ' + site.footerText)
+        );
+        var footerLinks = document.querySelectorAll('.footer-links a');
+        setHttpsHref(footerLinks[1], site.githubUrl);
+        setEmailHref(footerLinks[2], site.email);
+      }
+
+      function extractContent(payload) {
+        if (!isRecord(payload)) return null;
+        if (isRecord(payload.data)) return payload.data;
+        if (isRecord(payload.content)) return payload.content;
+        return null;
+      }
+
+      function hydratePublishedContent() {
+        root.dataset.contentSource = 'fallback';
+        var controller = typeof AbortController === 'function' ? new AbortController() : null;
+        var timeout = controller ? window.setTimeout(function () { controller.abort(); }, CONTENT_TIMEOUT_MS) : null;
+        var options = {
+          method: 'GET',
+          mode: 'cors',
+          credentials: 'omit',
+          headers: { Accept: 'application/json' }
+        };
+        if (controller) options.signal = controller.signal;
+
+        fetch(CONTENT_ENDPOINT, options)
+          .then(function (response) {
+            var contentLength = Number(response.headers.get('content-length'));
+            if (!response.ok || (Number.isFinite(contentLength) && contentLength > 262144)) throw new Error('Published content unavailable');
+            return response.text();
+          })
+          .then(function (responseText) {
+            if (new TextEncoder().encode(responseText).byteLength > 262144) throw new Error('Published content is too large');
+            return JSON.parse(responseText);
+          })
+          .then(function (payload) {
+            var content = extractContent(payload);
+            if (!validateContent(content)) throw new Error('Published content failed validation');
+            renderSite(content);
+            root.dataset.contentSource = 'api';
+          })
+          .catch(function () {
+            root.dataset.contentSource = 'fallback';
+          })
+          .then(function () {
+            if (timeout !== null) window.clearTimeout(timeout);
+          });
+      }
+
+      hydratePublishedContent();
     }());
   </script>
 </body>

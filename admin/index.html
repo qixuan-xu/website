@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ece9df">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="same-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'self'; object-src 'none'">
+  <title>Site Control / Qixuan</title>
+  <link rel="icon" href="./favicon.png">
+  <link rel="stylesheet" href="./admin.css">
+</head>
+<body>
+  <a class="skip-link" href="#admin-main">Skip to workspace</a>
+
+  <section class="session-gate" id="session-gate" aria-labelledby="gate-title">
+    <div class="gate-grid" aria-hidden="true"></div>
+    <div class="gate-card">
+      <div class="gate-mark"><span>QX</span><i></i></div>
+      <p class="eyebrow" id="gate-kicker">Access check / 00</p>
+      <h1 id="gate-title">Opening site control.</h1>
+      <p class="gate-copy" id="gate-copy">Checking your secure session and loading the latest draft.</p>
+      <div class="signal-line" id="gate-signal" aria-hidden="true"><span></span></div>
+      <div class="gate-actions" id="gate-actions" hidden>
+        <button class="button button-primary" id="sign-in-button" type="button">Continue with Access <span aria-hidden="true">&#8599;</span></button>
+        <button class="button button-secondary" id="retry-session-button" type="button">Retry connection</button>
+      </div>
+      <p class="microcopy">Authentication is handled by Cloudflare Access. This page never stores your login token.</p>
+    </div>
+  </section>
+
+  <div class="app-shell" id="admin-app" hidden>
+    <header class="topbar">
+      <a class="brand" href="#dashboard" aria-label="Site Control dashboard">
+        <span class="brand-mark">QX</span>
+        <span><b>Site Control</b><small>qixuan.net / admin</small></span>
+      </a>
+
+      <div class="topbar-status" aria-live="polite">
+        <span class="status-light" id="connection-light"></span>
+        <span id="connection-label">Connected</span>
+        <span class="status-divider" aria-hidden="true"></span>
+        <span id="revision-label">Draft r0</span>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="button button-quiet" id="preview-button" type="button"><span aria-hidden="true">&#9633;</span> Preview</button>
+        <button class="button button-secondary" id="save-button" type="button">Save draft</button>
+        <button class="button button-primary" id="publish-button" type="button">Publish <span aria-hidden="true">&#8599;</span></button>
+        <div class="account-block">
+          <button class="account-button" id="account-button" type="button" aria-expanded="false" aria-controls="account-menu">
+            <span class="account-avatar" id="account-avatar">Q</span>
+            <span class="account-copy"><b id="account-name">Qixuan</b><small id="account-email">Signed in</small></span>
+            <span aria-hidden="true">&#8964;</span>
+          </button>
+          <div class="account-menu" id="account-menu" hidden>
+            <button type="button" id="logout-button">Sign out of Access</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <aside class="sidebar" aria-label="Admin navigation">
+      <nav class="main-nav">
+        <button class="nav-item is-active" type="button" data-view="dashboard" aria-current="page">
+          <span class="nav-index">01</span><span>Dashboard</span><i></i>
+        </button>
+        <button class="nav-item" type="button" data-view="homepage">
+          <span class="nav-index">02</span><span>Homepage</span><i></i>
+        </button>
+        <button class="nav-item" type="button" data-view="projects">
+          <span class="nav-index">03</span><span>Projects</span><i></i>
+        </button>
+        <button class="nav-item" type="button" data-view="history">
+          <span class="nav-index">04</span><span>Versions</span><i></i>
+        </button>
+      </nav>
+
+      <div class="sidebar-module">
+        <p class="module-label">Deployment line</p>
+        <div class="deployment-route" aria-hidden="true">
+          <span>Draft</span><i></i><span>D1 / API</span><i></i><span>Live</span>
+        </div>
+        <dl class="mini-stats">
+          <div><dt>Local state</dt><dd id="sidebar-local-state">Clean</dd></div>
+          <div><dt>Published</dt><dd id="sidebar-published-revision">Not yet</dd></div>
+          <div><dt>Last sync</dt><dd id="sidebar-last-sync">Just now</dd></div>
+        </dl>
+      </div>
+
+      <a class="site-link" href="https://qixuan.net/" target="_blank" rel="noopener">Open qixuan.net <span aria-hidden="true">&#8599;</span></a>
+    </aside>
+
+    <main class="workspace" id="admin-main" tabindex="-1">
+      <section class="notice notice-conflict" id="conflict-banner" hidden aria-labelledby="conflict-title">
+        <div>
+          <p class="eyebrow">Revision conflict</p>
+          <h2 id="conflict-title">A newer draft exists on the server.</h2>
+          <p>Your edits are still safe on this device. Reload the remote draft, or export your local copy before deciding what to keep.</p>
+        </div>
+        <div class="notice-actions">
+          <button class="button button-secondary" id="download-conflict-button" type="button">Export local copy</button>
+          <button class="button button-primary" id="reload-conflict-button" type="button">Load remote draft</button>
+        </div>
+      </section>
+
+      <section class="notice notice-recovery" id="recovery-banner" hidden aria-labelledby="recovery-title">
+        <div>
+          <p class="eyebrow">Local recovery</p>
+          <h2 id="recovery-title">Unsaved edits were found on this device.</h2>
+          <p id="recovery-copy">They have not replaced the server draft.</p>
+        </div>
+        <div class="notice-actions">
+          <button class="button button-secondary" id="discard-recovery-button" type="button">Discard</button>
+          <button class="button button-primary" id="restore-recovery-button" type="button">Restore edits</button>
+        </div>
+      </section>
+
+      <section class="notice notice-error" id="error-banner" hidden aria-labelledby="error-title">
+        <div>
+          <p class="eyebrow">Request failed</p>
+          <h2 id="error-title">The control line is unavailable.</h2>
+          <p id="error-copy">Your current edits remain on this device.</p>
+          <p class="request-id" id="error-request-id"></p>
+        </div>
+        <button class="button button-secondary" id="dismiss-error-button" type="button">Dismiss</button>
+      </section>
+
+      <section class="view is-active" id="view-dashboard" data-view-panel="dashboard" aria-labelledby="dashboard-title">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">01 / Control overview</p>
+            <h1 id="dashboard-title">The site, at a glance.</h1>
+            <p class="page-intro">Review what is live, finish the current draft, and publish when the signal is clean.</p>
+          </div>
+          <div class="page-stamp"><span>Site health</span><b id="dashboard-health">Ready</b><i id="dashboard-health-light"></i></div>
+        </header>
+
+        <div class="metric-grid">
+          <article class="metric metric-accent">
+            <p>Draft revision</p><strong id="metric-revision">r0</strong><span id="metric-draft-state">Synced</span>
+          </article>
+          <article class="metric">
+            <p>Projects</p><strong id="metric-projects">0</strong><span id="metric-published-projects">0 published</span>
+          </article>
+          <article class="metric">
+            <p>Featured build</p><strong class="metric-text" id="metric-featured">Not set</strong><span>Homepage lead</span>
+          </article>
+          <article class="metric">
+            <p>Last published</p><strong class="metric-text" id="metric-published">Not yet</strong><span id="metric-published-detail">Draft only</span>
+          </article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="panel readiness-panel">
+            <header class="panel-head"><div><p class="eyebrow">Preflight / Checklist</p><h2>Ready to publish?</h2></div><span id="readiness-score">0/5</span></header>
+            <ul class="checklist" id="readiness-list"></ul>
+            <div class="panel-actions">
+              <button class="text-button" type="button" data-go="homepage">Review homepage <span aria-hidden="true">&#8594;</span></button>
+              <button class="text-button" type="button" data-go="projects">Review projects <span aria-hidden="true">&#8594;</span></button>
+            </div>
+          </article>
+
+          <article class="panel activity-panel">
+            <header class="panel-head"><div><p class="eyebrow">Recent / Activity</p><h2>Version log</h2></div><button class="text-button" type="button" data-go="history">View all</button></header>
+            <ol class="activity-list" id="dashboard-activity"></ol>
+            <div class="empty-state compact" id="dashboard-activity-empty" hidden>
+              <span aria-hidden="true">&#8987;</span><p>Versions will appear after the first publish.</p>
+            </div>
+          </article>
+        </div>
+
+        <article class="panel project-line-panel">
+          <header class="panel-head"><div><p class="eyebrow">Project line / Order</p><h2>Homepage sequence</h2></div><button class="button button-secondary button-small" type="button" id="dashboard-add-project">Add project</button></header>
+          <div class="project-line" id="dashboard-project-line"></div>
+        </article>
+      </section>
+
+      <section class="view" id="view-homepage" data-view-panel="homepage" aria-labelledby="homepage-title" hidden>
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">02 / Homepage copy</p>
+            <h1 id="homepage-title">Tune the public signal.</h1>
+            <p class="page-intro">Edit the words and links that frame your work. Plain text only; formatting stays consistent with the site.</p>
+          </div>
+          <div class="page-stamp"><span>Character checks</span><b>Live</b><i></i></div>
+        </header>
+
+        <form id="homepage-form" novalidate>
+          <fieldset class="form-panel">
+            <legend><span>01</span><b>Hero</b><small>First screen</small></legend>
+            <div class="form-grid form-grid-two">
+              <label class="field"><span>Availability note</span><input id="hero-availability" name="hero.availabilityLabel" type="text" maxlength="120" autocomplete="off"><small>Example: Open to internships &amp; collaboration.</small></label>
+              <label class="toggle-label field-toggle"><span>Show availability</span><input id="hero-availability-enabled" name="hero.availabilityEnabled" type="checkbox"><span class="toggle-ui" aria-hidden="true"></span></label>
+              <label class="field field-wide"><span>Headline / line one</span><input id="hero-line-one" name="hero.headline.line1" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Line two prefix</span><input id="hero-line-two-prefix" name="hero.headline.line2Prefix" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Primary accent</span><input id="hero-primary-accent" name="hero.headline.primaryAccent" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field field-wide"><span>Line two suffix</span><input id="hero-line-two-suffix" name="hero.headline.line2Suffix" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Line three prefix</span><input id="hero-line-three-prefix" name="hero.headline.line3Prefix" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Secondary accent</span><input id="hero-secondary-accent" name="hero.headline.secondaryAccent" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field field-wide"><span>Line three suffix</span><input id="hero-line-three-suffix" name="hero.headline.line3Suffix" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Intro lead</span><input id="hero-intro-lead" name="hero.intro.lead" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Intro emphasis</span><input id="hero-intro-emphasis" name="hero.intro.emphasis" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field field-wide"><span>Introduction</span><textarea id="hero-intro-tail" name="hero.intro.tail" rows="4" maxlength="800"></textarea><small><span data-count-for="hero-intro-tail">0</span>/800</small></label>
+              <label class="field"><span>Primary action label</span><input id="hero-primary-label" name="hero.primaryCtaLabel" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Secondary action label</span><input id="hero-secondary-label" name="hero.secondaryCtaLabel" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field field-wide"><span>Scroll label</span><input id="hero-scroll-label" name="hero.scrollLabel" type="text" maxlength="120" autocomplete="off"></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-panel">
+            <legend><span>02</span><b>Focus areas</b><small>Four signals</small></legend>
+            <p class="fieldset-copy">Exactly four compact labels appear in the capability strip below the hero.</p>
+            <div class="repeat-list" id="focus-list"></div>
+          </fieldset>
+
+          <fieldset class="form-panel">
+            <legend><span>03</span><b>System map</b><small>Hero instrument</small></legend>
+            <div class="form-grid form-grid-two">
+              <label class="field"><span>Instrument label</span><input id="system-map-label" name="systemMap.label" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>System state</span><input id="system-map-state" name="systemMap.state" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Focus label</span><input id="system-focus-label" name="systemMap.focusLabel" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Focus value</span><input id="system-focus-value" name="systemMap.focusValue" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Mode label</span><input id="system-mode-label" name="systemMap.modeLabel" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Mode value</span><input id="system-mode-value" name="systemMap.modeValue" type="text" maxlength="120" autocomplete="off"></label>
+            </div>
+            <div class="process-editor system-node-editor">
+              <section class="process-card"><span class="process-number">NODE / 01</span><label><span>Name</span><input name="systemMap.nodes.0.name" type="text" maxlength="120"></label><label><span>Description</span><textarea name="systemMap.nodes.0.description" rows="3" maxlength="120"></textarea></label><label><span>Signal</span><input name="systemMap.nodes.0.signal" type="text" maxlength="8"></label></section>
+              <section class="process-card"><span class="process-number">NODE / 02</span><label><span>Name</span><input name="systemMap.nodes.1.name" type="text" maxlength="120"></label><label><span>Description</span><textarea name="systemMap.nodes.1.description" rows="3" maxlength="120"></textarea></label><label><span>Signal</span><input name="systemMap.nodes.1.signal" type="text" maxlength="8"></label></section>
+              <section class="process-card"><span class="process-number">NODE / 03</span><label><span>Name</span><input name="systemMap.nodes.2.name" type="text" maxlength="120"></label><label><span>Description</span><textarea name="systemMap.nodes.2.description" rows="3" maxlength="120"></textarea></label><label><span>Signal</span><input name="systemMap.nodes.2.signal" type="text" maxlength="8"></label></section>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-panel">
+            <legend><span>04</span><b>Projects section</b><small>Section heading</small></legend>
+            <div class="form-grid form-grid-two">
+              <label class="field"><span>Section label</span><input id="projects-section-label" name="work.sectionLabel" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Highlighted phrase</span><input id="projects-title-accent" name="work.titleAccent" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field field-wide"><span>Heading lead</span><input id="projects-title-lead" name="work.titleLead" type="text" maxlength="120" autocomplete="off"></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-panel">
+            <legend><span>05</span><b>Build loop</b><small>Process</small></legend>
+            <div class="form-grid form-grid-two process-heading-fields">
+              <label class="field"><span>Section label</span><input id="method-section-label" name="method.sectionLabel" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Heading</span><input id="method-title" name="method.title" type="text" maxlength="120" autocomplete="off"></label>
+            </div>
+            <div class="process-editor" id="process-list"></div>
+          </fieldset>
+
+          <fieldset class="form-panel">
+            <legend><span>06</span><b>Now / next</b><small>Planned build</small></legend>
+            <div class="form-grid form-grid-two">
+              <label class="field"><span>Strip label</span><input id="now-label" name="now.label" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Project title</span><input id="now-title" name="now.title" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field field-wide"><span>Summary</span><textarea id="now-summary" name="now.summary" rows="3" maxlength="800"></textarea><small><span data-count-for="now-summary">0</span>/800</small></label>
+              <label class="field"><span>Status code</span><select id="now-status" name="now.status"><option value="planned">Planned</option><option value="prototype">Prototype</option><option value="active">Active</option><option value="in_progress">In progress</option><option value="completed">Completed</option><option value="archived">Archived</option></select></label>
+              <label class="field"><span>Status label</span><input id="now-status-label" name="now.statusLabel" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field field-wide"><span>Optional URL</span><input id="now-url" name="now.url" type="url" maxlength="500" autocomplete="url" placeholder="https://github.com/..."><small>Leave blank when the build has no public page yet.</small></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-panel">
+            <legend><span>07</span><b>About</b><small>Point of view</small></legend>
+            <div class="form-grid form-grid-two">
+              <label class="field"><span>Section label</span><input id="about-section-label" name="about.sectionLabel" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Heading lead</span><input id="about-heading-lead" name="about.headingLead" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field field-wide"><span>Highlighted phrase</span><input id="about-heading-accent" name="about.headingAccent" type="text" maxlength="120" autocomplete="off"></label>
+            </div>
+            <div class="subsection-head"><div><b>About paragraphs</b><small>One to four paragraphs</small></div></div>
+            <div class="paragraph-list" id="about-paragraph-list"></div>
+            <button class="button button-secondary button-small" id="add-about-paragraph-button" type="button">Add paragraph</button>
+            <div class="subsection-head"><div><b>Tool stack</b><small>Shown as compact labels</small></div></div>
+            <div class="repeat-list" id="stack-list"></div>
+            <button class="button button-secondary button-small" id="add-stack-button" type="button">Add tool</button>
+          </fieldset>
+
+          <fieldset class="form-panel">
+            <legend><span>08</span><b>Contact &amp; footer</b><small>Final channel</small></legend>
+            <div class="form-grid form-grid-two">
+              <label class="field"><span>Site name</span><input id="site-name" name="site.name" type="text" maxlength="120" autocomplete="name"></label>
+              <label class="field"><span>Short mark</span><input id="site-short-mark" name="site.shortMark" type="text" maxlength="4" autocomplete="off"></label>
+              <label class="field field-wide"><span>Browser / search title</span><input id="site-title" name="site.title" type="text" maxlength="180" autocomplete="off"></label>
+              <label class="field field-wide"><span>Search description</span><textarea id="site-description" name="site.description" rows="3" maxlength="320"></textarea><small><span data-count-for="site-description">0</span>/320</small></label>
+              <label class="field field-wide"><span>Canonical URL</span><input id="site-canonical-url" name="site.canonicalUrl" type="url" maxlength="500" autocomplete="url"></label>
+              <label class="field"><span>Contact label</span><input id="contact-kicker" name="contact.kicker" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field"><span>Button label</span><input id="contact-button-label" name="contact.buttonLabel" type="text" maxlength="120" autocomplete="off"></label>
+              <label class="field field-wide"><span>Contact heading</span><textarea id="contact-heading" name="contact.heading" rows="2" maxlength="240"></textarea><small><span data-count-for="contact-heading">0</span>/240</small></label>
+              <label class="field"><span>Email address</span><input id="site-email" name="site.email" type="email" maxlength="254" autocomplete="email"></label>
+              <label class="field"><span>GitHub URL</span><input id="site-github-url" name="site.githubUrl" type="url" maxlength="240" autocomplete="url"></label>
+              <label class="field field-wide"><span>Footer note</span><input id="site-footer-text" name="site.footerText" type="text" maxlength="120" autocomplete="off"></label>
+            </div>
+            <div class="subsection-head"><div><b>Navigation labels</b><small>Keep them concise</small></div></div>
+            <div class="form-grid form-grid-two">
+              <label class="field"><span>Work</span><input name="navigation.workLabel" type="text" maxlength="120"></label>
+              <label class="field"><span>About</span><input name="navigation.aboutLabel" type="text" maxlength="120"></label>
+              <label class="field"><span>GitHub</span><input name="navigation.githubLabel" type="text" maxlength="120"></label>
+              <label class="field"><span>Email</span><input name="navigation.emailLabel" type="text" maxlength="120"></label>
+            </div>
+          </fieldset>
+          <button class="sr-only" type="submit">Save draft</button>
+        </form>
+      </section>
+
+      <section class="view" id="view-projects" data-view-panel="projects" aria-labelledby="projects-title" hidden>
+        <header class="page-head projects-page-head">
+          <div>
+            <p class="eyebrow">03 / Project register</p>
+            <h1 id="projects-title">Builds worth opening.</h1>
+            <p class="page-intro">Add, order, feature, and publish projects. The first published featured project leads the homepage.</p>
+          </div>
+          <button class="button button-primary" id="add-project-button" type="button">Add project <span aria-hidden="true">+</span></button>
+        </header>
+
+        <div class="projects-toolbar">
+          <label class="search-field"><span class="sr-only">Filter projects</span><span aria-hidden="true">/</span><input id="project-search" type="search" placeholder="Filter project register" autocomplete="off"></label>
+          <div class="project-count" id="project-count">0 projects</div>
+        </div>
+
+        <div class="project-editor-list" id="project-editor-list"></div>
+        <div class="empty-state filter-empty" id="project-filter-empty" hidden>
+          <span class="empty-mark" aria-hidden="true">/</span>
+          <h2>No matching projects.</h2>
+          <p>Nothing in the register matches this filter. Your projects are still in the draft.</p>
+          <button class="button button-secondary" id="clear-project-search-button" type="button">Clear filter</button>
+        </div>
+        <div class="empty-state" id="project-empty" hidden>
+          <span class="empty-mark" aria-hidden="true">+</span>
+          <h2>No projects in this draft.</h2>
+          <p>Add the first build, then choose whether it should be featured and visible.</p>
+          <button class="button button-primary" id="empty-add-project-button" type="button">Add first project</button>
+        </div>
+      </section>
+
+      <section class="view" id="view-history" data-view-panel="history" aria-labelledby="history-title" hidden>
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">04 / Version register</p>
+            <h1 id="history-title">Every publish leaves a trace.</h1>
+            <p class="page-intro">Restore an earlier version as a new draft. Nothing goes live until you review and publish it again.</p>
+          </div>
+          <button class="button button-secondary" id="refresh-history-button" type="button">Refresh history</button>
+        </header>
+
+        <div class="history-layout">
+          <div>
+            <div class="history-list" id="history-list" aria-live="polite"></div>
+            <button class="button button-secondary history-load-more" id="load-more-versions-button" type="button" hidden>Load older versions</button>
+          </div>
+          <aside class="history-note" aria-labelledby="rollback-protocol-title">
+            <p class="eyebrow" id="rollback-protocol-title">Rollback protocol</p>
+            <ol>
+              <li>Select a published version.</li>
+              <li>Restore it as the current draft.</li>
+              <li>Review the homepage and projects.</li>
+              <li>Publish only when ready.</li>
+            </ol>
+          </aside>
+        </div>
+
+        <div class="empty-state" id="history-empty" hidden>
+          <span class="empty-mark" aria-hidden="true">&#8987;</span>
+          <h2>No published versions yet.</h2>
+          <p>Your first successful publish will start the version register.</p>
+        </div>
+      </section>
+    </main>
+
+    <div class="mobile-dirty-bar" id="mobile-dirty-bar" hidden>
+      <span><i></i> Unsaved changes</span>
+      <button type="button" id="mobile-save-button">Save draft</button>
+    </div>
+  </div>
+
+  <dialog class="preview-dialog" id="preview-dialog" aria-labelledby="preview-title">
+    <div class="preview-toolbar">
+      <div><p class="eyebrow">Draft preview / Local</p><h2 id="preview-title">Homepage preview</h2></div>
+      <div class="preview-actions">
+        <div class="segmented" role="group" aria-label="Preview width">
+          <button class="is-active" type="button" data-preview-size="desktop" aria-pressed="true">Desktop</button>
+          <button type="button" data-preview-size="mobile" aria-pressed="false">Mobile</button>
+        </div>
+        <button class="icon-button" id="close-preview-button" type="button" aria-label="Close preview">&#10005;</button>
+      </div>
+    </div>
+    <div class="preview-stage">
+      <div class="preview-canvas" id="preview-canvas"></div>
+    </div>
+  </dialog>
+
+  <dialog class="confirm-dialog" id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-copy">
+    <p class="eyebrow" id="confirm-kicker">Confirm action</p>
+    <h2 id="confirm-title">Are you sure?</h2>
+    <p id="confirm-copy">This action needs confirmation.</p>
+    <div class="confirm-actions">
+      <button class="button button-secondary" id="confirm-cancel-button" type="button">Cancel</button>
+      <button class="button button-danger" id="confirm-accept-button" type="button">Continue</button>
+    </div>
+  </dialog>
+
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="./admin.js" defer></script>
+</body>
+</html>

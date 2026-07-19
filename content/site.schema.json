@@ -1,0 +1,386 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qixuan.net/content/site.schema.json",
+  "title": "Qixuan.net site content",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "site",
+    "navigation",
+    "hero",
+    "systemMap",
+    "domains",
+    "work",
+    "projects",
+    "now",
+    "method",
+    "about",
+    "contact"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "site": {
+      "$ref": "#/$defs/site"
+    },
+    "navigation": {
+      "$ref": "#/$defs/navigation"
+    },
+    "hero": {
+      "$ref": "#/$defs/hero"
+    },
+    "systemMap": {
+      "$ref": "#/$defs/systemMap"
+    },
+    "domains": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/shortText"
+      }
+    },
+    "work": {
+      "$ref": "#/$defs/work"
+    },
+    "projects": {
+      "type": "array",
+      "maxItems": 24,
+      "items": {
+        "$ref": "#/$defs/project"
+      }
+    },
+    "now": {
+      "$ref": "#/$defs/now"
+    },
+    "method": {
+      "$ref": "#/$defs/method"
+    },
+    "about": {
+      "$ref": "#/$defs/about"
+    },
+    "contact": {
+      "$ref": "#/$defs/contact"
+    }
+  },
+  "$defs": {
+    "shortText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "pattern": "\\S"
+    },
+    "longText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 800,
+      "pattern": "\\S"
+    },
+    "httpsUrl": {
+      "type": "string",
+      "maxLength": 2048,
+      "format": "uri",
+      "pattern": "^https://"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planned",
+        "prototype",
+        "active",
+        "in_progress",
+        "completed",
+        "archived"
+      ]
+    },
+    "site": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "shortMark",
+        "canonicalUrl",
+        "title",
+        "description",
+        "email",
+        "githubUrl",
+        "footerText"
+      ],
+      "properties": {
+        "name": { "$ref": "#/$defs/shortText" },
+        "shortMark": { "type": "string", "minLength": 1, "maxLength": 4, "pattern": "\\S" },
+        "canonicalUrl": { "$ref": "#/$defs/httpsUrl" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 180, "pattern": "\\S" },
+        "description": { "type": "string", "minLength": 1, "maxLength": 320, "pattern": "\\S" },
+        "email": { "type": "string", "format": "email", "maxLength": 254 },
+        "githubUrl": { "$ref": "#/$defs/httpsUrl" },
+        "footerText": { "$ref": "#/$defs/shortText" }
+      }
+    },
+    "navigation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workLabel", "aboutLabel", "githubLabel", "emailLabel"],
+      "properties": {
+        "workLabel": { "$ref": "#/$defs/shortText" },
+        "aboutLabel": { "$ref": "#/$defs/shortText" },
+        "githubLabel": { "$ref": "#/$defs/shortText" },
+        "emailLabel": { "$ref": "#/$defs/shortText" }
+      }
+    },
+    "headline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "line1",
+        "line2Prefix",
+        "primaryAccent",
+        "line2Suffix",
+        "line3Prefix",
+        "secondaryAccent",
+        "line3Suffix"
+      ],
+      "properties": {
+        "line1": { "$ref": "#/$defs/shortText" },
+        "line2Prefix": { "$ref": "#/$defs/shortText" },
+        "primaryAccent": { "$ref": "#/$defs/shortText" },
+        "line2Suffix": { "type": "string", "maxLength": 120 },
+        "line3Prefix": { "$ref": "#/$defs/shortText" },
+        "secondaryAccent": { "$ref": "#/$defs/shortText" },
+        "line3Suffix": { "type": "string", "maxLength": 120 }
+      }
+    },
+    "intro": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lead", "emphasis", "tail"],
+      "properties": {
+        "lead": { "$ref": "#/$defs/shortText" },
+        "emphasis": { "$ref": "#/$defs/shortText" },
+        "tail": { "$ref": "#/$defs/longText" }
+      }
+    },
+    "hero": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "availabilityEnabled",
+        "availabilityLabel",
+        "headline",
+        "intro",
+        "primaryCtaLabel",
+        "secondaryCtaLabel",
+        "scrollLabel"
+      ],
+      "properties": {
+        "availabilityEnabled": { "type": "boolean" },
+        "availabilityLabel": { "$ref": "#/$defs/shortText" },
+        "headline": { "$ref": "#/$defs/headline" },
+        "intro": { "$ref": "#/$defs/intro" },
+        "primaryCtaLabel": { "$ref": "#/$defs/shortText" },
+        "secondaryCtaLabel": { "$ref": "#/$defs/shortText" },
+        "scrollLabel": { "$ref": "#/$defs/shortText" }
+      }
+    },
+    "systemNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "signal"],
+      "properties": {
+        "name": { "$ref": "#/$defs/shortText" },
+        "description": { "$ref": "#/$defs/shortText" },
+        "signal": { "type": "string", "minLength": 1, "maxLength": 8, "pattern": "\\S" }
+      }
+    },
+    "systemMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "state",
+        "nodes",
+        "focusLabel",
+        "focusValue",
+        "modeLabel",
+        "modeValue"
+      ],
+      "properties": {
+        "label": { "$ref": "#/$defs/shortText" },
+        "state": { "$ref": "#/$defs/shortText" },
+        "nodes": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/systemNode" }
+        },
+        "focusLabel": { "$ref": "#/$defs/shortText" },
+        "focusValue": { "$ref": "#/$defs/shortText" },
+        "modeLabel": { "$ref": "#/$defs/shortText" },
+        "modeValue": { "$ref": "#/$defs/shortText" }
+      }
+    },
+    "work": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sectionLabel", "titleLead", "titleAccent"],
+      "properties": {
+        "sectionLabel": { "$ref": "#/$defs/shortText" },
+        "titleLead": { "$ref": "#/$defs/shortText" },
+        "titleAccent": { "$ref": "#/$defs/shortText" }
+      }
+    },
+    "projectLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "url"],
+      "properties": {
+        "label": { "$ref": "#/$defs/shortText" },
+        "url": { "$ref": "#/$defs/httpsUrl" }
+      }
+    },
+    "projectVisual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "key"],
+      "properties": {
+        "type": { "const": "preset" },
+        "key": {
+          "type": "string",
+          "enum": ["vision", "drone", "embedded", "game"]
+        }
+      }
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "slug",
+        "title",
+        "category",
+        "summary",
+        "status",
+        "statusLabel",
+        "tags",
+        "link",
+        "note",
+        "featured",
+        "published",
+        "order",
+        "visual"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+        "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+        "title": { "$ref": "#/$defs/shortText" },
+        "category": { "$ref": "#/$defs/shortText" },
+        "summary": { "$ref": "#/$defs/longText" },
+        "status": { "$ref": "#/$defs/status" },
+        "statusLabel": { "$ref": "#/$defs/shortText" },
+        "tags": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 32, "pattern": "\\S" }
+        },
+        "link": {
+          "oneOf": [
+            { "$ref": "#/$defs/projectLink" },
+            { "type": "null" }
+          ]
+        },
+        "note": {
+          "oneOf": [
+            { "type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S" },
+            { "type": "null" }
+          ]
+        },
+        "featured": { "type": "boolean" },
+        "published": { "type": "boolean" },
+        "order": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "visual": { "$ref": "#/$defs/projectVisual" }
+      }
+    },
+    "now": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "title", "summary", "status", "statusLabel", "url"],
+      "properties": {
+        "label": { "$ref": "#/$defs/shortText" },
+        "title": { "$ref": "#/$defs/shortText" },
+        "summary": { "$ref": "#/$defs/longText" },
+        "status": { "$ref": "#/$defs/status" },
+        "statusLabel": { "$ref": "#/$defs/shortText" },
+        "url": {
+          "oneOf": [
+            { "$ref": "#/$defs/httpsUrl" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "methodItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "title", "description"],
+      "properties": {
+        "label": { "$ref": "#/$defs/shortText" },
+        "title": { "$ref": "#/$defs/shortText" },
+        "description": { "$ref": "#/$defs/longText" }
+      }
+    },
+    "method": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sectionLabel", "title", "items"],
+      "properties": {
+        "sectionLabel": { "$ref": "#/$defs/shortText" },
+        "title": { "$ref": "#/$defs/shortText" },
+        "items": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/methodItem" }
+        }
+      }
+    },
+    "about": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headingLead", "headingAccent", "sectionLabel", "paragraphs", "skills"],
+      "properties": {
+        "headingLead": { "$ref": "#/$defs/shortText" },
+        "headingAccent": { "$ref": "#/$defs/shortText" },
+        "sectionLabel": { "$ref": "#/$defs/shortText" },
+        "paragraphs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/longText" }
+        },
+        "skills": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "\\S" }
+        }
+      }
+    },
+    "contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kicker", "heading", "buttonLabel"],
+      "properties": {
+        "kicker": { "$ref": "#/$defs/shortText" },
+        "heading": { "type": "string", "minLength": 1, "maxLength": 240, "pattern": "\\S" },
+        "buttonLabel": { "$ref": "#/$defs/shortText" }
+      }
+    }
+  }
+}

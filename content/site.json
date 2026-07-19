@@ -1,0 +1,227 @@
+{
+  "$schema": "./site.schema.json",
+  "schemaVersion": 1,
+  "site": {
+    "name": "Qixuan Xu",
+    "shortMark": "QX",
+    "canonicalUrl": "https://qixuan.net/",
+    "title": "Qixuan Xu — Systems that see, decide, and move",
+    "description": "Qixuan Xu is a student engineer building across computer vision, embedded systems, and FPV — from camera frames and firmware to real-world motion.",
+    "email": "hi@qixuan.net",
+    "githubUrl": "https://github.com/qixuan-xu",
+    "footerText": "Built with curiosity"
+  },
+  "navigation": {
+    "workLabel": "Work",
+    "aboutLabel": "About",
+    "githubLabel": "GitHub ↗",
+    "emailLabel": "Email"
+  },
+  "hero": {
+    "availabilityEnabled": true,
+    "availabilityLabel": "Student engineer / Open to internships & collaboration",
+    "headline": {
+      "line1": "I build systems",
+      "line2Prefix": "that",
+      "primaryAccent": "see",
+      "line2Suffix": ", decide,",
+      "line3Prefix": "and",
+      "secondaryAccent": "move",
+      "line3Suffix": "."
+    },
+    "intro": {
+      "lead": "I'm",
+      "emphasis": "Qixuan Xu",
+      "tail": ", a student building across computer vision, embedded systems, and FPV — from sensor input and camera frames to firmware and real-world motion."
+    },
+    "primaryCtaLabel": "Explore selected builds",
+    "secondaryCtaLabel": "GitHub",
+    "scrollLabel": "Scroll / 01—04"
+  },
+  "systemMap": {
+    "label": "System map / QX-01",
+    "state": "Loop active",
+    "nodes": [
+      {
+        "name": "Sense",
+        "description": "Camera / sensor input",
+        "signal": "◉"
+      },
+      {
+        "name": "Decide",
+        "description": "Model / control logic",
+        "signal": "ƒx"
+      },
+      {
+        "name": "Move",
+        "description": "Motor / real-world output",
+        "signal": "↗"
+      }
+    ],
+    "focusLabel": "Focus",
+    "focusValue": "physical systems",
+    "modeLabel": "Mode",
+    "modeValue": "learn by building"
+  },
+  "domains": [
+    "Computer vision",
+    "Embedded systems",
+    "FPV / aviation",
+    "Game development"
+  ],
+  "work": {
+    "sectionLabel": "01 / Selected builds",
+    "titleLead": "Projects built to",
+    "titleAccent": "leave the screen."
+  },
+  "projects": [
+    {
+      "id": "yolo-vision-system",
+      "slug": "yolo-vision-system",
+      "title": "YOLO Vision System",
+      "category": "Vision",
+      "summary": "A prototype pipeline that turns road footage into structured detections with Python, OpenCV, and YOLO — finding useful signal in raw camera frames.",
+      "status": "prototype",
+      "statusLabel": "Prototype",
+      "tags": [
+        "Python",
+        "OpenCV",
+        "YOLO",
+        "Video processing"
+      ],
+      "link": {
+        "label": "View repository",
+        "url": "https://github.com/qixuan-xu/yolo-vision-system"
+      },
+      "note": null,
+      "featured": true,
+      "published": true,
+      "order": 10,
+      "visual": {
+        "type": "preset",
+        "key": "vision"
+      }
+    },
+    {
+      "id": "fpv-drone-build",
+      "slug": "fpv-drone-build",
+      "title": "FPV Drone Build",
+      "category": "Flight",
+      "summary": "A 3.5-inch cinewhoop built, wired, tuned, and tested — taking Betaflight settings and hardware from bench checks to stable flight.",
+      "status": "in_progress",
+      "statusLabel": "In progress",
+      "tags": [
+        "FPV",
+        "Betaflight",
+        "Electronics"
+      ],
+      "link": null,
+      "note": "Build log coming soon",
+      "featured": false,
+      "published": true,
+      "order": 20,
+      "visual": {
+        "type": "preset",
+        "key": "drone"
+      }
+    },
+    {
+      "id": "stm32-projects",
+      "slug": "stm32-projects",
+      "title": "STM32 Projects",
+      "category": "Embedded",
+      "summary": "Bare-metal experiments that make sensors and peripherals behave — learning what really happens below the abstraction layer.",
+      "status": "active",
+      "statusLabel": "Active",
+      "tags": [
+        "STM32",
+        "Embedded C",
+        "Sensors"
+      ],
+      "link": {
+        "label": "GitHub profile",
+        "url": "https://github.com/qixuan-xu"
+      },
+      "note": null,
+      "featured": false,
+      "published": true,
+      "order": 30,
+      "visual": {
+        "type": "preset",
+        "key": "embedded"
+      }
+    },
+    {
+      "id": "godot-game",
+      "slug": "godot-game",
+      "title": "Godot Game",
+      "category": "Game dev",
+      "summary": "A top-down shooter focused on the gameplay loop, enemy behavior, and the small details that make movement feel right.",
+      "status": "in_progress",
+      "statusLabel": "In progress",
+      "tags": [
+        "Godot",
+        "GDScript",
+        "Game feel"
+      ],
+      "link": null,
+      "note": "Playable build in development",
+      "featured": false,
+      "published": true,
+      "order": 40,
+      "visual": {
+        "type": "preset",
+        "key": "game"
+      }
+    }
+  ],
+  "now": {
+    "label": "Now / Next 05",
+    "title": "Study Organizer App",
+    "summary": "A Swift homework and schedule manager for a less chaotic school week.",
+    "status": "planned",
+    "statusLabel": "Planned",
+    "url": null
+  },
+  "method": {
+    "sectionLabel": "02 / Process",
+    "title": "One loop, three ways of thinking.",
+    "items": [
+      {
+        "label": "INPUT / 01",
+        "title": "Sense",
+        "description": "Start with the messy world: camera frames, sensors, radio links, and the signal underneath the noise."
+      },
+      {
+        "label": "LOGIC / 02",
+        "title": "Decide",
+        "description": "Turn inputs into useful choices with models, firmware, control logic, and repeated testing."
+      },
+      {
+        "label": "OUTPUT / 03",
+        "title": "Act",
+        "description": "Close the loop in the physical world — on a motor, in a flight controller, or inside an interaction."
+      }
+    ]
+  },
+  "about": {
+    "headingLead": "I build to understand",
+    "headingAccent": "how things really work.",
+    "sectionLabel": "03 / About",
+    "paragraphs": [
+      "I'm most interested in the moment software meets physics: when a control loop steadies a drone, a sensor becomes useful data, or a vision model finds structure in a frame.",
+      "This site is my field log for the things I'm learning, breaking, rebuilding, and eventually getting to work."
+    ],
+    "skills": [
+      "Python / OpenCV",
+      "Embedded C",
+      "Betaflight / FPV",
+      "Godot / GDScript"
+    ]
+  },
+  "contact": {
+    "kicker": "04 / Contact — Channel open",
+    "heading": "Have a problem that crosses hardware and software?",
+    "buttonLabel": "Let's talk"
+  }
+}

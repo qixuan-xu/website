@@ -1,0 +1,4 @@
+# Copy to .dev.vars and replace the token locally. Never commit .dev.vars.
+ENVIRONMENT=development
+ADMIN_ORIGIN=http://localhost:8787
+DEV_BEARER_TOKEN=replace-with-a-long-random-local-token

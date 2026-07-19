@@ -1,0 +1,5 @@
+exclude:
+  - admin
+  - content
+  - worker
+  - README.md
