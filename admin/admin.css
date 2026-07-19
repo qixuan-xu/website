@@ -1139,7 +1139,7 @@ button:disabled {
 /* Forms */
 #homepage-form {
   display: grid;
-  gap: 24px;
+  gap: 0;
 }
 
 .form-panel {
