@@ -11,6 +11,8 @@ const MAX_ARRAY_LENGTH = 500;
 const MAX_STRING_LENGTH = 50_000;
 const FORBIDDEN_KEYS = new Set(["__proto__", "prototype", "constructor"]);
 const MAX_URL_LENGTH = 2_048;
+const MEDIA_ORIGIN = "https://api.qixuan.net";
+const MEDIA_PATH_PATTERN = /^\/v1\/media\/[0-9a-f]{32}\.(?:jpg|png|webp|avif|gif)$/;
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
 const validateSiteSchema = ajv.compile(siteSchema);
@@ -99,12 +101,39 @@ function validateContentSemantics(value: Record<string, unknown>): void {
     if (isRecord(link)) {
       urlFields.push({ path: `/projects/${index}/link/url`, value: link.url });
     }
+    const visual = project.visual;
+    if (isRecord(visual) && visual.type === "image") {
+      const path = `/projects/${index}/visual/url`;
+      urlFields.push({ path, value: visual.url });
+      addMediaUrlIssues(visual.url, path, issues);
+    }
   });
   for (const field of urlFields) addUrlIssues(field.value, field.path, issues);
 
   if (issues.length > 0) {
     throw new ApiError(422, "semantic_validation_failed", "Content violates site-level constraints", {
       issues: issues.slice(0, 50)
+    });
+  }
+}
+
+function addMediaUrlIssues(value: unknown, path: string, issues: SemanticIssue[]): void {
+  if (typeof value !== "string") return;
+  let parsed: URL;
+  try {
+    parsed = new URL(value);
+  } catch {
+    return;
+  }
+  if (
+    parsed.origin !== MEDIA_ORIGIN ||
+    !MEDIA_PATH_PATTERN.test(parsed.pathname) ||
+    parsed.search !== "" ||
+    parsed.hash !== ""
+  ) {
+    issues.push({
+      path,
+      message: `must be an uploaded project image under ${MEDIA_ORIGIN}/v1/media/`
     });
   }
 }

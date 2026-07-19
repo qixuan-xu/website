@@ -35,6 +35,9 @@
 
   <script>
     document.documentElement.classList.add('js');
+    if (/^#qx-preview=[a-f0-9]{32}$/.test(window.location.hash) && window.parent !== window) {
+      document.documentElement.dataset.previewMode = 'waiting';
+    }
     try {
       var savedTheme = localStorage.getItem('qx-theme');
       var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -98,6 +101,7 @@
       -webkit-font-smoothing:antialiased;
       overflow-x:hidden;
     }
+    html[data-preview-mode="waiting"] body{visibility:hidden}
     body::before{
       content:'';
       position:fixed;
@@ -328,6 +332,9 @@
     .vision-visual::after{content:attr(data-visual-label);position:absolute;left:28px;bottom:20px;color:#7482ad;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em}
     .vision-svg{width:100%;height:auto;filter:drop-shadow(0 28px 60px rgba(0,0,0,.35))}
     .featured-preset-visual svg{width:100%;height:auto;max-height:360px;filter:drop-shadow(0 28px 60px rgba(0,0,0,.35))}
+    .project-image-visual{padding:0;background:#0a0c0a}
+    .project-image-visual img{width:100%;height:100%;display:block;object-fit:cover}
+    .featured-image-visual::after{content:'PROJECT MEDIA / LIVE';color:#d8ddd3;text-shadow:0 1px 12px rgba(0,0,0,.85)}
 
     .project-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
     .project-card{position:relative;border:1px solid var(--hangar-line);background:var(--hangar-soft);overflow:hidden;transition:transform .35s var(--ease),border-color .25s ease}
@@ -585,7 +592,7 @@
           <h2 class="section-title" id="projects-title">Projects built to <span class="outline">leave the screen.</span></h2>
         </div>
 
-        <article class="featured-project reveal">
+        <article class="featured-project reveal" data-project-id="yolo-vision-system">
           <div class="featured-copy">
             <div class="project-meta">
               <span>Featured / Vision</span>
@@ -644,7 +651,7 @@
         </article>
 
         <div class="project-grid">
-          <article class="project-card reveal">
+          <article class="project-card reveal" data-project-id="fpv-drone-build">
             <div class="card-graphic" data-preset-visual="drone" aria-hidden="true">
               <svg viewBox="0 0 360 150">
                 <g fill="none" stroke="#ff6a3d" stroke-width="2">
@@ -675,7 +682,7 @@
             </div>
           </article>
 
-          <article class="project-card reveal reveal-delay">
+          <article class="project-card reveal reveal-delay" data-project-id="stm32-projects">
             <div class="card-graphic" data-preset-visual="embedded" aria-hidden="true">
               <svg viewBox="0 0 360 150">
                 <g stroke="#667064" stroke-width="2">
@@ -705,7 +712,7 @@
             </div>
           </article>
 
-          <article class="project-card reveal">
+          <article class="project-card reveal" data-project-id="godot-game">
             <div class="card-graphic" data-preset-visual="game" aria-hidden="true">
               <svg viewBox="0 0 360 150">
                 <rect x="48" y="20" width="264" height="110" fill="#10152a" stroke="#465174"/>
@@ -812,7 +819,14 @@
       'use strict';
 
       var CONTENT_ENDPOINT = 'https://api.qixuan.net/v1/content';
+      var ANALYTICS_ENDPOINT = 'https://api.qixuan.net/v1/analytics';
       var CONTENT_TIMEOUT_MS = 4500;
+      var PREVIEW_MATCH = /^#qx-preview=([a-f0-9]{32})$/.exec(window.location.hash);
+      var PREVIEW_NONCE = PREVIEW_MATCH ? PREVIEW_MATCH[1] : null;
+      var PREVIEW_MODE = PREVIEW_NONCE !== null && window.parent !== window;
+      var PREVIEW_CHANNEL = 'qx-site-preview';
+      var PREVIEW_VERSION = 1;
+      var previewParentOrigin = null;
       var STATUS_VALUES = ['planned', 'prototype', 'active', 'in_progress', 'completed', 'archived'];
       var VISUAL_KEYS = ['vision', 'drone', 'embedded', 'game'];
       var VISUAL_LABELS = {
@@ -897,6 +911,14 @@
         }
       }
 
+      function isMediaUrl(value) {
+        if (!isHttpsUrl(value)) return false;
+        var url = new URL(value);
+        return url.origin === 'https://api.qixuan.net' &&
+          /^\/v1\/media\/[0-9a-f]{32}\.(?:jpg|png|webp|avif|gif)$/.test(url.pathname) &&
+          !url.search && !url.hash;
+      }
+
       function isEmail(value) {
         return isText(value, 254, false) && !/[\r\n]/.test(value) && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
       }
@@ -924,8 +946,9 @@
         if (project.note !== null && !isText(project.note, 160, false)) return false;
         if (typeof project.featured !== 'boolean' || typeof project.published !== 'boolean') return false;
         if (!Number.isInteger(project.order) || project.order < 0 || project.order > 10000) return false;
-        if (!isRecord(project.visual) || project.visual.type !== 'preset') return false;
-        return VISUAL_KEYS.indexOf(project.visual.key) !== -1;
+        if (!isRecord(project.visual)) return false;
+        if (project.visual.type === 'preset') return VISUAL_KEYS.indexOf(project.visual.key) !== -1;
+        return project.visual.type === 'image' && isMediaUrl(project.visual.url) && isText(project.visual.alt, 180, false);
       }
 
       function validateContent(content) {
@@ -1040,23 +1063,45 @@
         return svg;
       }
 
-      function makeCardVisual(key) {
-        var visual = document.createElement('div');
-        visual.className = 'card-graphic';
-        visual.setAttribute('aria-hidden', 'true');
-        visual.appendChild(clonePresetSvg(key));
-        return visual;
+      function makeProjectImage(visual, eager) {
+        var image = document.createElement('img');
+        image.src = visual.url;
+        image.alt = visual.alt;
+        image.decoding = 'async';
+        image.loading = eager ? 'eager' : 'lazy';
+        image.referrerPolicy = 'no-referrer';
+        return image;
       }
 
-      function makeFeaturedVisual(key) {
-        var visual = document.createElement('div');
-        visual.className = 'vision-visual featured-preset-visual';
-        visual.setAttribute('data-visual-label', VISUAL_LABELS[key]);
-        visual.setAttribute('aria-hidden', 'true');
-        var svg = clonePresetSvg(key);
+      function makeCardVisual(visual) {
+        if (visual.type === 'image') {
+          var imageVisual = document.createElement('div');
+          imageVisual.className = 'card-graphic project-image-visual';
+          imageVisual.appendChild(makeProjectImage(visual, false));
+          return imageVisual;
+        }
+        var container = document.createElement('div');
+        container.className = 'card-graphic';
+        container.setAttribute('aria-hidden', 'true');
+        container.appendChild(clonePresetSvg(visual.key));
+        return container;
+      }
+
+      function makeFeaturedVisual(visual) {
+        if (visual.type === 'image') {
+          var imageVisual = document.createElement('div');
+          imageVisual.className = 'vision-visual project-image-visual featured-image-visual';
+          imageVisual.appendChild(makeProjectImage(visual, true));
+          return imageVisual;
+        }
+        var container = document.createElement('div');
+        container.className = 'vision-visual featured-preset-visual';
+        container.setAttribute('data-visual-label', VISUAL_LABELS[visual.key]);
+        container.setAttribute('aria-hidden', 'true');
+        var svg = clonePresetSvg(visual.key);
         svg.classList.add('vision-svg');
-        visual.appendChild(svg);
-        return visual;
+        container.appendChild(svg);
+        return container;
       }
 
       function renderTags(container, tags) {
@@ -1126,7 +1171,7 @@
         var featuredProject = published.find(function (project) { return project.featured; }) || published[0];
         fillProject(featuredArticle, featuredProject, 1, true);
         var oldVisual = featuredArticle.querySelector('.vision-visual');
-        oldVisual.replaceWith(makeFeaturedVisual(featuredProject.visual.key));
+        oldVisual.replaceWith(makeFeaturedVisual(featuredProject.visual));
 
         var remaining = published.filter(function (project) { return project.id !== featuredProject.id; });
         var fragment = document.createDocumentFragment();
@@ -1134,7 +1179,7 @@
           var card = cardTemplate.cloneNode(true);
           card.classList.toggle('reveal-delay', index % 2 === 1);
           card.classList.add('is-visible');
-          card.querySelector('.card-graphic').replaceWith(makeCardVisual(project.visual.key));
+          card.querySelector('.card-graphic').replaceWith(makeCardVisual(project.visual));
           fillProject(card, project, index + 2, false);
           wireProjectCard(card);
           fragment.appendChild(card);
@@ -1367,7 +1412,93 @@
           });
       }
 
-      hydratePublishedContent();
+      function initializeDraftPreview() {
+        root.dataset.contentSource = 'preview-waiting';
+        document.addEventListener('click', function (event) {
+          var target = event.target instanceof Element ? event.target : event.target.parentElement;
+          if (target && target.closest('a')) event.preventDefault();
+        }, true);
+        window.addEventListener('message', function (event) {
+          if (event.source !== window.parent || !isAllowedPreviewParentOrigin(event.origin)) return;
+          var message = event.data;
+          if (!isRecord(message) || message.channel !== PREVIEW_CHANNEL || message.version !== PREVIEW_VERSION || message.nonce !== PREVIEW_NONCE) return;
+          if (message.type === 'hello') {
+            if (previewParentOrigin !== null && event.origin !== previewParentOrigin) return;
+            if (previewParentOrigin === null) previewParentOrigin = event.origin;
+            window.parent.postMessage({ channel: PREVIEW_CHANNEL, version: PREVIEW_VERSION, type: 'ready', nonce: PREVIEW_NONCE }, previewParentOrigin);
+            return;
+          }
+          if (event.origin !== previewParentOrigin || message.type !== 'render' || !validateContent(message.content)) return;
+          renderSite(message.content);
+          root.dataset.contentSource = 'preview';
+          root.dataset.previewMode = 'ready';
+          window.parent.postMessage({ channel: PREVIEW_CHANNEL, version: PREVIEW_VERSION, type: 'rendered', nonce: PREVIEW_NONCE }, previewParentOrigin);
+        });
+      }
+
+      function isAllowedPreviewParentOrigin(origin) {
+        var localSite = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (localSite) return origin === window.location.origin;
+        if (origin === 'https://admin.qixuan.net') return true;
+        try {
+          var parent = new URL(origin);
+          return parent.protocol === 'http:' && (parent.hostname === 'localhost' || parent.hostname === '127.0.0.1');
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function analyticsPath() {
+        return '/';
+      }
+
+      function analyticsReferrerHost() {
+        if (!document.referrer) return '';
+        try {
+          var referrer = new URL(document.referrer);
+          return referrer.hostname === window.location.hostname ? '' : referrer.hostname.toLowerCase();
+        } catch (error) {
+          return '';
+        }
+      }
+
+      function postAnalytics(eventType, projectId) {
+        var payload = {
+          eventType: eventType,
+          path: analyticsPath(),
+          projectId: projectId || '',
+          referrerHost: eventType === 'page_view' ? analyticsReferrerHost() : ''
+        };
+        try {
+          fetch(ANALYTICS_ENDPOINT, {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'omit',
+            cache: 'no-store',
+            keepalive: true,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).catch(function () {});
+        } catch (error) {}
+      }
+
+      function initializeAnalytics() {
+        postAnalytics('page_view', '');
+
+        document.addEventListener('click', function (event) {
+          var target = event.target instanceof Element ? event.target : null;
+          var link = target ? target.closest('[data-project-id] a[href]') : null;
+          var project = link ? link.closest('[data-project-id]') : null;
+          var projectId = project ? project.getAttribute('data-project-id') : '';
+          if (/^[a-z0-9][a-z0-9-]{0,63}$/.test(projectId)) postAnalytics('project_click', projectId);
+        });
+      }
+
+      if (PREVIEW_MODE) initializeDraftPreview();
+      else {
+        hydratePublishedContent();
+        initializeAnalytics();
+      }
     }());
   </script>
 </body>

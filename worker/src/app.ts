@@ -1,5 +1,13 @@
 import { accessLogoutUrl, authenticate, csrfTokenFor, requireCsrf } from "./auth";
+import {
+  analyticsCorsHeaders,
+  analyticsOptions,
+  analyticsSummary,
+  collectAnalytics,
+  parseAnalyticsDays
+} from "./analytics";
 import { ApiError } from "./errors";
+import { deleteMedia, publicMediaResponse, uploadMedia } from "./media";
 import {
   parseCursor,
   parseExpectedRevision,
@@ -142,11 +150,24 @@ async function routeAdmin(context: RequestContext, auth: Authenticator): Promise
     }, requestId);
   }
 
+  if (url.pathname === "/v1/admin/media" && request.method === "POST") {
+    return success(await uploadMedia(request, env), requestId, { status: 201 });
+  }
+
+  if (url.pathname.startsWith("/v1/admin/media/") && request.method === "DELETE") {
+    const key = url.pathname.slice("/v1/admin/media/".length);
+    return success(await deleteMedia(key, env), requestId);
+  }
+
   if (url.pathname === "/v1/admin/content" && request.method === "GET") {
     const state = await repository.getDraft();
     return success(contentPayload(state), requestId, {
       headers: { ETag: `"draft-${state.revision}"` }
     });
+  }
+
+  if (url.pathname === "/v1/admin/analytics" && request.method === "GET") {
+    return success(await analyticsSummary(env, parseAnalyticsDays(url.searchParams.get("days"))), requestId);
   }
 
   if (
@@ -224,7 +245,7 @@ function applySecurityHeaders(response: Response, env: Env, isApi: boolean): Res
     "Content-Security-Policy",
     isApi
       ? "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
-      : "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
+      : "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' https://api.qixuan.net data: blob:; connect-src 'self'; frame-src 'self' https://qixuan.net; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
   );
   if (env.ENVIRONMENT === "production") {
     headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
@@ -259,6 +280,7 @@ export function createApp(dependencies: AppDependencies = {}): ExportedHandler<E
       const requestId = requestIdFor(request);
       const url = new URL(request.url);
       const isApi = url.pathname === "/v1" || url.pathname.startsWith("/v1/");
+      const isAnalytics = url.pathname === "/v1/analytics";
       const repository = dependencies.repository ?? new D1ContentRepository(env.DB);
       const auth = dependencies.authenticate ?? authenticate;
 
@@ -266,10 +288,22 @@ export function createApp(dependencies: AppDependencies = {}): ExportedHandler<E
         let response: Response;
         if (url.pathname === "/v1/health" && request.method === "GET") {
           response = success({ status: "ok", service: "qixuan-admin", version: "1" }, requestId);
+        } else if (isAnalytics && request.method === "OPTIONS") {
+          response = analyticsOptions(request, env);
+        } else if (isAnalytics && request.method === "POST") {
+          response = success(await collectAnalytics(request, env, repository), requestId, {
+            status: 202,
+            headers: analyticsCorsHeaders(request, env)
+          });
+        } else if (isAnalytics) {
+          throw new ApiError(405, "method_not_allowed", "Analytics endpoint only supports POST and OPTIONS");
         } else if (url.pathname === "/v1/content" && request.method === "OPTIONS") {
           response = publicContentOptions();
         } else if (url.pathname === "/v1/content" && (request.method === "GET" || request.method === "HEAD")) {
           response = publicContentResponse(await repository.getPublished(), request);
+        } else if (url.pathname.startsWith("/v1/media/") && request.method === "GET") {
+          const key = url.pathname.slice("/v1/media/".length);
+          response = await publicMediaResponse(request, key, env);
         } else if (url.pathname.startsWith("/v1/admin/")) {
           response = await routeAdmin({ request, env, repository, requestId }, auth);
         } else if (isApi) {
@@ -285,7 +319,11 @@ export function createApp(dependencies: AppDependencies = {}): ExportedHandler<E
         if (!(error instanceof ApiError)) {
           console.error("Unhandled worker error", { requestId, path: url.pathname, error });
         }
-        return applySecurityHeaders(errorResponse(apiError, requestId), env, true);
+        const response = errorResponse(apiError, requestId);
+        if (isAnalytics) {
+          analyticsCorsHeaders(request, env).forEach((value, key) => response.headers.set(key, value));
+        }
+        return applySecurityHeaders(response, env, true);
       }
     }
   };

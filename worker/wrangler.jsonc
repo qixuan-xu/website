@@ -9,9 +9,13 @@
     { "pattern": "admin.qixuan.net", "custom_domain": true },
     { "pattern": "api.qixuan.net", "custom_domain": true }
   ],
+  "triggers": {
+    "crons": ["17 3 * * *"]
+  },
   "vars": {
     "ENVIRONMENT": "production",
-    "ADMIN_ORIGIN": "https://admin.qixuan.net"
+    "ADMIN_ORIGIN": "https://admin.qixuan.net",
+    "MEDIA_PUBLIC_ORIGIN": "https://api.qixuan.net"
   },
   "d1_databases": [
     {
@@ -19,6 +23,22 @@
       "database_name": "qixuan-admin",
       "database_id": "f40738c5-f0f7-4319-bdad-2fc5fad753c1",
       "migrations_dir": "migrations"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "MEDIA",
+      "id": "a0b01328f8474e528d976b0903f160b6"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "ANALYTICS_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 120,
+        "period": 60
+      }
     }
   ],
   "assets": {

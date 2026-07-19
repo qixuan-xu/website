@@ -149,6 +149,10 @@ class MemoryRepository implements Repository {
 function makeEnv(overrides: Partial<Env> = {}): Env {
   return {
     DB: {} as D1Database,
+    MEDIA: {} as KVNamespace,
+    ANALYTICS_RATE_LIMITER: {
+      limit: vi.fn(async () => ({ success: true }))
+    } as unknown as RateLimit,
     ASSETS: {
       fetch: vi.fn(async () => new Response("admin asset", {
         headers: { "Content-Type": "text/html" }
@@ -156,6 +160,7 @@ function makeEnv(overrides: Partial<Env> = {}): Env {
     } as unknown as Fetcher,
     ENVIRONMENT: "development",
     ADMIN_ORIGIN: ORIGIN,
+    MEDIA_PUBLIC_ORIGIN: "https://api.qixuan.net",
     DEV_BEARER_TOKEN: DEV_TOKEN,
     ...overrides
   };
@@ -442,6 +447,61 @@ describe("qixuan admin worker", () => {
     expect(body.error.details.issues).toContainEqual(expect.objectContaining({
       message: expect.stringContaining("username or password") as string
     }));
+  });
+
+  it("accepts a project image served by the controlled media route", async () => {
+    const csrf = await sessionCsrf(app, env);
+    const content = structuredClone(defaultSiteContent);
+    (content.projects[0] as unknown as { visual: unknown }).visual = {
+      type: "image",
+      url: "https://api.qixuan.net/v1/media/0123456789abcdef0123456789abcdef.webp",
+      alt: "Camera detections over a road scene"
+    };
+
+    const response = await app.fetch(
+      new Request(`${ORIGIN}/v1/admin/content`, {
+        method: "PUT",
+        headers: mutationHeaders(csrf, { "If-Match": '"draft-0"' }),
+        body: JSON.stringify({ content })
+      }),
+      env,
+      {} as ExecutionContext,
+    );
+
+    expect(response.status).toBe(200);
+  });
+
+  it.each([
+    "https://images.example/0123456789abcdef0123456789abcdef.webp",
+    "https://api.qixuan.net/v1/media/0123456789abcdef0123456789abcdef.webp?download=1",
+    "https://api.qixuan.net/v1/media/not-a-controlled-key.webp"
+  ])("rejects an uncontrolled project image URL: %s", async (url) => {
+    const csrf = await sessionCsrf(app, env);
+    const content = structuredClone(defaultSiteContent);
+    (content.projects[0] as unknown as { visual: unknown }).visual = {
+      type: "image",
+      url,
+      alt: "Project cover"
+    };
+
+    const response = await app.fetch(
+      new Request(`${ORIGIN}/v1/admin/content`, {
+        method: "PUT",
+        headers: mutationHeaders(csrf, { "If-Match": '"draft-0"' }),
+        body: JSON.stringify({ content })
+      }),
+      env,
+      {} as ExecutionContext,
+    );
+    const body = await response.json() as {
+      error: { code: string; details: { issues: Array<{ path: string }> } };
+    };
+
+    expect(response.status).toBe(422);
+    expect(body.error.code).toBe("semantic_validation_failed");
+    expect(body.error.details.issues).toContainEqual(
+      expect.objectContaining({ path: "/projects/0/visual/url" }),
+    );
   });
 
   it("rejects email domains without a dot to match the public client contract", async () => {

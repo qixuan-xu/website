@@ -4,9 +4,12 @@ export type JsonObject = { [key: string]: JsonValue };
 
 export interface Env {
   DB: D1Database;
+  MEDIA: KVNamespace;
+  ANALYTICS_RATE_LIMITER: RateLimit;
   ASSETS: Fetcher;
   ENVIRONMENT: string;
   ADMIN_ORIGIN: string;
+  MEDIA_PUBLIC_ORIGIN: string;
   ACCESS_TEAM_DOMAIN?: string;
   ACCESS_AUD?: string;
   ADMIN_EMAIL?: string;

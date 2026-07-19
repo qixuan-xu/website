@@ -244,16 +244,35 @@
       }
     },
     "projectVisual": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["type", "key"],
-      "properties": {
-        "type": { "const": "preset" },
-        "key": {
-          "type": "string",
-          "enum": ["vision", "drone", "embedded", "game"]
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "key"],
+          "properties": {
+            "type": { "const": "preset" },
+            "key": {
+              "type": "string",
+              "enum": ["vision", "drone", "embedded", "game"]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "url", "alt"],
+          "properties": {
+            "type": { "const": "image" },
+            "url": { "$ref": "#/$defs/httpsUrl" },
+            "alt": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 180,
+              "pattern": "\\S"
+            }
+          }
         }
-      }
+      ]
     },
     "project": {
       "type": "object",

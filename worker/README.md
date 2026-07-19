@@ -7,10 +7,11 @@ Cloudflare Worker backend for the private admin application. The public website 
 - Production authentication is Cloudflare Access only. The Worker verifies the `Cf-Access-Jwt-Assertion` signature, issuer, audience, expiry, and exact administrator email.
 - The local bearer-token bypass runs only when `ENVIRONMENT=development`. Production ignores `DEV_BEARER_TOKEN`.
 - Access JWT material is never returned to browser JavaScript. The session endpoint derives a CSRF token from the current assertion.
-- Every mutation requires an exact `Origin`, `X-CSRF-Token`, and `application/json` body.
+- Every admin mutation requires an exact `Origin` and `X-CSRF-Token`. Content mutations require `application/json`; media upload alone uses validated `multipart/form-data`.
 - Admin responses are `no-store`; all responses receive CSP, frame, MIME-sniffing, referrer, and permissions headers.
 - Drafts and published snapshots are immutable D1 versions with optimistic revision checks. Rollback creates a new draft; it does not silently change the public version.
-- Runtime validation enforces the site schema, unique project IDs and slugs, the public client's email contract, and credential-free HTTPS URLs no longer than 2,048 characters.
+- Runtime validation enforces the site schema, unique project IDs and slugs, the public client's email contract, credential-free HTTPS URLs no longer than 2,048 characters, and project images served only by the controlled media route.
+- Traffic reporting is privacy-preserving by construction: D1 stores only 180 days of daily aggregate counters for the homepage, coarse referrer categories, and published project IDs. A daily scheduled cleanup enforces that retention period, with an insert trigger as a second cleanup path. It does not store cookies, IP addresses, user-agent strings, query strings, full referrers, or visitor-level rows. The rate limiter uses Cloudflare's transient request key but never writes it to D1.
 - The Worker contains no credentials. Do not commit `.dev.vars` or any production value.
 
 Protect the custom admin hostname with a Cloudflare Access self-hosted application and disable the public `workers.dev` route. The Access policy and the Worker's `ADMIN_EMAIL` check should both allow only the intended administrator.
@@ -21,12 +22,18 @@ Public:
 
 - `GET /v1/health`
 - `GET /v1/content` → `{ data: <site content>, meta: { revision, versionId, publishedAt } }`
+- `GET /v1/media/:key` (immutable public image response with ETag support)
+- `POST /v1/analytics` (exact-origin, aggregate-only page-view or project-click collector)
+- `OPTIONS /v1/analytics`
 
 Admin:
 
 - `GET /v1/admin/session`
 - `POST /v1/admin/logout`
+- `POST /v1/admin/media` (`multipart/form-data`, one `file`, 5 MiB maximum; returns an absolute URL under `MEDIA_PUBLIC_ORIGIN`)
+- `DELETE /v1/admin/media/:key`
 - `GET /v1/admin/content`
+- `GET /v1/admin/analytics?days=7|30|90|180`
 - `PUT /v1/admin/content` (`If-Match: "draft-N"` or `expectedRevision`)
 - `PUT /v1/admin/draft` compatibility alias
 - `POST /v1/admin/publish`
@@ -60,7 +67,7 @@ Replace the example development token with a long random value. Send it only to 
 ## Production setup
 
 1. Create a D1 database and replace the all-zero `database_id` in `wrangler.jsonc`.
-2. Apply `migrations/0001_content.sql` with Wrangler.
+2. Apply all D1 migrations with Wrangler. `0002_analytics.sql` creates only daily aggregate counters; it never stores visitor-level records.
 3. Configure `ACCESS_TEAM_DOMAIN`, `ACCESS_AUD`, and `ADMIN_EMAIL` as encrypted Worker secrets. Wrangler preserves encrypted secrets across subsequent deploys; do not duplicate them under plaintext `vars`:
 
    ```sh
@@ -70,8 +77,9 @@ Replace the example development token with a long random value. Send it only to 
    ```
 
    `wrangler secret put` requires the Worker to exist. On the first deployment, supply all three values with `wrangler deploy --secrets-file .prod.secrets`; `.prod.secrets` is gitignored and must be stored locally and securely deleted after use. Never place secret values in `wrangler.jsonc`, command history, source files, or GitHub Pages assets. Production authentication fails closed with a configuration error if any of these bindings is absent.
-4. Configure the Cloudflare Access application for `admin.qixuan.net` before exposing the hostname.
-5. Point the `ASSETS` directory at the built admin SPA if its output path differs from `../admin`.
-6. Run `npm run check`, then deploy.
+4. Bind a private Workers KV namespace as `MEDIA`. Portfolio images stay below the application's 5 MiB limit and are exposed only through the validated `/v1/media/:key` route; the namespace itself is never public.
+5. Configure the Cloudflare Access application for `admin.qixuan.net` before exposing the hostname.
+6. Point the `ASSETS` directory at the built admin SPA if its output path differs from `../admin`.
+7. Run `npm run check`, then deploy.
 
 D1 is seeded lazily from `../content/site.json` after the migration creates an empty schema. Content is validated at runtime against `../content/site.schema.json`; the migration does not duplicate the content document.

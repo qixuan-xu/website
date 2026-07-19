@@ -1076,6 +1076,220 @@ button:disabled {
   font-size: 8px;
 }
 
+.analytics-panel {
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.analytics-head {
+  align-items: center;
+}
+
+.analytics-range {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--faint);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.analytics-range select {
+  min-height: 34px;
+  padding: 6px 28px 6px 9px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--paper-raised);
+  outline: 0;
+}
+
+.analytics-range select:focus {
+  border-color: var(--blue);
+  box-shadow: 3px 3px 0 rgba(87, 104, 232, .18);
+}
+
+.analytics-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  background: var(--line);
+  gap: 1px;
+}
+
+.analytics-summary > div {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  background: rgba(247, 244, 235, .92);
+}
+
+.analytics-summary span {
+  color: var(--faint);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.analytics-summary strong {
+  overflow: hidden;
+  font-size: clamp(24px, 4vw, 40px);
+  letter-spacing: -.055em;
+  line-height: 1;
+  text-overflow: ellipsis;
+}
+
+.analytics-chart {
+  min-height: 206px;
+  margin-top: 18px;
+  padding: 20px 18px 13px;
+  color: var(--hangar-text);
+  border: 1px solid var(--hangar-line);
+  background:
+    linear-gradient(rgba(103, 116, 151, .11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(103, 116, 151, .11) 1px, transparent 1px),
+    var(--hangar);
+  background-size: 24px 24px;
+}
+
+.analytics-chart.is-empty {
+  display: grid;
+  place-items: center;
+}
+
+.analytics-chart-empty {
+  margin: 0;
+  color: #8f97a8;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+  letter-spacing: .05em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.analytics-bars {
+  height: 148px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.analytics-day {
+  min-width: 1px;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+}
+
+.analytics-day i {
+  width: 100%;
+  min-height: 2px;
+  display: block;
+  background: var(--lime);
+  transition: height .25s var(--ease), background .15s ease;
+}
+
+.analytics-day:hover i {
+  background: var(--orange);
+}
+
+.analytics-level-0 i { height: 2px; opacity: .28; }
+.analytics-level-1 i { height: 10%; }
+.analytics-level-2 i { height: 20%; }
+.analytics-level-3 i { height: 30%; }
+.analytics-level-4 i { height: 40%; }
+.analytics-level-5 i { height: 50%; }
+.analytics-level-6 i { height: 60%; }
+.analytics-level-7 i { height: 70%; }
+.analytics-level-8 i { height: 80%; }
+.analytics-level-9 i { height: 90%; }
+.analytics-level-10 i { height: 100%; }
+
+.analytics-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  color: #858da0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 7px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.analytics-rankings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  margin-top: 22px;
+}
+
+.analytics-rankings h3 {
+  margin: 0 0 8px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.analytics-rankings ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.analytics-rankings li {
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+}
+
+.analytics-rankings li b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.analytics-rankings li strong,
+.analytics-rank-index {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+}
+
+.analytics-rank-index {
+  color: var(--orange-dark);
+}
+
+.analytics-rankings li.analytics-empty {
+  display: flex;
+  color: var(--faint);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
+.analytics-privacy {
+  margin: 19px 0 0;
+  color: var(--faint);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  line-height: 1.55;
+}
+
+.analytics-panel.is-loading .analytics-summary,
+.analytics-panel.is-loading .analytics-rankings {
+  opacity: .46;
+}
+
 .project-line-panel {
   overflow: hidden;
 }
@@ -1731,6 +1945,108 @@ button:disabled {
   min-height: 108px;
 }
 
+.project-media-field {
+  padding: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .24);
+}
+
+.project-media-layout {
+  display: grid;
+  grid-template-columns: minmax(180px, .62fr) minmax(0, 1.38fr);
+  gap: 16px;
+}
+
+.project-media-preview {
+  position: relative;
+  min-height: 172px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--hangar-text);
+  border: 1px solid var(--hangar-line);
+  background:
+    linear-gradient(rgba(103, 116, 151, .13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(103, 116, 151, .13) 1px, transparent 1px),
+    var(--hangar);
+  background-size: 20px 20px;
+}
+
+.project-media-preview img {
+  width: 100%;
+  height: 100%;
+  min-height: 172px;
+  display: block;
+  object-fit: cover;
+}
+
+.project-media-preview small {
+  position: absolute;
+  right: 10px;
+  bottom: 9px;
+  color: #aeb6c8;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
+.project-media-preset-mark {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  color: var(--lime);
+  border: 1px solid var(--hangar-line);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 18px;
+}
+
+.project-media-controls {
+  min-width: 0;
+  display: flex;
+  align-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.project-media-control {
+  min-width: 180px;
+  flex: 1;
+  display: grid;
+  gap: 7px;
+}
+
+.project-media-control > span {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.project-media-upload {
+  position: relative;
+  align-self: end;
+  overflow: hidden;
+}
+
+.project-media-upload.is-uploading {
+  pointer-events: none;
+  opacity: .55;
+}
+
+.project-media-help {
+  width: 100%;
+  color: var(--faint);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+}
+
+.project-media-alt {
+  min-width: 100%;
+}
+
 .project-footer-actions {
   display: flex;
   justify-content: flex-end;
@@ -1945,17 +2261,42 @@ button:disabled {
 }
 
 .preview-canvas {
+  position: relative;
   width: min(100%, 1220px);
-  min-height: calc(100vh - 136px);
+  height: calc(100vh - 136px);
+  min-height: 540px;
   margin: 0 auto;
-  color: #171915;
+  overflow: hidden;
+  border: 1px solid var(--hangar-line);
   background: #efede5;
   box-shadow: 0 24px 80px rgba(0, 0, 0, .4);
   transition: width .3s var(--ease);
 }
 
+.preview-canvas.is-loading::after {
+  content: "Rendering live draft…";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #aeb4c1;
+  background: #171b25;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
 .preview-canvas.is-mobile {
   width: min(100%, 390px);
+}
+
+.preview-canvas iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+  background: #efede5;
 }
 
 .preview-site-bar {
@@ -2440,6 +2781,20 @@ button:disabled {
     font-size: 17px;
   }
 
+  .analytics-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .analytics-summary > div {
+    padding: 12px 10px;
+  }
+
+  .analytics-rankings {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
   .panel {
     padding: 18px;
   }
@@ -2475,6 +2830,10 @@ button:disabled {
 
   .form-grid-two,
   .project-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-media-layout {
     grid-template-columns: 1fr;
   }
 

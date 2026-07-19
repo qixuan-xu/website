@@ -6,6 +6,10 @@
   var DEMO_ENABLED = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && new URLSearchParams(window.location.search).get("demo") === "1";
   var STATUS_VALUES = ["planned", "prototype", "active", "in_progress", "completed", "archived"];
   var VISUAL_VALUES = ["vision", "drone", "embedded", "game"];
+  var MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif"];
+  var MAX_MEDIA_BYTES = 5 * 1024 * 1024;
+  var PREVIEW_CHANNEL = "qx-site-preview";
+  var PREVIEW_VERSION = 1;
   var state = {
     session: null,
     content: null,
@@ -16,6 +20,9 @@
     publishedRevision: null,
     versions: [],
     versionsNextCursor: null,
+    analytics: null,
+    analyticsDays: 30,
+    analyticsLoading: false,
     dirty: false,
     busy: false,
     online: true,
@@ -27,7 +34,10 @@
     recoveryBaseRevision: null,
     allowNavigation: false,
     confirmResolver: null,
-    recoveryTimer: null
+    recoveryTimer: null,
+    previewNonce: null,
+    previewReady: false,
+    previewUpdateTimer: null
   };
 
   var demoStore = DEMO_ENABLED ? createDemoStore() : null;
@@ -96,10 +106,19 @@
   function isHttpsUrl(value) {
     if (!nonEmpty(value)) return false;
     try {
-      return new URL(value).protocol === "https:";
+      var url = new URL(value);
+      return url.protocol === "https:" && !url.username && !url.password;
     } catch (error) {
       return false;
     }
+  }
+
+  function isMediaUrl(value) {
+    if (!isHttpsUrl(value)) return false;
+    var url = new URL(value);
+    return url.origin === "https://api.qixuan.net" &&
+      /^\/v1\/media\/[0-9a-f]{32}\.(?:jpg|png|webp|avif|gif)$/.test(url.pathname) &&
+      !url.search && !url.hash;
   }
 
   function isEmail(value) {
@@ -346,6 +365,9 @@
     var title = nonEmpty(source.title) ? source.title : "Untitled project";
     var id = /^[a-z0-9][a-z0-9-]{0,63}$/.test(source.id || "") ? source.id : slugify(title);
     var visualKey = isRecord(source.visual) && VISUAL_VALUES.indexOf(source.visual.key) >= 0 ? source.visual.key : VISUAL_VALUES[index % VISUAL_VALUES.length];
+    var visual = isRecord(source.visual) && source.visual.type === "image" && isMediaUrl(source.visual.url) && nonEmpty(source.visual.alt)
+      ? { type: "image", url: source.visual.url, alt: String(source.visual.alt).slice(0, 180) }
+      : { type: "preset", key: visualKey };
     var status = STATUS_VALUES.indexOf(source.status) >= 0 ? source.status : "planned";
     return {
       id: id,
@@ -361,7 +383,7 @@
       featured: Boolean(source.featured),
       published: source.published !== false,
       order: Number.isInteger(source.order) ? source.order : (index + 1) * 10,
-      visual: { type: "preset", key: visualKey }
+      visual: visual
     };
   }
 
@@ -425,6 +447,23 @@
       };
     } else if (path.indexOf("/versions") === 0 && method === "GET") {
       data = { items: deepClone(demoStore.versions), nextCursor: null };
+    } else if (path.indexOf("/analytics") === 0 && method === "GET") {
+      var demoDays = Number(new URLSearchParams(path.split("?")[1] || "").get("days")) || 30;
+      var daily = [];
+      for (var dayIndex = Math.min(demoDays, 14) - 1; dayIndex >= 0; dayIndex -= 1) {
+        var day = new Date(Date.now() - dayIndex * 86400000).toISOString().slice(0, 10);
+        daily.push({ day: day, pageViews: 8 + ((dayIndex * 7) % 19), projectClicks: 2 + ((dayIndex * 3) % 8) });
+      }
+      data = {
+        range: { days: demoDays },
+        totals: {
+          pageViews: daily.reduce(function (sum, item) { return sum + item.pageViews; }, 0),
+          projectClicks: daily.reduce(function (sum, item) { return sum + item.projectClicks; }, 0)
+        },
+        daily: daily,
+        topProjects: [{ label: "yolo-vision-system", count: 31 }, { label: "fpv-drone-build", count: 18 }],
+        topReferrers: [{ label: "GitHub", count: 42 }, { label: "Google", count: 17 }]
+      };
     } else if (path === "/rollback" && method === "POST") {
       if (options.body.expectedRevision !== demoStore.revision) throw new ApiError(409, "revision_conflict", "Demo revision changed.");
       var snapshot = demoStore.snapshots[options.body.versionId];
@@ -488,6 +527,52 @@
     };
   }
 
+  async function uploadProjectMedia(file) {
+    if (DEMO_ENABLED) {
+      throw new ApiError(400, "demo_upload_disabled", "Image uploads are available on the protected production admin.");
+    }
+    if (!(file instanceof File) || file.size < 1) {
+      throw new ApiError(422, "invalid_media", "Choose a non-empty image file.");
+    }
+    if (file.size > MAX_MEDIA_BYTES) {
+      throw new ApiError(413, "media_too_large", "Images must be 5 MB or smaller.");
+    }
+    if (MEDIA_TYPES.indexOf(file.type) < 0) {
+      throw new ApiError(415, "unsupported_media_type", "Use JPEG, PNG, WebP, AVIF, or GIF.");
+    }
+
+    var formData = new FormData();
+    formData.append("file", file, file.name);
+    var headers = new Headers({ Accept: "application/json" });
+    if (state.session && state.session.csrfToken) headers.set("X-CSRF-Token", state.session.csrfToken);
+    var response;
+    try {
+      response = await fetch(API_ROOT + "/media", {
+        method: "POST",
+        headers: headers,
+        body: formData,
+        credentials: "include",
+        cache: "no-store"
+      });
+    } catch (error) {
+      throw new ApiError(0, "network_error", "The image upload could not reach site control.");
+    }
+    var payload;
+    try {
+      payload = await response.json();
+    } catch (error) {
+      throw new ApiError(response.status, "invalid_response", "Site control returned an unreadable upload response.");
+    }
+    if (!response.ok || payload.ok === false) {
+      var details = payload && payload.error ? payload.error : {};
+      throw new ApiError(response.status, details.code, details.message || "The image upload failed.", details.requestId || payload.requestId, details.details);
+    }
+    if (!payload || payload.ok !== true || !isRecord(payload.data) || !isMediaUrl(payload.data.url)) {
+      throw new ApiError(response.status, "invalid_response", "Site control returned an invalid media record.");
+    }
+    return payload.data;
+  }
+
   async function init() {
     bindStaticEvents();
     configureDemoMode();
@@ -516,10 +601,15 @@
   }
 
   async function loadWorkspace() {
-    var results = await Promise.all([apiRequest("/content"), apiRequest("/versions?limit=50")]);
+    var results = await Promise.all([
+      apiRequest("/content"),
+      apiRequest("/versions?limit=50"),
+      apiRequest("/analytics?days=" + state.analyticsDays).catch(function () { return { data: null }; })
+    ]);
     applyContentPayload(results[0]);
     state.versions = Array.isArray(results[1].data.items) ? results[1].data.items : [];
     state.versionsNextCursor = results[1].data.nextCursor === null || Number.isInteger(results[1].data.nextCursor) ? results[1].data.nextCursor : null;
+    state.analytics = results[2].data;
     state.savedSnapshot = stableSnapshot(state.content);
     state.dirty = false;
     readLocalRecovery();
@@ -611,12 +701,19 @@
     });
     $("#preview-button").addEventListener("click", openPreview);
     $("#close-preview-button").addEventListener("click", function () { $("#preview-dialog").close(); });
+    $("#preview-dialog").addEventListener("close", resetPreview);
+    $("#preview-frame").addEventListener("load", sendPreviewHello);
+    window.addEventListener("message", handlePreviewMessage);
     $all("[data-preview-size]").forEach(function (button) {
       button.addEventListener("click", function () { setPreviewSize(button.dataset.previewSize); });
     });
     $("#save-button").addEventListener("click", function () { saveDraft(); });
     $("#mobile-save-button").addEventListener("click", function () { saveDraft(); });
     $("#publish-button").addEventListener("click", publishDraft);
+    $("#analytics-range").addEventListener("change", function () {
+      state.analyticsDays = Number($("#analytics-range").value) || 30;
+      loadAnalytics();
+    });
     $("#refresh-history-button").addEventListener("click", loadVersions);
     $("#load-more-versions-button").addEventListener("click", function () { loadVersions(false, true); });
     $("#account-button").addEventListener("click", toggleAccountMenu);
@@ -895,8 +992,108 @@
       checklist.appendChild(item);
     });
     renderDashboardActivity();
+    renderAnalytics();
     renderProjectLine();
     renderStatus();
+  }
+
+  async function loadAnalytics() {
+    if (state.analyticsLoading) return;
+    state.analyticsLoading = true;
+    state.analytics = null;
+    renderAnalytics();
+    try {
+      var result = await apiRequest("/analytics?days=" + state.analyticsDays);
+      state.analytics = isRecord(result.data) ? result.data : null;
+    } catch (error) {
+      toast("Analytics unavailable", error && error.message ? error.message : "The aggregate report could not be loaded.", true);
+    } finally {
+      state.analyticsLoading = false;
+      renderAnalytics();
+    }
+  }
+
+  function analyticsCount(value) {
+    var number = Number(value);
+    return Number.isFinite(number) && number > 0 ? Math.floor(number) : 0;
+  }
+
+  function analyticsProjectLabel(projectId) {
+    if (!state.content || !Array.isArray(state.content.projects)) return projectId;
+    var project = state.content.projects.find(function (item) { return item.id === projectId; });
+    return project ? project.title : projectId;
+  }
+
+  function renderAnalyticsRanking(selector, entries, projectLabels) {
+    var list = $(selector);
+    list.replaceChildren();
+    if (!entries.length) {
+      list.appendChild(makeElement("li", "analytics-empty", "No signal yet"));
+      return;
+    }
+    entries.slice(0, 8).forEach(function (entry, index) {
+      var label = nonEmpty(entry.label) ? entry.label : "Direct";
+      if (projectLabels) label = analyticsProjectLabel(label);
+      var item = makeElement("li");
+      appendChildren(item,
+        makeElement("span", "analytics-rank-index", String(index + 1).padStart(2, "0")),
+        makeElement("b", "", label),
+        makeElement("strong", "", analyticsCount(entry.count).toLocaleString())
+      );
+      list.appendChild(item);
+    });
+  }
+
+  function renderAnalytics() {
+    var panel = $(".analytics-panel");
+    if (!panel) return;
+    panel.classList.toggle("is-loading", state.analyticsLoading);
+    panel.setAttribute("aria-busy", String(state.analyticsLoading));
+    var range = $("#analytics-range");
+    range.value = String(state.analyticsDays);
+    range.disabled = state.analyticsLoading;
+
+    var report = isRecord(state.analytics) ? state.analytics : null;
+    var totals = report && isRecord(report.totals) ? report.totals : {};
+    var pageViews = analyticsCount(totals.pageViews);
+    var projectClicks = analyticsCount(totals.projectClicks);
+    $("#analytics-pageviews").textContent = pageViews.toLocaleString();
+    $("#analytics-clicks").textContent = projectClicks.toLocaleString();
+    $("#analytics-click-rate").textContent = pageViews ? (projectClicks / pageViews).toFixed(2) + "×" : "0×";
+
+    var chart = $("#analytics-chart");
+    chart.replaceChildren();
+    chart.classList.toggle("is-empty", !report);
+    if (!report) {
+      chart.appendChild(makeElement("p", "analytics-chart-empty", state.analyticsLoading ? "Loading aggregate signal…" : "No aggregate signal is available yet."));
+    } else {
+      var daily = Array.isArray(report.daily) ? report.daily.filter(isRecord) : [];
+      var maxViews = daily.reduce(function (maximum, item) { return Math.max(maximum, analyticsCount(item.pageViews)); }, 0);
+      var bars = makeElement("div", "analytics-bars");
+      daily.forEach(function (item) {
+        var count = analyticsCount(item.pageViews);
+        var level = maxViews ? Math.max(1, Math.round(count / maxViews * 10)) : 0;
+        var bar = makeElement("span", "analytics-day analytics-level-" + level);
+        bar.setAttribute("title", String(item.day || "Day") + ": " + count.toLocaleString() + " page views");
+        bar.setAttribute("aria-label", String(item.day || "Day") + ", " + count.toLocaleString() + " page views");
+        bar.appendChild(makeElement("i"));
+        bars.appendChild(bar);
+      });
+      chart.appendChild(bars);
+      if (daily.length) {
+        var axis = makeElement("div", "analytics-axis");
+        appendChildren(axis,
+          makeElement("span", "", String(daily[0].day || "")),
+          makeElement("span", "", String(daily[daily.length - 1].day || ""))
+        );
+        chart.appendChild(axis);
+      } else {
+        chart.appendChild(makeElement("p", "analytics-chart-empty", "No page views in this range."));
+      }
+    }
+
+    renderAnalyticsRanking("#analytics-projects", report && Array.isArray(report.topProjects) ? report.topProjects.filter(isRecord) : [], true);
+    renderAnalyticsRanking("#analytics-referrers", report && Array.isArray(report.topReferrers) ? report.topReferrers.filter(isRecord) : [], false);
   }
 
   function renderDashboardActivity() {
@@ -1168,18 +1365,96 @@
   }
 
   function createVisualField(project) {
-    var label = makeElement("label", "project-field");
-    var caption = makeElement("span", "", "Visual preset");
+    var panel = makeElement("div", "project-field project-field-wide project-media-field");
+    var caption = makeElement("span", "", "Project visual");
+    var layout = makeElement("div", "project-media-layout");
+    var preview = makeElement("div", "project-media-preview");
+    if (project.visual.type === "image") {
+      var image = makeElement("img");
+      image.src = project.visual.url;
+      image.alt = project.visual.alt;
+      image.loading = "lazy";
+      image.decoding = "async";
+      image.referrerPolicy = "no-referrer";
+      preview.appendChild(image);
+    } else {
+      appendChildren(preview, makeElement("span", "project-media-preset-mark", project.visual.key.slice(0, 2).toUpperCase()), makeElement("small", "", project.visual.key + " preset"));
+    }
+
+    var controls = makeElement("div", "project-media-controls");
+    var presetLabel = makeElement("label", "project-media-control");
+    var presetCaption = makeElement("span", "", "Generated preset");
     var select = makeElement("select");
+    if (project.visual.type === "image") {
+      var placeholder = makeElement("option", "", "Switch to preset…");
+      placeholder.value = "";
+      placeholder.selected = true;
+      placeholder.disabled = true;
+      select.appendChild(placeholder);
+    }
     VISUAL_VALUES.forEach(function (visual) {
       var option = makeElement("option", "", visual);
       option.value = visual;
-      option.selected = project.visual.key === visual;
+      option.selected = project.visual.type === "preset" && project.visual.key === visual;
       select.appendChild(option);
     });
-    select.addEventListener("change", function () { project.visual = { type: "preset", key: select.value }; markDirty(); });
-    appendChildren(label, caption, select);
-    return label;
+    select.addEventListener("change", function () {
+      if (!select.value) return;
+      project.visual = { type: "preset", key: select.value };
+      markDirty();
+      renderProjects(project.id);
+    });
+    appendChildren(presetLabel, presetCaption, select);
+
+    var uploadLabel = makeElement("label", "project-media-upload button button-secondary button-small");
+    uploadLabel.appendChild(document.createTextNode(project.visual.type === "image" ? "Replace image" : "Upload image"));
+    var fileInput = makeElement("input", "sr-only");
+    fileInput.type = "file";
+    fileInput.accept = MEDIA_TYPES.join(",");
+    fileInput.addEventListener("change", async function () {
+      var file = fileInput.files && fileInput.files[0];
+      if (!file) return;
+      fileInput.disabled = true;
+      uploadLabel.classList.add("is-uploading");
+      try {
+        var media = await uploadProjectMedia(file);
+        project.visual = {
+          type: "image",
+          url: media.url,
+          alt: (project.title + " project cover").slice(0, 180)
+        };
+        markDirty();
+        renderProjects(project.id);
+        toast("Image uploaded", "Add precise alt text, then save the draft when ready.");
+      } catch (error) {
+        handleApiError(error);
+        fileInput.value = "";
+        fileInput.disabled = false;
+        uploadLabel.classList.remove("is-uploading");
+      }
+    });
+    uploadLabel.appendChild(fileInput);
+    appendChildren(controls, presetLabel, uploadLabel, makeElement("small", "project-media-help", "JPEG, PNG, WebP, AVIF, or GIF · max 5 MB"));
+
+    if (project.visual.type === "image") {
+      var altLabel = makeElement("label", "project-media-control project-media-alt");
+      var altCaption = makeElement("span", "", "Image alt text");
+      var altInput = makeElement("input");
+      altInput.type = "text";
+      altInput.maxLength = 180;
+      altInput.value = project.visual.alt;
+      altInput.addEventListener("input", function () {
+        project.visual.alt = altInput.value;
+        image.alt = altInput.value;
+        markDirty();
+      });
+      appendChildren(altLabel, altCaption, altInput);
+      controls.appendChild(altLabel);
+    }
+
+    appendChildren(layout, preview, controls);
+    appendChildren(panel, caption, layout);
+    return panel;
   }
 
   function createTagsField(project) {
@@ -1317,6 +1592,7 @@
     }
     renderStatus();
     scheduleLocalRecovery();
+    schedulePreviewUpdate();
   }
 
   function scheduleLocalRecovery() {
@@ -1420,7 +1696,11 @@
       if (!nonEmpty(project.title) || !nonEmpty(project.category) || !nonEmpty(project.summary) || !nonEmpty(project.statusLabel)) issues.push(label + " has an empty required field.");
       if (STATUS_VALUES.indexOf(project.status) < 0) issues.push(label + " has an invalid status.");
       if (!Number.isInteger(project.order) || project.order < 0 || project.order > 10000) issues.push(label + " has an invalid sort order.");
-      if (!isRecord(project.visual) || VISUAL_VALUES.indexOf(project.visual.key) < 0) issues.push(label + " needs a valid visual preset.");
+      if (!isRecord(project.visual) || (
+        project.visual.type === "preset"
+          ? VISUAL_VALUES.indexOf(project.visual.key) < 0
+          : project.visual.type !== "image" || !isMediaUrl(project.visual.url) || !nonEmpty(project.visual.alt) || project.visual.alt.length > 180
+      )) issues.push(label + " needs a valid visual preset or uploaded image with alt text.");
       if (project.link && (!nonEmpty(project.link.label) || !isHttpsUrl(project.link.url))) issues.push(label + " link must use https:// and include a label.");
       if (project.tags.length > 8 || project.tags.some(function (tag) { return !nonEmpty(tag) || tag.length > 32; })) issues.push(label + " has invalid tags.");
     });
@@ -1737,10 +2017,72 @@
   }
 
   function openPreview() {
-    renderPreview();
+    var issues = validateDraft();
+    if (issues.length) {
+      showLocalValidation(issues);
+      toast("Preview needs valid content", issues[0], true);
+      return;
+    }
+    state.previewNonce = createPreviewNonce();
+    state.previewReady = false;
+    var frame = $("#preview-frame");
+    var previewUrl = new URL("/", previewTargetOrigin());
+    previewUrl.hash = "qx-preview=" + state.previewNonce;
+    $("#preview-canvas").classList.add("is-loading");
+    frame.src = previewUrl.toString();
     var dialog = $("#preview-dialog");
     if (typeof dialog.showModal === "function") dialog.showModal();
     else dialog.setAttribute("open", "");
+  }
+
+  function createPreviewNonce() {
+    var bytes = new Uint8Array(16);
+    window.crypto.getRandomValues(bytes);
+    return Array.prototype.map.call(bytes, function (value) { return value.toString(16).padStart(2, "0"); }).join("");
+  }
+
+  function previewTargetOrigin() {
+    var localHost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    var localStaticSite = localHost && /^\/admin(?:\/|$)/.test(window.location.pathname);
+    return localStaticSite ? window.location.origin : "https://qixuan.net";
+  }
+
+  function previewMessage(type, extra) {
+    return Object.assign({
+      channel: PREVIEW_CHANNEL,
+      version: PREVIEW_VERSION,
+      type: type,
+      nonce: state.previewNonce
+    }, extra || {});
+  }
+
+  function sendPreviewHello() {
+    if (!state.previewNonce) return;
+    var frame = $("#preview-frame");
+    if (!frame.contentWindow) return;
+    frame.contentWindow.postMessage(previewMessage("hello"), previewTargetOrigin());
+  }
+
+  function handlePreviewMessage(event) {
+    var frame = $("#preview-frame");
+    var message = event.data;
+    if (!state.previewNonce || event.source !== frame.contentWindow || event.origin !== previewTargetOrigin()) return;
+    if (!isRecord(message) || message.channel !== PREVIEW_CHANNEL || message.version !== PREVIEW_VERSION || message.nonce !== state.previewNonce) return;
+    if (message.type === "ready") {
+      state.previewReady = true;
+      renderPreview();
+    } else if (message.type === "rendered") {
+      $("#preview-canvas").classList.remove("is-loading");
+    }
+  }
+
+  function resetPreview() {
+    window.clearTimeout(state.previewUpdateTimer);
+    state.previewUpdateTimer = null;
+    state.previewNonce = null;
+    state.previewReady = false;
+    $("#preview-canvas").classList.remove("is-loading");
+    $("#preview-frame").src = "about:blank";
   }
 
   function setPreviewSize(size) {
@@ -1752,50 +2094,21 @@
     });
   }
 
+  function schedulePreviewUpdate() {
+    var dialog = $("#preview-dialog");
+    if (!dialog.open || !state.previewReady) return;
+    window.clearTimeout(state.previewUpdateTimer);
+    state.previewUpdateTimer = window.setTimeout(renderPreview, 120);
+  }
+
   function renderPreview() {
-    var content = state.content;
-    var canvas = $("#preview-canvas");
-    canvas.replaceChildren();
-    var bar = makeElement("header", "preview-site-bar");
-    appendChildren(bar, makeElement("span", "preview-logo", content.site.shortMark + " / " + content.site.name), makeElement("span", "", "Work · About · GitHub ↗"));
-    var hero = makeElement("section", "preview-hero");
-    var heroCopy = makeElement("div");
-    heroCopy.appendChild(makeElement("div", "preview-kicker", content.hero.availabilityEnabled ? content.hero.availabilityLabel : "Student engineer"));
-    var heading = makeElement("h1");
-    heading.appendChild(makeElement("div", "", content.hero.headline.line1));
-    var lineTwo = makeElement("div");
-    appendChildren(lineTwo, content.hero.headline.line2Prefix + " ", makeElement("span", "", content.hero.headline.primaryAccent), content.hero.headline.line2Suffix);
-    var lineThree = makeElement("div");
-    appendChildren(lineThree, content.hero.headline.line3Prefix + " ", makeElement("span", "", content.hero.headline.secondaryAccent), content.hero.headline.line3Suffix);
-    appendChildren(heading, lineTwo, lineThree);
-    var intro = content.hero.intro.lead + " " + content.hero.intro.emphasis + content.hero.intro.tail;
-    appendChildren(heroCopy, heading, makeElement("p", "", intro));
-    var heroSide = makeElement("aside", "preview-hero-side");
-    appendChildren(heroSide, makeElement("span", "preview-meta", content.systemMap.label), makeElement("strong", "", content.systemMap.state), makeElement("small", "", content.systemMap.focusValue + " / " + content.systemMap.modeValue));
-    appendChildren(hero, heroCopy, heroSide);
-    var focus = makeElement("div", "preview-focus");
-    content.domains.forEach(function (domain) { focus.appendChild(makeElement("span", "", domain)); });
-    var work = makeElement("section", "preview-work");
-    appendChildren(work, makeElement("div", "preview-kicker", content.work.sectionLabel), makeElement("h2", "", content.work.titleLead + " " + content.work.titleAccent));
-    var projectGrid = makeElement("div", "preview-project-grid");
-    sortedProjects().filter(function (project) { return project.published; }).forEach(function (project) {
-      var card = makeElement("article", "preview-project" + (project.featured ? " is-featured" : ""));
-      appendChildren(card, makeElement("span", "preview-project-meta", project.category + " / " + project.statusLabel), makeElement("h3", "", project.title), makeElement("p", "", project.summary));
-      var tags = makeElement("div", "preview-tags");
-      project.tags.forEach(function (tag) { tags.appendChild(makeElement("span", "", tag)); });
-      card.appendChild(tags);
-      projectGrid.appendChild(card);
-    });
-    if (!projectGrid.children.length) projectGrid.appendChild(makeElement("p", "", "No published projects in this draft."));
-    work.appendChild(projectGrid);
-    var about = makeElement("section", "preview-about");
-    appendChildren(about, makeElement("h2", "", content.about.headingLead + " " + content.about.headingAccent));
-    var aboutCopy = makeElement("div", "preview-about-copy");
-    content.about.paragraphs.forEach(function (paragraph) { if (nonEmpty(paragraph)) aboutCopy.appendChild(makeElement("p", "", paragraph)); });
-    about.appendChild(aboutCopy);
-    var contact = makeElement("section", "preview-contact");
-    appendChildren(contact, makeElement("div", "preview-kicker", content.contact.kicker), makeElement("h2", "", content.contact.heading));
-    appendChildren(canvas, bar, hero, focus, work, about, contact);
+    if (!state.previewReady || !state.previewNonce) return;
+    var content = deepClone(state.content);
+    content.projects = content.projects.filter(function (project) { return project.published; });
+    var frame = $("#preview-frame");
+    if (frame.contentWindow) {
+      frame.contentWindow.postMessage(previewMessage("render", { content: content }), previewTargetOrigin());
+    }
   }
 
   function confirmAction(options) {
