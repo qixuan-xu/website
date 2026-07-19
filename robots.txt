@@ -1,0 +1,17 @@
+# robots.txt for qixuan.net
+# The public front door is open to search engines.
+# The personal "back room" (dashboard / tools) is kept out of search results.
+#
+# Note: this only affects well-behaved crawlers. Security scanners and
+# bad bots ignore robots.txt — that traffic is handled at Cloudflare.
+
+User-agent: *
+Allow: /
+Disallow: /home
+Disallow: /files/
+Disallow: /notes/
+Disallow: /blog/
+Disallow: /password/
+Disallow: /mc/
+
+Sitemap: https://qixuan.net/sitemap.xml
