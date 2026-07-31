@@ -80,12 +80,23 @@ const races = [
   { round: 23, slug: "united-arab-emirates", flag: "🇦🇪", country: "阿联酋", name: "阿布扎比大奖赛", circuit: "Yas Marina Circuit", dates: "12.04 — 12.06", raceTime: "2026-12-06T13:00:00Z", laps: 58, length: "5.281" },
 ];
 
+const fallbackSessionsByRound = new Map([
+  [12, [
+    { label: "练习赛 1", kind: "practice", time: "2026-08-21T10:30:00Z" },
+    { label: "冲刺排位", kind: "sprint", time: "2026-08-21T14:30:00Z" },
+    { label: "冲刺赛", kind: "sprint", time: "2026-08-22T10:00:00Z" },
+    { label: "排位赛", kind: "qualifying", time: "2026-08-22T14:00:00Z" },
+    { label: "正赛", kind: "race", time: "2026-08-23T13:00:00Z" },
+  ]],
+]);
+
 const driverFlags = Object.fromEntries(fallbackDrivers.map((driver) => [driver.code, driver.flag]));
 const driverNumbers = Object.fromEntries(fallbackDrivers.map((driver) => [driver.code, driver.number]));
 
 let drivers = fallbackDrivers;
 let constructors = fallbackConstructors;
 let allDriversVisible = false;
+let renderedSessionKey = "";
 
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
@@ -100,6 +111,40 @@ const beijingTime = (iso) => new Intl.DateTimeFormat("zh-CN", {
   minute: "2-digit",
   hourCycle: "h23",
 }).format(new Date(iso));
+
+const beijingSessionDate = (iso) => {
+  const date = new Date(iso);
+  const monthDay = new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date).replaceAll("/", ".");
+  const weekday = new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    weekday: "short",
+  }).format(date);
+  return `${monthDay} · ${weekday}`;
+};
+
+function renderWeekendSchedule(race) {
+  const sessions = race.sessions || fallbackSessionsByRound.get(race.round) || [];
+  const sessionKey = `${race.round}:${sessions.map((session) => `${session.label}-${session.time}`).join("|")}`;
+  if (sessionKey === renderedSessionKey) return;
+  renderedSessionKey = sessionKey;
+
+  const list = document.querySelector("#next-session-list");
+  if (!sessions.length) {
+    list.innerHTML = '<p class="session-pending">完整周末时间待公布</p>';
+    return;
+  }
+
+  list.innerHTML = sessions.map((session) => `
+    <article class="session-item ${escapeHtml(session.kind)}">
+      <span>${escapeHtml(session.label)}</span>
+      <strong>${beijingTime(session.time)}</strong>
+      <small>${beijingSessionDate(session.time)}</small>
+    </article>`).join("");
+}
 
 function renderDrivers() {
   const list = document.querySelector("#driver-standings");
@@ -202,6 +247,7 @@ function updateHero() {
   document.querySelector("#fact-length").textContent = `${nextRace.length} km`;
   document.querySelector("#fact-time").textContent = beijingTime(nextRace.raceTime);
   document.querySelector("#official-race-link").href = `https://www.formula1.com/en/racing/${season}/${nextRace.slug}`;
+  renderWeekendSchedule(nextRace);
 }
 
 async function fetchWithTimeout(url, timeout = 5000) {
@@ -213,6 +259,41 @@ async function fetchWithTimeout(url, timeout = 5000) {
     return await response.json();
   } finally {
     clearTimeout(timer);
+  }
+}
+
+function extractRaceSessions(apiRace) {
+  const toSession = (label, kind, value) => value?.date ? {
+    label,
+    kind,
+    time: `${value.date}T${value.time || "00:00:00Z"}`,
+  } : null;
+
+  return [
+    toSession("练习赛 1", "practice", apiRace.FirstPractice),
+    toSession("练习赛 2", "practice", apiRace.SecondPractice),
+    toSession("练习赛 3", "practice", apiRace.ThirdPractice),
+    toSession("冲刺排位", "sprint", apiRace.SprintQualifying || apiRace.SprintShootout),
+    toSession("冲刺赛", "sprint", apiRace.Sprint),
+    toSession("排位赛", "qualifying", apiRace.Qualifying),
+    toSession("正赛", "race", { date: apiRace.date, time: apiRace.time }),
+  ].filter(Boolean).sort((a, b) => new Date(a.time) - new Date(b.time));
+}
+
+async function syncSchedule() {
+  try {
+    const data = await fetchWithTimeout(`https://api.jolpi.ca/ergast/f1/${season}.json`);
+    const liveRaces = data?.MRData?.RaceTable?.Races;
+    if (!Array.isArray(liveRaces)) return;
+
+    liveRaces.forEach((apiRace) => {
+      const race = races.find((candidate) => candidate.round === Number(apiRace.round));
+      if (race) race.sessions = extractRaceSessions(apiRace);
+    });
+    renderedSessionKey = "";
+    updateHero();
+  } catch {
+    // The checked-in next-race schedule remains visible when the API is unavailable.
   }
 }
 
@@ -275,4 +356,5 @@ renderConstructors();
 renderCalendar();
 updateHero();
 syncStandings();
+syncSchedule();
 setInterval(updateHero, 1000);

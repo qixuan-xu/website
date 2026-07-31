@@ -293,9 +293,106 @@ img { display: block; max-width: 100%; }
 .next-map {
   position: relative;
   width: 100%;
+  height: auto;
+  max-height: 330px;
   min-width: 0;
+  object-fit: contain;
   filter: drop-shadow(0 0 24px rgba(255, 255, 255, .08));
   mix-blend-mode: screen;
+}
+
+.weekend-schedule {
+  position: relative;
+  z-index: 1;
+  padding: 18px clamp(22px, 3vw, 36px) 22px;
+  border-top: 1px solid var(--line);
+  background: rgba(255, 255, 255, .012);
+}
+
+.weekend-schedule-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.weekend-schedule-heading h3 {
+  margin: 0;
+  color: #cfcfcf;
+  font-family: var(--display);
+  font-size: .72rem;
+  font-style: italic;
+  letter-spacing: .1em;
+}
+
+.weekend-schedule-heading span {
+  color: #5f5f5f;
+  font-size: .56rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+
+.session-list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border: 1px solid #2a2a2a;
+  background: #0d0d0d;
+}
+
+.session-item {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  padding: 13px 14px 12px;
+  border-right: 1px solid #262626;
+}
+
+.session-item:last-child { border-right: 0; }
+
+.session-item::before {
+  position: absolute;
+  top: -1px;
+  right: 14px;
+  left: 14px;
+  height: 2px;
+  background: #3a3a3a;
+  content: "";
+}
+
+.session-item.sprint::before, .session-item.race::before { background: var(--red); }
+
+.session-item.qualifying::before { background: #f2f0e9; }
+
+.session-item span {
+  overflow: hidden;
+  margin-bottom: 8px;
+  color: #777;
+  font-size: .58rem;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.session-item strong {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-style: italic;
+  font-variant-numeric: tabular-nums;
+}
+
+.session-item small {
+  margin-top: 4px;
+  color: #555;
+  font-size: .52rem;
+}
+
+.session-pending {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 22px;
+  color: #666;
+  font-size: .66rem;
+  text-align: center;
 }
 
 .countdown {
@@ -598,6 +695,8 @@ img { display: block; max-width: 100%; }
   .hero-lead { margin-top: 34px; }
   .next-race-main { grid-template-columns: 1fr; min-height: 340px; padding: 28px 24px 10px; }
   .next-map { width: 82%; margin: -10px auto -8px; }
+  .weekend-schedule { padding-inline: 20px; }
+  .session-list { grid-template-columns: repeat(5, minmax(126px, 1fr)); overflow-x: auto; overscroll-behavior-inline: contain; }
   .countdown { padding: 22px 14px; }
   .countdown strong { font-size: 1.75rem; }
   .countdown span { font-size: .55rem; }
