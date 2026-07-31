@@ -309,6 +309,27 @@
     .domain-list li:nth-child(3)::before{background:var(--acid);border:1px solid var(--ink)}
     .domain-list li:nth-child(4)::before{background:var(--ink)}
 
+    .launch-section{padding:clamp(74px,8vw,112px) 0 0}
+    .launch-head{display:grid;grid-template-columns:180px 1fr;gap:34px;align-items:end;margin-bottom:34px}
+    .launch-head h2{max-width:760px;font-size:clamp(36px,4.8vw,64px);font-weight:600;line-height:.98;letter-spacing:-.052em}
+    .launch-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .launch-card{--launch-accent:var(--orange);position:relative;min-height:280px;overflow:hidden;border:1px solid var(--line);background:var(--paper-raised);transition:transform .3s var(--ease),border-color .2s ease,box-shadow .3s ease}
+    .launch-card:hover{transform:translateY(-6px);border-color:var(--launch-accent);box-shadow:var(--shadow)}
+    .launch-card-link{position:relative;z-index:2;display:flex;min-height:280px;padding:clamp(26px,4vw,46px);flex-direction:column;color:inherit;text-decoration:none}
+    .launch-card-top{display:flex;align-items:center;justify-content:space-between;gap:20px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase}
+    .launch-card-top::after{content:'↗';display:grid;width:34px;height:34px;place-items:center;border:1px solid var(--line);color:var(--ink);font-size:13px;transition:background .2s ease,color .2s ease,border-color .2s ease}
+    .launch-card:hover .launch-card-top::after{border-color:var(--launch-accent);background:var(--launch-accent);color:#fff}
+    .launch-card h3{max-width:410px;margin-top:auto;font-size:clamp(34px,4.4vw,58px);line-height:.9;letter-spacing:-.055em}
+    .launch-card p{max-width:430px;margin-top:18px;color:var(--muted);font-size:14px;line-height:1.6}
+    .launch-card-mark{position:absolute;right:-.06em;bottom:-.3em;z-index:0;color:color-mix(in srgb,var(--launch-accent) 12%,transparent);font-family:'IBM Plex Mono',monospace;font-size:clamp(130px,18vw,240px);font-weight:700;line-height:1;letter-spacing:-.12em;pointer-events:none}
+    .launch-card::after{content:'';position:absolute;right:0;bottom:0;left:0;height:4px;background:var(--launch-accent);transform:scaleX(.16);transform-origin:left;transition:transform .35s var(--ease)}
+    .launch-card:hover::after{transform:scaleX(1)}
+    .launch-mc{--launch-accent:#36a65b}
+    .launch-f1{--launch-accent:#e10600;background:#111;color:#f5f4f0;border-color:#2c2c2c}
+    .launch-f1 .launch-card-top,.launch-f1 p{color:#969696}
+    .launch-f1 .launch-card-top::after{border-color:#363636;color:#f5f4f0}
+    .launch-f1::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(120deg,transparent 0 42px,rgba(255,255,255,.025) 42px 43px);pointer-events:none}
+
     .work-section{margin-top:100px;padding:clamp(80px,9vw,130px) 0;background:var(--hangar);color:var(--hangar-text)}
     .section-intro{display:grid;grid-template-columns:180px 1fr;gap:34px;align-items:start;margin-bottom:56px}
     .section-label{display:flex;align-items:center;gap:10px;color:var(--orange);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase}
@@ -430,6 +451,7 @@
       .domain-list li:nth-child(2){border-right:0}
       .domain-list li:nth-child(3),.domain-list li:nth-child(4){border-bottom:0}
       .domain-list li:nth-child(3){padding-left:0}
+      .launch-head{grid-template-columns:1fr;gap:16px}
       .section-intro,.method-head{grid-template-columns:1fr;gap:24px}
       .featured-project{grid-template-columns:1fr}
       .vision-visual{border-left:0;border-top:1px solid var(--hangar-line);min-height:380px}
@@ -464,6 +486,8 @@
       .flow-line::after{left:-3px;top:0;animation-name:signal}
       .instrument-foot{align-items:flex-start;flex-direction:column}
       .domain-list li{min-height:64px;font-size:9px;padding:0 12px}
+      .launch-grid{grid-template-columns:1fr}
+      .launch-card,.launch-card-link{min-height:250px}
       .work-section{margin-top:72px}
       .featured-copy{padding:28px 22px}
       .project-meta{align-items:flex-start;flex-direction:column;margin-bottom:30px}
@@ -500,6 +524,7 @@
       </a>
       <div class="nav-actions">
         <a class="nav-link" href="#projects">Work</a>
+        <a class="nav-link nav-link-secondary nav-link-sites" href="#live-sites">Live</a>
         <a class="nav-link nav-link-secondary" href="#about">About</a>
         <a class="nav-link nav-link-github" href="https://github.com/qixuan-xu" target="_blank" rel="noopener">GitHub ↗</a>
         <a class="nav-link nav-mail" href="mailto:hi@qixuan.net">Email</a>
@@ -584,6 +609,31 @@
         <li>Game development</li>
       </ul>
     </div>
+
+    <section class="launch-section shell" id="live-sites" aria-labelledby="live-sites-title">
+      <div class="launch-head reveal">
+        <div class="section-label">Live / Explore</div>
+        <h2 id="live-sites-title">Two more places running on qixuan.net.</h2>
+      </div>
+      <div class="launch-grid">
+        <article class="launch-card launch-mc reveal" data-project-id="minecraft">
+          <a class="launch-card-link" href="/mc/">
+            <div class="launch-card-top"><span>mc.qixuan.net / Java 1.21.1</span></div>
+            <h3>Minecraft<br>Survival</h3>
+            <p>Server address, Fabric modpack download, installation steps, and the private control-panel entrance.</p>
+          </a>
+          <span class="launch-card-mark" aria-hidden="true">MC</span>
+        </article>
+        <article class="launch-card launch-f1 reveal reveal-delay" data-project-id="f1-season-center">
+          <a class="launch-card-link" href="/f1/">
+            <div class="launch-card-top"><span>2026 / Race center</span></div>
+            <h3>Formula 1<br>Season Center</h3>
+            <p>Live standings, the complete race calendar, circuit maps, weekend sessions, and the next-race countdown.</p>
+          </a>
+          <span class="launch-card-mark" aria-hidden="true">F1</span>
+        </article>
+      </div>
+    </section>
 
     <section class="work-section" id="projects" aria-labelledby="projects-title">
       <div class="shell">
@@ -808,6 +858,8 @@
       <div class="footer-copy">© <span id="year">2026</span> Qixuan Xu / Built with curiosity</div>
       <nav class="footer-links" aria-label="Footer links">
         <a href="#main">Top ↑</a>
+        <a href="/mc/">Minecraft ↗</a>
+        <a href="/f1/">F1 ↗</a>
         <a href="https://github.com/qixuan-xu" target="_blank" rel="noopener">GitHub ↗</a>
         <a href="mailto:hi@qixuan.net">Email</a>
       </nav>
