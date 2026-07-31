@@ -189,6 +189,7 @@ function updateHero() {
   document.querySelector("#count-seconds").textContent = String(seconds).padStart(2, "0");
   document.querySelector("#progress-label").textContent = `${completed} / ${races.length}`;
   document.querySelector("#progress-bar").style.width = `${(completed / races.length) * 100}%`;
+  document.querySelector(".season-progress").setAttribute("aria-valuenow", String(completed));
   document.querySelector("#next-round").textContent = `ROUND ${nextRace.round}`;
   document.querySelector("#next-flag").textContent = nextRace.flag;
   document.querySelector("#next-country").textContent = nextRace.country;

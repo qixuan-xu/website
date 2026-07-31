@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e10600" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="2026 F1 赛季中心：车手与车队积分、完整赛历、赛道图、下一站倒计时和最新赛果。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content="2026 F1 赛季中心" />
+    <meta
+      property="og:description"
+      content="一页看懂 2026 赛季：积分榜、23 站赛历、赛道图与下一站倒计时。"
+    />
+    <meta property="og:url" content="https://qixuan.net/f1/" />
+    <meta property="og:image" content="https://qixuan.net/f1/assets/og-card.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="2026 F1 赛季中心" />
+    <meta name="twitter:image" content="https://qixuan.net/f1/assets/og-card.png" />
+    <link rel="canonical" href="https://qixuan.net/f1/" />
+    <link rel="icon" href="../favicon.png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>2026 F1 赛季中心 · Qixuan</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="2026 F1 赛季中心首页">
+        <span class="brand-mark">Q</span>
+        <span class="brand-copy">RACE<br />CENTER</span>
+      </a>
+      <nav class="site-nav" aria-label="页面导航">
+        <a href="#next-race">下一站</a>
+        <a href="#standings">积分榜</a>
+        <a href="#calendar">赛历</a>
+      </nav>
+      <div class="season-chip"><span class="live-dot"></span>2026 SEASON</div>
+    </header>
+
+    <main id="main">
+      <section class="hero section-shell" id="next-race" aria-labelledby="hero-title">
+        <div class="hero-intro">
+          <p class="kicker">FORMULA ONE · 2026</p>
+          <h1 id="hero-title">赛季仍在<br /><em>升温。</em></h1>
+          <p class="hero-lead">
+            11 站之后，梅赛德斯暂居车队榜首，Kimi Antonelli 领跑车手积分。下一站，车手们将冲进赞德沃特的海岸沙丘。
+          </p>
+          <div class="season-progress" role="progressbar" aria-label="赛季进度" aria-valuemin="0" aria-valuemax="23" aria-valuenow="11">
+            <div class="progress-copy">
+              <span>赛季进度</span>
+              <strong id="progress-label">11 / 23</strong>
+            </div>
+            <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+          </div>
+        </div>
+
+        <article class="next-race-card" aria-labelledby="next-race-title">
+          <div class="race-card-topline">
+            <span id="next-round">ROUND 12</span>
+            <span class="race-status">NEXT RACE</span>
+          </div>
+          <div class="next-race-main">
+            <div class="next-race-copy">
+              <p class="flagline"><span id="next-flag">🇳🇱</span><span id="next-country">荷兰</span></p>
+              <h2 id="next-race-title">荷兰大奖赛</h2>
+              <p class="circuit-name" id="next-circuit">Circuit Zandvoort</p>
+              <p class="race-date" id="next-date">08.21 — 08.23</p>
+            </div>
+            <img
+              id="next-map"
+              class="next-map"
+              src="./assets/tracks/netherlands.png"
+              width="700"
+              height="394"
+              alt="赞德沃特赛道图"
+            />
+          </div>
+          <div class="countdown" role="timer" aria-label="距离下一场正赛">
+            <div><strong id="count-days">22</strong><span>天</span></div>
+            <i>:</i>
+            <div><strong id="count-hours">23</strong><span>小时</span></div>
+            <i>:</i>
+            <div><strong id="count-minutes">59</strong><span>分钟</span></div>
+            <i>:</i>
+            <div><strong id="count-seconds">59</strong><span>秒</span></div>
+          </div>
+          <div class="race-facts">
+            <span><b id="fact-laps">72</b> 圈数</span>
+            <span><b id="fact-length">4.259 km</b> 单圈长度</span>
+            <span><b id="fact-time">21:00</b> 北京时间</span>
+            <a id="official-race-link" href="https://www.formula1.com/en/racing/2026/netherlands" target="_blank" rel="noreferrer">官方详情 ↗</a>
+          </div>
+        </article>
+      </section>
+
+      <section class="leader-strip" aria-label="当前领跑者">
+        <div class="leader-label">
+          <span>CHAMPIONSHIP<br />LEADERS</span>
+          <i></i>
+        </div>
+        <article>
+          <span class="leader-number">12</span>
+          <div><small>车手榜首</small><strong>Andrea Kimi<br />Antonelli</strong></div>
+          <b>219 <small>PTS</small></b>
+        </article>
+        <article>
+          <span class="leader-number">M</span>
+          <div><small>车队榜首</small><strong>Mercedes</strong></div>
+          <b>379 <small>PTS</small></b>
+        </article>
+        <article class="last-winner">
+          <span class="leader-number">1</span>
+          <div><small>上一站冠军 · 匈牙利</small><strong>Lando Norris</strong></div>
+          <b>NOR</b>
+        </article>
+      </section>
+
+      <section class="standings section-shell" id="standings" aria-labelledby="standings-title">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">WORLD CHAMPIONSHIP</p>
+            <h2 id="standings-title">谁在领跑</h2>
+          </div>
+          <p class="data-note"><span id="data-state" class="data-state"></span><span id="data-updated">数据截至 2026 匈牙利站</span></p>
+        </div>
+
+        <div class="standings-grid">
+          <article class="standings-panel">
+            <div class="panel-heading">
+              <div><span>01</span><h3>车手积分榜</h3></div>
+              <span>DRIVERS</span>
+            </div>
+            <div class="table-head" aria-hidden="true"><span>排名 / 车手</span><span>车队</span><span>积分</span></div>
+            <div id="driver-standings" class="standings-list" aria-live="polite"></div>
+            <button class="show-all" id="show-all-drivers" type="button" aria-expanded="false">查看全部 22 位车手 <span>↓</span></button>
+          </article>
+
+          <article class="standings-panel constructors-panel">
+            <div class="panel-heading">
+              <div><span>02</span><h3>车队积分榜</h3></div>
+              <span>TEAMS</span>
+            </div>
+            <div class="constructor-chart" id="constructor-standings" aria-live="polite"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="calendar section-shell" id="calendar" aria-labelledby="calendar-title">
+        <div class="section-heading calendar-heading">
+          <div>
+            <p class="kicker">23 RACES · 5 CONTINENTS</p>
+            <h2 id="calendar-title">全球赛历</h2>
+          </div>
+          <div class="calendar-filters" role="group" aria-label="赛历筛选">
+            <button class="active" type="button" data-filter="all" aria-pressed="true">全部</button>
+            <button type="button" data-filter="completed" aria-pressed="false">已结束</button>
+            <button type="button" data-filter="upcoming" aria-pressed="false">接下来</button>
+          </div>
+        </div>
+        <div class="race-grid" id="race-grid"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-brand"><span>Q</span><strong>2026<br />RACE CENTER</strong></div>
+      <p>
+        非官方车迷页面。积分与赛历来自
+        <a href="https://www.formula1.com/en/results/2026/drivers" target="_blank" rel="noreferrer">Formula 1®</a>
+        及 <a href="https://api.jolpi.ca/ergast/f1/" target="_blank" rel="noreferrer">Jolpica F1 API</a>；赛道图 © Formula 1®。
+      </p>
+      <a href="https://qixuan.net/">QIXUAN.NET ↗</a>
+    </footer>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>

@@ -3,181 +3,129 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#e10600" />
-    <meta name="color-scheme" content="dark" />
-    <meta
-      name="description"
-      content="2026 F1 赛季中心：车手与车队积分、完整赛历、赛道图、下一站倒计时和最新赛果。"
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="zh_CN" />
-    <meta property="og:title" content="2026 F1 赛季中心" />
-    <meta
-      property="og:description"
-      content="一页看懂 2026 赛季：积分榜、23 站赛历、赛道图与下一站倒计时。"
-    />
-    <meta property="og:url" content="https://qixuan.net/mc/" />
-    <meta property="og:image" content="https://qixuan.net/mc/assets/og-card.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="2026 F1 赛季中心" />
-    <meta name="twitter:image" content="https://qixuan.net/mc/assets/og-card.png" />
-    <link rel="canonical" href="https://qixuan.net/mc/" />
-    <link rel="icon" href="../favicon.png" />
-    <link rel="stylesheet" href="./styles.css" />
-    <title>2026 F1 赛季中心 · Qixuan</title>
+    <meta name="theme-color" content="#142117" />
+    <title>Qixuan Survival</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0b120d;
+        color: #eef7ef;
+      }
+      * { box-sizing: border-box; }
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 28px 18px;
+        background:
+          radial-gradient(circle at 15% 15%, rgba(91, 173, 104, .2), transparent 30rem),
+          radial-gradient(circle at 90% 85%, rgba(82, 137, 255, .12), transparent 30rem),
+          #0b120d;
+      }
+      main { width: min(760px, 100%); }
+      .eyebrow { margin: 0 0 10px; color: #8ed69a; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+      h1 { margin: 0; font-size: clamp(2.4rem, 8vw, 5.2rem); line-height: .98; letter-spacing: -.055em; }
+      .lead { max-width: 620px; margin: 22px 0 28px; color: #b8c9bb; font-size: 1.08rem; line-height: 1.7; }
+      .address {
+        display: flex; align-items: center; justify-content: space-between; gap: 14px;
+        padding: 15px 17px; border: 1px solid #304b35; border-radius: 14px; background: rgba(20, 33, 23, .84);
+      }
+      code { color: #d9f7dc; font-size: clamp(1rem, 4vw, 1.25rem); }
+      button { border: 0; color: #9fc6a4; background: transparent; cursor: pointer; font: inherit; }
+      .status-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 15px; }
+      .status-pill {
+        display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px;
+        border: 1px solid #304b35; border-radius: 999px; background: rgba(20, 33, 23, .84);
+        color: #b8c9bb; font-size: .9rem;
+      }
+      .dot { width: 9px; height: 9px; border-radius: 50%; background: #758078; box-shadow: 0 0 0 4px rgba(117, 128, 120, .12); }
+      .dot.online { background: #70d67d; box-shadow: 0 0 0 4px rgba(112, 214, 125, .14); }
+      .dot.offline { background: #ef7777; box-shadow: 0 0 0 4px rgba(239, 119, 119, .14); }
+      .actions { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; margin-top: 15px; }
+      .action {
+        display: block; padding: 17px 18px; border-radius: 14px; text-align: center;
+        color: white; font-weight: 760; text-decoration: none; transition: transform .15s ease, filter .15s ease;
+      }
+      .action:hover { transform: translateY(-2px); filter: brightness(1.08); }
+      .download { background: #397b45; }
+      .console { border: 1px solid #3d5140; background: #18231a; }
+      .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 28px; }
+      .card { padding: 20px; border: 1px solid #26372a; border-radius: 14px; background: rgba(17, 27, 19, .72); }
+      .card h2 { margin: 0 0 10px; font-size: 1rem; }
+      .card p, .card ol { margin: 0; color: #aebcaf; line-height: 1.65; font-size: .94rem; }
+      .card ol { padding-left: 1.2rem; }
+      footer { margin-top: 22px; color: #718074; font-size: .8rem; }
+      @media (max-width: 620px) { .actions, .grid { grid-template-columns: 1fr; } }
+    </style>
   </head>
   <body>
-    <a class="skip-link" href="#main">跳到主要内容</a>
+    <main>
+      <p class="eyebrow">Minecraft Java · Fabric 1.21.1</p>
+      <h1>Qixuan<br />Survival</h1>
+      <p class="lead">轻量原版生存服。查看服务器状态和下载整合包都不需要登录；只有重启、关机和执行指令需要管理员身份。</p>
 
-    <header class="site-header">
-      <a class="brand" href="./" aria-label="2026 F1 赛季中心首页">
-        <span class="brand-mark">Q</span>
-        <span class="brand-copy">RACE<br />CENTER</span>
-      </a>
-      <nav class="site-nav" aria-label="页面导航">
-        <a href="#next-race">下一站</a>
-        <a href="#standings">积分榜</a>
-        <a href="#calendar">赛历</a>
-      </nav>
-      <div class="season-chip"><span class="live-dot"></span>2026 SEASON</div>
-    </header>
+      <div class="status-row" aria-live="polite">
+        <span class="status-pill"><span class="dot" id="status-dot"></span><span id="server-status">正在查询服务器…</span></span>
+        <span class="status-pill" id="player-status">在线人数：—</span>
+        <span class="status-pill" id="version-status">版本：1.21.1</span>
+      </div>
 
-    <main id="main">
-      <section class="hero section-shell" id="next-race" aria-labelledby="hero-title">
-        <div class="hero-intro">
-          <p class="kicker">FORMULA ONE · 2026</p>
-          <h1 id="hero-title">赛季仍在<br /><em>升温。</em></h1>
-          <p class="hero-lead">
-            11 站之后，梅赛德斯暂居车队榜首，Kimi Antonelli 领跑车手积分。下一站，车手们将冲进赞德沃特的海岸沙丘。
-          </p>
-          <div class="season-progress" aria-label="赛季进度">
-            <div class="progress-copy">
-              <span>赛季进度</span>
-              <strong id="progress-label">11 / 23</strong>
-            </div>
-            <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
-          </div>
-        </div>
+      <div class="address">
+        <code id="address">mc.qixuan.net</code>
+        <button id="copy" type="button">复制地址</button>
+      </div>
+      <div class="actions">
+        <a class="action download" href="./Qixuan-Survival-1.21.1.mrpack" download>下载整合包</a>
+        <a class="action console" href="https://mc-panel.qixuan.net/">登录后管理服务器</a>
+      </div>
 
-        <article class="next-race-card" aria-labelledby="next-race-title">
-          <div class="race-card-topline">
-            <span id="next-round">ROUND 12</span>
-            <span class="race-status">NEXT RACE</span>
-          </div>
-          <div class="next-race-main">
-            <div class="next-race-copy">
-              <p class="flagline"><span id="next-flag">🇳🇱</span><span id="next-country">荷兰</span></p>
-              <h2 id="next-race-title">荷兰大奖赛</h2>
-              <p class="circuit-name" id="next-circuit">Circuit Zandvoort</p>
-              <p class="race-date" id="next-date">08.21 — 08.23</p>
-            </div>
-            <img
-              id="next-map"
-              class="next-map"
-              src="./assets/tracks/netherlands.png"
-              width="700"
-              height="394"
-              alt="赞德沃特赛道图"
-            />
-          </div>
-          <div class="countdown" aria-label="距离下一场正赛">
-            <div><strong id="count-days">22</strong><span>天</span></div>
-            <i>:</i>
-            <div><strong id="count-hours">23</strong><span>小时</span></div>
-            <i>:</i>
-            <div><strong id="count-minutes">59</strong><span>分钟</span></div>
-            <i>:</i>
-            <div><strong id="count-seconds">59</strong><span>秒</span></div>
-          </div>
-          <div class="race-facts">
-            <span><b id="fact-laps">72</b> 圈数</span>
-            <span><b id="fact-length">4.259 km</b> 单圈长度</span>
-            <span><b id="fact-time">21:00</b> 北京时间</span>
-            <a id="official-race-link" href="https://www.formula1.com/en/racing/2026/netherlands" target="_blank" rel="noreferrer">官方详情 ↗</a>
-          </div>
+      <section class="grid">
+        <article class="card">
+          <h2>如何安装</h2>
+          <ol>
+            <li>安装 Modrinth App 或 Prism Launcher</li>
+            <li>导入下载的 .mrpack 文件</li>
+            <li>启动后添加服务器 mc.qixuan.net</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h2>生存世界</h2>
+          <p>种子 2115721395574866849。出生点附近有村庄、铁匠铺和试炼密室，适合多人开荒。</p>
         </article>
       </section>
-
-      <section class="leader-strip" aria-label="当前领跑者">
-        <div class="leader-label">
-          <span>CHAMPIONSHIP<br />LEADERS</span>
-          <i></i>
-        </div>
-        <article>
-          <span class="leader-number">12</span>
-          <div><small>车手榜首</small><strong>Andrea Kimi<br />Antonelli</strong></div>
-          <b>219 <small>PTS</small></b>
-        </article>
-        <article>
-          <span class="leader-number">M</span>
-          <div><small>车队榜首</small><strong>Mercedes</strong></div>
-          <b>379 <small>PTS</small></b>
-        </article>
-        <article class="last-winner">
-          <span class="leader-number">1</span>
-          <div><small>上一站冠军 · 匈牙利</small><strong>Lando Norris</strong></div>
-          <b>NOR</b>
-        </article>
-      </section>
-
-      <section class="standings section-shell" id="standings" aria-labelledby="standings-title">
-        <div class="section-heading">
-          <div>
-            <p class="kicker">WORLD CHAMPIONSHIP</p>
-            <h2 id="standings-title">谁在领跑</h2>
-          </div>
-          <p class="data-note"><span id="data-state" class="data-state"></span><span id="data-updated">数据截至 2026 匈牙利站</span></p>
-        </div>
-
-        <div class="standings-grid">
-          <article class="standings-panel">
-            <div class="panel-heading">
-              <div><span>01</span><h3>车手积分榜</h3></div>
-              <span>DRIVERS</span>
-            </div>
-            <div class="table-head" aria-hidden="true"><span>排名 / 车手</span><span>车队</span><span>积分</span></div>
-            <div id="driver-standings" class="standings-list" aria-live="polite"></div>
-            <button class="show-all" id="show-all-drivers" type="button" aria-expanded="false">查看全部 22 位车手 <span>↓</span></button>
-          </article>
-
-          <article class="standings-panel constructors-panel">
-            <div class="panel-heading">
-              <div><span>02</span><h3>车队积分榜</h3></div>
-              <span>TEAMS</span>
-            </div>
-            <div class="constructor-chart" id="constructor-standings" aria-live="polite"></div>
-          </article>
-        </div>
-      </section>
-
-      <section class="calendar section-shell" id="calendar" aria-labelledby="calendar-title">
-        <div class="section-heading calendar-heading">
-          <div>
-            <p class="kicker">23 RACES · 5 CONTINENTS</p>
-            <h2 id="calendar-title">全球赛历</h2>
-          </div>
-          <div class="calendar-filters" role="group" aria-label="赛历筛选">
-            <button class="active" type="button" data-filter="all" aria-pressed="true">全部</button>
-            <button type="button" data-filter="completed" aria-pressed="false">已结束</button>
-            <button type="button" data-filter="upcoming" aria-pressed="false">接下来</button>
-          </div>
-        </div>
-        <div class="race-grid" id="race-grid"></div>
-      </section>
+      <footer>客户端：Sodium · Jade · AppleSkin · EMI · Xaero 小地图/世界地图　服务端：Essential Commands · LuckPerms · Ledger · Universal Graves 等</footer>
     </main>
+    <script>
+      const copy = document.querySelector("#copy");
+      copy.addEventListener("click", async () => {
+        await navigator.clipboard.writeText("mc.qixuan.net");
+        copy.textContent = "已复制";
+        setTimeout(() => { copy.textContent = "复制地址"; }, 1600);
+      });
 
-    <footer class="site-footer">
-      <div class="footer-brand"><span>Q</span><strong>2026<br />RACE CENTER</strong></div>
-      <p>
-        非官方车迷页面。积分与赛历来自
-        <a href="https://www.formula1.com/en/results/2026/drivers" target="_blank" rel="noreferrer">Formula 1®</a>
-        及 <a href="https://api.jolpi.ca/ergast/f1/" target="_blank" rel="noreferrer">Jolpica F1 API</a>；赛道图 © Formula 1®。
-      </p>
-      <a href="https://qixuan.net/">QIXUAN.NET ↗</a>
-    </footer>
-
-    <script src="./app.js" defer></script>
+      const statusDot = document.querySelector("#status-dot");
+      const serverStatus = document.querySelector("#server-status");
+      const playerStatus = document.querySelector("#player-status");
+      const versionStatus = document.querySelector("#version-status");
+      async function refreshStatus() {
+        try {
+          const response = await fetch("https://mc-status.qixuan.net/status", { cache: "no-store" });
+          if (!response.ok) throw new Error("status unavailable");
+          const status = await response.json();
+          statusDot.className = `dot ${status.running ? "online" : "offline"}`;
+          serverStatus.textContent = status.running ? "服务器运行中" : "服务器已关闭";
+          playerStatus.textContent = `在线人数：${status.playersOnline}/${status.playersMax}`;
+          versionStatus.textContent = `版本：${status.version}`;
+        } catch {
+          statusDot.className = "dot offline";
+          serverStatus.textContent = "暂时无法获取状态";
+          playerStatus.textContent = "在线人数：—";
+        }
+      }
+      refreshStatus();
+      setInterval(refreshStatus, 15000);
+    </script>
   </body>
 </html>
