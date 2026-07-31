@@ -34,6 +34,15 @@
       }
       code { color: #d9f7dc; font-size: clamp(1rem, 4vw, 1.25rem); }
       button { border: 0; color: #9fc6a4; background: transparent; cursor: pointer; font: inherit; }
+      .status-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 15px; }
+      .status-pill {
+        display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px;
+        border: 1px solid #304b35; border-radius: 999px; background: rgba(20, 33, 23, .84);
+        color: #b8c9bb; font-size: .9rem;
+      }
+      .dot { width: 9px; height: 9px; border-radius: 50%; background: #758078; box-shadow: 0 0 0 4px rgba(117, 128, 120, .12); }
+      .dot.online { background: #70d67d; box-shadow: 0 0 0 4px rgba(112, 214, 125, .14); }
+      .dot.offline { background: #ef7777; box-shadow: 0 0 0 4px rgba(239, 119, 119, .14); }
       .actions { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; margin-top: 15px; }
       .action {
         display: block; padding: 17px 18px; border-radius: 14px; text-align: center;
@@ -55,7 +64,13 @@
     <main>
       <p class="eyebrow">Minecraft Java · Fabric 1.21.1</p>
       <h1>Qixuan<br />Survival</h1>
-      <p class="lead">轻量原版生存服。整合包包含性能优化、物品查询和界面提示，不加入会破坏原版平衡的内容。</p>
+      <p class="lead">轻量原版生存服。查看服务器状态和下载整合包都不需要登录；只有重启、关机和执行指令需要管理员身份。</p>
+
+      <div class="status-row" aria-live="polite">
+        <span class="status-pill"><span class="dot" id="status-dot"></span><span id="server-status">正在查询服务器…</span></span>
+        <span class="status-pill" id="player-status">在线人数：—</span>
+        <span class="status-pill" id="version-status">版本：1.21.1</span>
+      </div>
 
       <div class="address">
         <code id="address">mc.qixuan.net</code>
@@ -63,7 +78,7 @@
       </div>
       <div class="actions">
         <a class="action download" href="./Qixuan-Survival-1.21.1.mrpack" download>下载整合包</a>
-        <a class="action console" href="https://mc-panel.qixuan.net/">打开控制台</a>
+        <a class="action console" href="https://mc-panel.qixuan.net/">登录后管理服务器</a>
       </div>
 
       <section class="grid">
@@ -80,7 +95,7 @@
           <p>种子 2115721395574866849。出生点附近有村庄、铁匠铺和试炼密室，适合多人开荒。</p>
         </article>
       </section>
-      <footer>服务端：Lithium · FerriteCore · spark　客户端：Sodium · Jade · AppleSkin · EMI 等</footer>
+      <footer>客户端：Sodium · Jade · AppleSkin · EMI · Xaero 小地图/世界地图　服务端：Essential Commands · LuckPerms · Ledger · Universal Graves 等</footer>
     </main>
     <script>
       const copy = document.querySelector("#copy");
@@ -89,6 +104,28 @@
         copy.textContent = "已复制";
         setTimeout(() => { copy.textContent = "复制地址"; }, 1600);
       });
+
+      const statusDot = document.querySelector("#status-dot");
+      const serverStatus = document.querySelector("#server-status");
+      const playerStatus = document.querySelector("#player-status");
+      const versionStatus = document.querySelector("#version-status");
+      async function refreshStatus() {
+        try {
+          const response = await fetch("https://mc-status.qixuan.net/status", { cache: "no-store" });
+          if (!response.ok) throw new Error("status unavailable");
+          const status = await response.json();
+          statusDot.className = `dot ${status.running ? "online" : "offline"}`;
+          serverStatus.textContent = status.running ? "服务器运行中" : "服务器已关闭";
+          playerStatus.textContent = `在线人数：${status.playersOnline}/${status.playersMax}`;
+          versionStatus.textContent = `版本：${status.version}`;
+        } catch {
+          statusDot.className = "dot offline";
+          serverStatus.textContent = "暂时无法获取状态";
+          playerStatus.textContent = "在线人数：—";
+        }
+      }
+      refreshStatus();
+      setInterval(refreshStatus, 15000);
     </script>
   </body>
 </html>
